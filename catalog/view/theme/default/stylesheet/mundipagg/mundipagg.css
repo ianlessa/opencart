@@ -1,0 +1,99 @@
+/**
+** Checkout
+**/
+.mundipaggNav {
+    width: 100%;
+}
+
+.active.mundipaggCheckoutTabs {
+    background-color:#EEEEEE;
+    border-radius: 0.5em;
+}
+
+.mundipaggCheckoutTabs i {
+    font-size: 5em;
+}
+
+.nav>.mundipaggCheckoutTabs>a {
+    padding: 2em 0 0.8em 0;
+    border-radius: 0.5em;
+}
+
+.mundipaggCheckoutTabsContent .tab-pane{
+    border-radius: 0.2em;
+    padding: 2em 1.5em 2em 1.5em;
+    margin-top:1.2em;
+}
+
+/**
+** Boleto
+**/
+
+#boletoTab.active a{
+    border-radius: 0.5em;
+}
+
+#boletoTab.tab-pane{
+    background-color:#314350;
+    color:#fff;
+}
+
+#boletoTab.tab-pane h3{
+    margin:0 0 1.5em 0;
+    color:#fff;
+}
+
+#boletoTab.tab-pane{
+    font-size:1.5em;
+    
+}
+
+#boletoTab.tab-pane blockquote {
+    background: rgba(99,144,71,.11);
+    border-left: 0.3em solid #97cd76;
+    color: #ddd;
+    font-size: 0.8em;
+    margin: 0 0 0 20px
+}
+
+#boletoTab.tab-pane #boletoLink>i {
+font-size:1.3em;
+}
+
+#boletoTab.tab-pane #boletoLink {
+    border: 0.02em solid #31708f;
+    color:#23a1d1;
+    border-radius: 0;
+    padding: 0.7em 0.7em;
+    float:left;
+
+}
+
+#boletoTab.tab-pane #boletoLink:hover, #boletoTab.tab-pane #boletoLink:active {
+    color:#49A5FF;
+    border: 0.02em solid #49A5FF;
+}
+
+/**
+** Credit card
+**/
+
+#creditCardTab{
+    background-color:#F7F7F7;
+}
+
+.input-group-addon {
+    padding: 0 5px!important;
+}
+
+.float-to-right {
+    float: right;
+}
+
+.clear-left-padding{
+    padding-left: 0 !important;
+}
+
+.hidden {
+    display: none;
+}

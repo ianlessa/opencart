@@ -1,0 +1,166 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f0d4f951b0ae01a6d7c47cee03f001e3",
+    "packages": [
+        {
+            "name": "apimatic/jsonmapper",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/apimatic/jsonmapper.git",
+                "reference": "4a678b12ce7116645d10d4854bf22473be683267"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/apimatic/jsonmapper/zipball/4a678b12ce7116645d10d4854bf22473be683267",
+                "reference": "4a678b12ce7116645d10d4854bf22473be683267",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.2.*",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "apimatic\\jsonmapper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Weiske",
+                    "email": "christian.weiske@netresearch.de",
+                    "homepage": "http://www.netresearch.de/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Mehdi Jaffery",
+                    "email": "mehdi.jaffery@apimatic.io",
+                    "homepage": "http://apimatic.io/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Map nested JSON structures onto PHP classes",
+            "time": "2017-04-06T13:14:24+00:00"
+        },
+        {
+            "name": "apimatic/mundiapi",
+            "version": "v0.2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mundipagg/MundiAPI-PHP.git",
+                "reference": "66e383c84bdb7a59854dd699000e68481aac7bf1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mundipagg/MundiAPI-PHP/zipball/66e383c84bdb7a59854dd699000e68481aac7bf1",
+                "reference": "66e383c84bdb7a59854dd699000e68481aac7bf1",
+                "shasum": ""
+            },
+            "require": {
+                "apimatic/jsonmapper": "~1.2.0",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "mashape/unirest-php": "~3.0.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MundiAPILib\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "APIMatic SDK Generator",
+                    "email": "support@apimatic.io",
+                    "homepage": "https://apimatic.io",
+                    "role": "API Tool"
+                }
+            ],
+            "description": "Mundipagg API",
+            "homepage": "https://apimatic.io",
+            "keywords": [
+                "API",
+                "MundiAPI",
+                "SDK"
+            ],
+            "support": {
+                "source": "https://github.com/mundipagg/MundiAPI-PHP/tree/v0.2",
+                "issues": "https://github.com/mundipagg/MundiAPI-PHP/issues"
+            },
+            "time": "2017-06-27 21:56:17"
+        },
+        {
+            "name": "mashape/unirest-php",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Mashape/unirest-php.git",
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Mashape/unirest-php/zipball/842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "0.1.*",
+                "phpunit/phpunit": "~4.4"
+            },
+            "suggest": {
+                "ext-json": "Allows using JSON Bodies for sending and parsing requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Unirest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Unirest PHP",
+            "homepage": "https://github.com/Mashape/unirest-php",
+            "keywords": [
+                "client",
+                "curl",
+                "http",
+                "https",
+                "rest"
+            ],
+            "time": "2016-08-11T17:49:21+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "apimatic/mundiapi": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

@@ -1,0 +1,411 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+	        <div class="pull-right">
+		        <button type="submit" id="submit-form" form="form-mundipagg" data-toggle="tooltip" title="{{ misc.button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+		        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ misc.button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+	        <h1><i class="fa fa-credit-card"></i> {{ heading_title }}</h1>
+            <ul class="breadcrumb">
+	            {% for breadcrumb in breadcrumbs %}
+		        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+	            {% endfor %}
+            </ul>
+	    </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i>Edit Mundipagg payments</h3>
+            </div>
+
+	        <div class="panel-body">
+	            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-mundipagg" class="form-horizontal">
+		            <ul class="nav nav-tabs">
+		                <li class="active"><a href="#tab-general" data-toggle="tab">{{ general.label }}</a></li>
+		                <li><a href="#tab-credit-card" data-toggle="tab">{{ credit_card.label }}</a></li>
+		                <li><a href="#tab-boleto" data-toggle="tab">{{ boleto.label }}</a></li>
+		            </ul>
+
+		            <div class="tab-content">
+		                <div class="tab-pane active" id="tab-general">
+                            <div class="panel-heading">
+                                <h3>{{ general.module_section }}</h3>
+                            </div>
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="module-enabled">{{ misc.enabled }}</label>
+			                    <div class="col-sm-10">
+                                {% if not settings.general_status %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_status == '0' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_status == '1' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_status" id="module-disabled" value="0">{{ misc.no }}</label>
+                                {% endif %}
+			                    </div>
+			                </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="payment-title">{{ general.payment_title }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_title" placeholder="{{ general.payment_title }}" id="payment-title" class="form-control" value="{{ settings.general_payment_title }}"/>
+			                    </div>
+                            </div>
+
+
+                            <div class="panel-heading">
+                                <h3>{{ general.api_section }}</h3>
+                            </div>
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="prod-secret-key">{{ general.api_prod_key }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_prod_secret_key" placeholder="{{ general.api_prod_key }}" id="prod-security-key" class="form-control" value="{{ settings.general_prod_secret_key }}"/>
+			                    </div>
+                            </div>
+
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="test-secret-key">{{ general.api_test_key }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_test_secret_key" placeholder="{{ general.api_test_key }}" id="test-security-key" class="form-control" value="{{ settings.general_test_secret_key }}"/>
+			                    </div>
+                            </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="prod-public-key">{{ general.api_prod_pub_key }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_prod_public_key" placeholder="{{ general.api_prod_pub_key }}" id="prod-public-key" class="form-control" value="{{ settings.general_prod_pub_key }}"/>
+			                    </div>
+                            </div>
+
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="test-public-key">{{ general.api_test_pub_key }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_test_public_key" placeholder="{{ general.api_test_pub_key }}" id="test-public-key" class="form-control" value="{{ settings.general_test_pub_key }}"/>
+			                    </div>
+                            </div>
+
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="test-mode-enabled">{{ general.api_test_mode }}</label>
+			                    <div class="col-sm-10">
+                                {% if not settings.general_test_mode %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_test_mode == '0' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_test_mode == '1' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" >{{ misc.no }}</label>
+                                {% endif %}
+			                    </div>
+			                </div>
+
+                            <div class="panel-heading">
+                                <h3>{{ general.log_section }}</h3>
+                            </div>
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="log-enabled">{{ misc.enabled }}</label>
+			                    <div class="col-sm-10">
+                                {% if not settings.general_log_enabled %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_log_enabled == '0' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.general_log_enabled == '1' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_log_enabled" id="log-disabled" value="0">{{ misc.no }}</label>
+                                {% endif %}
+			                    </div>
+			                </div>
+		                </div> <!-- tab-general -->
+
+		                <div class="tab-pane" id="tab-credit-card">
+                            <div class="panel-heading">
+                                <h3>{{ credit_card.configure_section }}</h3>
+                            </div>
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="credit-card-enabled">
+                                    {{ misc.enabled }}
+                                </label>
+			                    <div class="col-sm-10">
+                                {% if not settings.credit_card_status %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="1">
+                                        {{ misc.yes }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="0"
+                                            checked="checked">
+                                        {{ misc.no }}
+                                    </label>
+                                {% elseif settings.credit_card_status == '0' %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="1">
+                                        {{ misc.yes }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="0"
+                                            checked="checked">
+                                        {{ misc.no }}
+                                    </label>
+                                {% elseif settings.credit_card_status == '1' %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="1"
+                                            checked="checked">
+                                        {{ misc.yes }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_status"
+                                            id="credit-card-enabled"
+                                            value="0" >
+                                        {{ misc.no }}
+                                    </label>
+                                {% endif %}
+			                    </div>
+			                </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="payment-title">
+                                    {{ credit_card.configure_payment_title }}
+                                </label>
+			                    <div class="col-sm-10">
+                                    <input
+                                        type="text"
+                                        name="payment_mundipagg_credit_card_payment_title"
+                                        placeholder="{{ credit_card.configure_payment_title }}"
+                                        id="payment-title"
+                                        class="form-control"
+                                        value="{{ settings.credit_card_payment_title }}"/>
+			                    </div>
+                            </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="invoice-name">
+                                    {{ credit_card.configure_invoice_name }}
+                                </label>
+			                    <div class="col-sm-10">
+                                    <input
+                                        type="text"
+                                        name="payment_mundipagg_credit_card_invoice_name"
+                                        placeholder="{{ credit_card.configure_invoice_name }}"
+                                        id="invoice-name"
+                                        class="form-control"
+                                        value="{{ settings.credit_card_invoice_name }}"/>
+			                    </div>
+                            </div>
+
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="credit-card-operation">
+                                    {{ credit_card.configure_operation_type }}
+                                </label>
+			                    <div class="col-sm-10">
+                                {% if not settings.credit_card_operation %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_label }}"
+                                            checked="checked">
+                                        {{ credit_card.configure_auth_label }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_capture_label }}">
+                                        {{ credit_card.configure_auth_capture_label }}
+                                    </label>
+                                {% elseif settings.credit_card_operation == credit_card.configure_auth_label %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_label }}"
+                                            checked="checked">
+                                        {{ credit_card.configure_auth_label }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_capture_label }}">
+                                        {{ credit_card.configure_auth_capture_label }}
+                                    </label>
+                                {% elseif settings.credit_card_operation == credit_card.configure_auth_capture_label %}
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_label }}">
+                                            {{ credit_card.configure_auth_label }}
+                                        </label>
+                                    <label class="radio-inline">
+                                        <input
+                                            type="radio"
+                                            name="payment_mundipagg_credit_card_operation"
+                                            id="credit-card-operation"
+                                            value="{{ credit_card.configure_auth_capture_label }}"
+                                            checked="checked">
+                                        {{ credit_card.configure_auth_capture_label }}
+                                    </label>
+                                {% endif %}
+			                    </div>
+			                </div>
+
+                            <div class="panel-heading">
+                                <h3>{{ credit_card.manage_section }}</h3>
+                            </div>
+
+                            {% for cC in creditCard %}
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="credit-card-enabled">
+                                        {{ cC['brand_name'] }}                                
+                                    </label>
+                                    <div class="col-sm-2">
+                                        <select
+                                            class="form-control"
+                                            name="creditCard[{{ cC['brand_name'] }}][is_enabled]">
+                                            {% if cC['is_enabled'] %}
+                                                <option value="1" selected="selected">Enabled</option>
+                                                <option value="0">Disabled</option>
+                                            {% else %}
+                                                <option value="1">Enabled</option>
+                                                <option value="0" selected="selected">Disabled</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input
+                                            type="text"
+                                            name="creditCard[{{ cC['brand_name'] }}][installments_up_to]"
+                                            placeholder="Installments up to"
+                                            class="form-control"
+                                            value="{{ cC['installments_up_to'] }}">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input
+                                            type="text"
+                                            name="creditCard[{{ cC['brand_name'] }}][installments_without_interest]"
+                                            placeholder="Installments without interest"
+                                            id="invoice-name"
+                                            class="form-control"
+                                            value="{{ cC['installments_without_interest'] }}">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input
+                                            type="text"
+                                            name="creditCard[{{ cC['brand_name'] }}][interest]"
+                                            placeholder="Interest"
+                                            id="invoice-name"
+                                            class="form-control"
+                                            value="{{ cC['interest'] }}">
+                                    </div>
+                                </div>
+                            {% endfor %}
+		                </div> <!-- tab-credit-card -->
+
+		                <div class="tab-pane" id="tab-boleto">
+                            <div class="panel-heading">
+                                <h3>{{ boleto.configure_section }}</h3>
+                            </div>
+
+                            <div class="form-group">
+			                    <label class="col-sm-2 control-label" for="boleto-card-enabled">{{ misc.enabled }}</label>
+			                    <div class="col-sm-10">
+                                {% if not settings.boleto_enabled %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-card-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-card-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.boleto_enabled == '0' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                {% elseif settings.boleto_enabled == '1' %}
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="0">{{ misc.no }}</label>
+                                {% endif %}
+			                    </div>
+			                </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="boleto-title">{{ boleto.configure_payment_title }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_boleto_title" placeholder="{{ boleto.configure_payment_title }}" id="boleto-title" class="form-control" value="{{ settings.boleto_title }}"/>
+			                    </div>
+                            </div>
+
+			                <div class="form-group required">
+			                    <label class="col-sm-2 control-label" for="boleto-name">{{ boleto.configure_name }}</label>
+			                    <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_boleto_name" placeholder="{{ boleto.configure_name }}" id="boleto-name" class="form-control" value="{{ settings.boleto_name }}"/>
+			                    </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="bank-selection"><span data-toggle="tooltip" title="tooltip">{{ boleto.configure_select_bank }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_mundipagg_boleto_bank" id="bank-selection" class="form-control">
+                                        {% for code, name in boletoInfo %}
+                                            {% if code == settings.boleto_bank %}
+                                                <option value="{{ code }}" selected="selected">{{ name }}</option>
+                                            {% else %}
+                                                <option value="{{ code }}">{{ name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="boleto-due-date"><span data-toggle="tooltip" title="tooltip">{{ boleto.configure_due_at }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_boleto_due_date" placeholder="{{ boleto.configure_due_at }}" id="boleto-name" class="form-control" value="{{ settings.boleto_name }}"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="bank-selection"><span data-toggle="tooltip" title="tooltip">{{ boleto.configure_instructions }}</span></label>
+                                <div class="col-sm-10">
+                                    <textarea wrap="off" rows="15" class="form-control" name="payment_mundipagg_boleto_instructions">{{ settings.boleto_instructions }}</textarea>
+                                </div>
+                            </div>
+
+		                </div> <!-- tab-boleto -->
+		            </div>
+	            </form>
+	        </div>
+        </div>
+    </div>
+</div>
+{{ footer }}

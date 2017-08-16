@@ -1,0 +1,51 @@
+## Admin
+
+# model
+admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
+
+# view
+admin/view/template/extension/payment/mundipagg.twig admin/view/template/extension/payment/mundipagg.twig
+
+# controller
+admin/controller/extension/payment/mundipagg.php admin/controller/extension/payment/mundipagg.php
+
+# language
+admin/language/en-gb/extension/payment/mundipagg.php admin/language/en-gb/extension/payment/mundipagg.php
+admin/language/pt-br/payment/mundipagg.php admin/language/pt-br/extension/payment/mundipagg.php
+
+##Catalog
+
+# controller
+catalog/controller/extension/payment/mundipagg_events.php catalog/controller/extension/payment/mundipagg_events.php
+catalog/controller/extension/payment/mundipagg_credit_card.php catalog/controller/extension/payment/mundipagg_credit_card.php
+catalog/controller/extension/payment/mundipagg.php catalog/controller/extension/payment/mundipagg.php
+catalog/controller/mundipagg/* catalog/controller/mundipagg/
+
+# language
+catalog/language/en-gb/extension/payment/mundipagg.php catalog/language/en-gb/extension/payment/mundipagg.php
+catalog/language/pt-br/extension/payment/mundipagg.php catalog/language/pt-br/extension/payment/mundipagg.php
+
+# model
+catalog/model/extension/payment/mundipagg.php catalog/model/extension/payment/mundipagg.php
+catalog/model/extension/payment/mundipagg_credit_card.php catalog/model/extension/payment/mundipagg_credit_card.php
+catalog/model/extension/payment/mundipagg_customer.php catalog/model/extension/payment/mundipagg_customer.php
+catalog/model/extension/payment/mundipagg_events.php catalog/model/extension/payment/mundipagg_events.php
+catalog/model/extension/payment/mundipagg_order_processing.php catalog/model/extension/payment/mundipagg_order_processing.php
+catalog/model/extension/payment/mundipagg_webhook_logging.php catalog/model/extension/payment/mundipagg_webhook_logging.php
+
+# view
+catalog/view/theme/default/template/extension/payment/mundipagg.twig catalog/view/theme/default/template/extension/payment/mundipagg.twig
+catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig
+
+# scripts
+catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/
+
+# stylesheet
+catalog/view/theme/default/stylesheet/mundipagg/* catalog/view/theme/default/stylesheet/mundipagg/
+
+# Libraries
+system/library/mundipagg/* system/library/mundipagg/
+
+# image
+image/payment/mundipagg/* image/payment/mundipagg/
+

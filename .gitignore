@@ -1,0 +1,24 @@
+www
+.env
+.modman
+
+### Composer ###
+composer.phar
+vendor
+
+### Vim ###
+# swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+### Eclipse ###
+.metadata
+.settings/
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# Eclipse Core      
+.project
