@@ -2,6 +2,9 @@ www
 .env
 .modman
 
+# this is the code coverage generated when running phpunit.
+tests/log
+
 ### Composer ###
 composer.phar
 vendor

@@ -8,11 +8,12 @@
         "beyondit/opencart-test-suite": "3.0.x",
         "consolidation/robo": "^1.1",
         "opencart/opencart": "dev-dev",
-        "colinmollenhour/modman": "^1.12"
+        "colinmollenhour/modman": "^1.12",
+        "satooshi/php-coveralls": "^1.0"
     },
     "scripts" : {
-		"test-admin": "phpunit --testsuite admin-tests --colors=always",
-		"test-catalog": "phpunit --testsuite catalog-tests --colors=always",
+		"test-admin": "phpunit --testsuite admin-tests --coverage-clover ./tests/log/clover.xml --colors=always",
+		"test-catalog": "phpunit --testsuite catalog-tests --coverage-clover ./tests/log/clover.xml --colors=always",
 		"test": [
 			"@test-admin",
 			"@test-catalog"

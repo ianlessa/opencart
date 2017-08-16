@@ -1,0 +1,29 @@
+language: php
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - nightly
+env:
+  - DB_HOST=localhost
+  - DB_USER=root
+  - DB_PASSWORD=root
+  - DB_NAME=opencart
+  - DB_DRIVER=mysqli
+  - OC_ROOT=./www/
+  - OC_ADMIN_USER=admin
+  - OC_ADMIN_PASS=admin
+  - OC_ADMIN_MAIL=travis@test.com
+  - HTTP_SERVER=http://localhost/www/
+  - TEST_CONFIG=test-config
+  - REGENERATE_OPENCART_DIR=1
+before_script:
+  - composer self-update
+  - composer install --dev
+  - composer setup
+script:
+  - composer test
+after_success:
+  - php vendor/bin/coveralls --verbose
