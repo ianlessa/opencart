@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mundipagg/opencart.svg?branch=master)](https://travis-ci.org/mundipagg/opencart)
+
 # Opencart/Mundipagg Integration module
 This is the official Opencart module for Mundipagg integration
 
