@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/mundipagg/opencart.svg?branch=master)](https://travis-ci.org/mundipagg/opencart)
-[![Coverage Status](https://coveralls.io/repos/github/mundipagg/opencart/badge.svg?branch=master)](https://coveralls.io/github/mundipagg/opencart?branch=master)
 
 # Opencart/Mundipagg Integration module
 This is the official Opencart module for Mundipagg integration
