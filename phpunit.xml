@@ -17,15 +17,5 @@
             <directory suffix="AdminTest.php">./tests/admin/</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory>admin</directory>
-            <directory>catalog</directory>
-            <directory>src</directory>
-            <exclude>
-                <directory>vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
 </phpunit>
 
