@@ -23,7 +23,7 @@ modman init
 modman clone https://github.com/mundipagg/opencart
 ```
 
-## Installer do OpenCart
+## OpenCart Installer
 Download the latest release and paste the directories inside your store webroot.
 For releases, refer to [releases](https://github.com/mundipagg/opencart/releases).
 
