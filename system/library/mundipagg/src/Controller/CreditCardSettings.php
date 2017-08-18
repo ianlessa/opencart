@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: felipe
- * Date: 8/18/17
- * Time: 4:49 PM
- */
 
 namespace Mundipagg\Controller;
-
 
 class CreditCardSettings
 {
@@ -23,7 +16,8 @@ class CreditCardSettings
         return $this->openCart->config->get('payment_mundipagg_credit_card_status');
     }
 
-    public function isCreditCardEnabled() {
+    public function isCreditCardEnabled()
+    {
         return $this->getStatus() == '1';
     }
 
