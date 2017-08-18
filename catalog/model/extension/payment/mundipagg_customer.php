@@ -6,22 +6,22 @@ class ModelExtensionPaymentMundipaggCustomer extends Model
     private $mundiPaggCustomerId;
     private $customerId;
 
-    function getMundiPaggCustomerId()
+    public function getMundiPaggCustomerId()
     {
         return $this->mundiPaggCustomerId;
     }
 
-    function getCustomerId()
+    public function getCustomerId()
     {
         return $this->customerId;
     }
 
-    function setMundiPaggCustomerId($mundiPaggCustomerId)
+    public function setMundiPaggCustomerId($mundiPaggCustomerId)
     {
         $this->mundiPaggCustomerId = $mundiPaggCustomerId;
     }
 
-    function setCustomerId($customerId)
+    public function setCustomerId($customerId)
     {
         $this->customerId = $customerId;
     }
