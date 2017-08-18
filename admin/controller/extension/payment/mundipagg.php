@@ -1,7 +1,5 @@
 <?php
 
-$a = DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
-
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 use Mundipagg\Controller\Settings;
