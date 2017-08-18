@@ -17,8 +17,8 @@
 			"@test-admin",
 			"@test-catalog"
 		],
-        "phpcs" : "phpcs --standard=PSR2 -n admin catalog system RoboFile.php --ignore=vendor",
-        "phpcbf" : "phpcbf --standard=PSR2 -n admin catalog system RoboFile.php --ignore=vendor",
+        "phpcs" : "phpcs --standard=ruleset.xml -n admin catalog system RoboFile.php --ignore=vendor",
+        "phpcbf" : "phpcbf --standard=ruleset.xml -n admin catalog system RoboFile.php --ignore=vendor",
         "behat" : "behat",
         "setup" : "robo opencart:setup",
         "build" : "composer install --prefer-dist -q -d system/library/mundipagg/",
