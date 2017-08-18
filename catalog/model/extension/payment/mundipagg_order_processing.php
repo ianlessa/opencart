@@ -1,6 +1,6 @@
 <?php
 
-use Mundipagg\OrderstatusEnum;
+use Mundipagg\Enum\OrderstatusEnum;
 
 class ModelExtensionPaymentMundipaggOrderProcessing extends Model
 {

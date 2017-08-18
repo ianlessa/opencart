@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg;
+namespace Mundipagg\Enum;
 
 class OrderstatusEnum
 {
