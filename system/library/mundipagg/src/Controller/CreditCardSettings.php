@@ -16,7 +16,7 @@ class CreditCardSettings
         return $this->openCart->config->get('payment_mundipagg_credit_card_status');
     }
 
-    public function isEnabled()
+    public function isCreditCardEnabled()
     {
         return $this->getStatus() == '1';
     }
