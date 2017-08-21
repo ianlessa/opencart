@@ -8,7 +8,7 @@ use Mundipagg\Enum\WebHookEnum;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
 use Mundipagg\Model\WebHook as WebHookModel;
-use Mundipagg\OrderstatusEnum;
+use Mundipagg\Enum\OrderstatusEnum;
 
 class WebHook
 {
