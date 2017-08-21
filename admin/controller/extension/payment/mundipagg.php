@@ -4,6 +4,7 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\CreditCardSettings;
+use Mundipagg\Controller\BoletoSettings;
 
 /**
  * ControllerExtensionPaymentMundipagg
@@ -259,6 +260,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $mundiPaggSettings = new Settings($this);
         $creditCardSettings = new CreditCardSettings($this);
+        $boletoSettings = new BoletoSettings($this);
 
         $this->data['settings'] = array(
             'general_status'          => $this->config->get('payment_mundipagg_status'),
@@ -269,18 +271,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
             'general_test_mode'       => $this->config->get('payment_mundipagg_test_mode'),
             'general_log_enabled'     => $this->config->get('payment_mundipagg_log_enabled'),
             'general_payment_title'   => $this->config->get('payment_mundipagg_title'),
-
-            'boleto_enabled'      => $this->config->get('payment_mundipagg_boleto_status'),
-            'boleto_title'        => $this->config->get('payment_mundipagg_boleto_title'),
-            'boleto_name'         => $this->config->get('payment_mundipagg_boleto_name'),
-            'boleto_bank'         => $this->config->get('payment_mundipagg_boleto_bank'),
-            'boleto_instructions' => $this->config->get('payment_mundipagg_boleto_instructions'),
-            'boleto_due_date'     => $this->config->get('payment_mundipagg_boleto_due_date')
         );
 
         $this->data['settings'] = array_merge(
             $this->data['settings'],
-            $creditCardSettings->getAllSettings()
+            $creditCardSettings->getAllSettings(),
+            $boletoSettings->getAllSettings()
         );
 
         $this->load->model('extension/payment/mundipagg');
