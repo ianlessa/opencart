@@ -1,6 +1,7 @@
 www
 .env
 .modman
+*.zip
 
 ### Composer ###
 composer.phar

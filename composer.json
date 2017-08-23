@@ -7,7 +7,6 @@
         "phpunit/phpunit" : "^6.2",
         "beyondit/opencart-test-suite": "3.0.x",
         "consolidation/robo": "^1.1",
-        "opencart/opencart": "dev-dev",
         "colinmollenhour/modman": "^1.12"
     },
     "scripts" : {
