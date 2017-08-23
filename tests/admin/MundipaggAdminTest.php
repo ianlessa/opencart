@@ -80,7 +80,7 @@ class MundipaggAdminTest extends OpenCartTest
         $this->assertInstanceOf('stdClass', $actual);
     }
 
-    public function tearDown()
+    public function _tearDown()
     {
         $response = $this->dispatchAction(
             'extension/extension/payment/uninstall',
