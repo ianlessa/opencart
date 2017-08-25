@@ -128,7 +128,8 @@ class RoboFile extends \Robo\Tasks
             getenv('OC_ROOT').'install/cli_install.php'
         ])
         ->to(getenv('OC_ROOT').'install/cli_install.php')
-        ->run();        $install = $this->taskExec('php')->arg(getenv('OC_ROOT').'install/cli_install.php')->arg('install');
+        ->run();
+        $install = $this->taskExec('php')->arg(getenv('OC_ROOT').'install/cli_install.php')->arg('install');
         foreach ($this->opencart_config as $option => $value) {
             $install->option($option, $value);
         }
