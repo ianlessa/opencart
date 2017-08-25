@@ -1,4 +1,6 @@
 <?php
+use Symfony\Component\Console\Helper\ProgressBar;
+
 require_once 'vendor/autoload.php';
 
 if (file_exists('.env')) {
@@ -9,6 +11,7 @@ if (file_exists('.env')) {
 class RoboFile extends \Robo\Tasks
 {
     use \Robo\Common\TaskIO;
+    use \Robo\Common\ProgressIndicatorAwareTrait;
 
     public function __construct()
     {
@@ -43,13 +46,33 @@ class RoboFile extends \Robo\Tasks
         $filename = getenv('OPENCART_VERSION') . '-OpenCart.zip';
         $url = 'https://github.com/opencart/opencart/releases/download/' . getenv('OPENCART_VERSION') . '/' . $filename;
         if (!file_exists($filename)) {
-            file_put_contents($filename, fopen($url, 'r'));
+            $headers = get_headers($url, 1);
+            $filesize = $headers['Content-Length'];
+            $remote = fopen($url, 'r');
+            $local = fopen($filename, 'x');
+            $this->startProgressIndicator();
+            $read_bytes = 0;
+            $this->steps = $filesize / 1024;
+            $this->showProgressIndicator();
+            $progress = new ProgressBar($this->output(), $this->steps);
+            $progress->start();
+            $progress->setMessage('Downloading OpenCart '.getenv('OPENCART_VERSION'));
+            $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%');
+            while (!feof($remote)) {
+                $buffer = fread($remote, 1024);
+                fwrite($local, $buffer);
+                $read_bytes += 1024;
+                $progress->advance();
+            }
+            $progress->finish();
+            fclose($remote);
+            fclose($local);
         }
         if (!is_dir(getenv('OC_ROOT'))) {
             $zip = new ZipArchive;
             $res = $zip->open('./'.$filename);
             if ($res !== true) {
-                throw new Exception('Failed to open ' . $filename);
+                throw new Exception('Failed to open ./' . $filename);
             }
             $tmpPath = $this->collectionBuilder()->tmpDir();
             $zip->extractTo($tmpPath);
@@ -92,14 +115,39 @@ class RoboFile extends \Robo\Tasks
         }
         $this->taskFileSystemStack()
             ->chmod(getenv('OC_ROOT'), 0777, 0000, true)->run();
+        $script_install = getenv('OC_ROOT').'install/cli_install.php';
+        $define_dir_storage = "define('DIR_STORAGE', '".__DIR__."/system/storage/');";
+        file_put_contents($script_install, str_replace(
+            "error_reporting(E_ALL);\r\n",
+            "error_reporting(E_ALL);\r\n".$define_dir_storage,
+            file_get_contents($script_install)
+        ));
 
-        $install = $this->taskExec('php')->arg(getenv('OC_ROOT') . 'install/cli_install.php')->arg('install');
+        $this->taskConcat([
+            getenv('OC_ROOT') . 'tmp_setup.php',
+            getenv('OC_ROOT').'install/cli_install.php'
+        ])
+        ->to(getenv('OC_ROOT').'install/cli_install.php')
+        ->run();        $install = $this->taskExec('php')->arg(getenv('OC_ROOT').'install/cli_install.php')->arg('install');
         foreach ($this->opencart_config as $option => $value) {
             $install->option($option, $value);
         }
         $install->rawArg('> /dev/null');
-
         $install->run();
+        $this->taskMirrorDir([
+            getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage' => __DIR__.'system'.DIRECTORY_SEPARATOR.'storage'
+        ])->run();
+        $this->taskDeleteDir(getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage')->run();
+        file_put_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'config.php', str_replace(
+            "define('DIR_STORAGE', DIR_SYSTEM . 'storage/');",
+            "define('DIR_STORAGE', '".__DIR__.DIRECTORY_SEPARATOR."storage/');",
+            file_get_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'config.php')
+        ));
+        file_put_contents($script_install, str_replace(
+            "error_reporting(E_ALL);\r\n".$define_dir_storage,
+            "error_reporting(E_ALL);\r\n",
+            file_get_contents($script_install)
+        ));
     }
 
     private function installModuleByModman()
@@ -111,7 +159,6 @@ class RoboFile extends \Robo\Tasks
             $this->taskExec('vendor/bin/modman init ' . getenv('OC_ROOT'))->run();
             $this->taskExec('ln -sf "$(pwd)" .modman/')->run();
         }
-        
         $this->taskExec('vendor/bin/modman deploy-all --no-clean > /dev/null')->run();
     }
 }
