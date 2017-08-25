@@ -1,4 +1,5 @@
 www
+storage
 .env
 .modman
 *.zip

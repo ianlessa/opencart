@@ -136,7 +136,7 @@ class RoboFile extends \Robo\Tasks
         $install->rawArg('> /dev/null');
         $install->run();
         $this->taskMirrorDir([
-            getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage' => __DIR__.'system'.DIRECTORY_SEPARATOR.'storage'
+            getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage' => __DIR__.DIRECTORY_SEPARATOR.'storage'
         ])->run();
         $this->taskDeleteDir(getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage')->run();
         file_put_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'config.php', str_replace(
