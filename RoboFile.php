@@ -11,7 +11,6 @@ if (file_exists('.env')) {
 class RoboFile extends \Robo\Tasks
 {
     use \Robo\Common\TaskIO;
-    use \Robo\Common\ProgressIndicatorAwareTrait;
 
     public function __construct()
     {
