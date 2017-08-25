@@ -144,6 +144,11 @@ class RoboFile extends \Robo\Tasks
             "define('DIR_STORAGE', '".__DIR__.DIRECTORY_SEPARATOR."storage/');",
             file_get_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'config.php')
         ));
+        file_put_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'config.php', str_replace(
+            "define('DIR_STORAGE', DIR_SYSTEM . 'storage/');",
+            "define('DIR_STORAGE', '".__DIR__.DIRECTORY_SEPARATOR."storage/');",
+            file_get_contents(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'config.php')
+        ));
         file_put_contents($script_install, str_replace(
             "error_reporting(E_ALL);\r\n".$define_dir_storage,
             "error_reporting(E_ALL);\r\n",
