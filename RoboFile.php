@@ -44,7 +44,7 @@ class RoboFile extends \Robo\Tasks
         }
         $this->taskDeleteDir(getenv('OC_ROOT'))->run();
         $filename = getenv('OPENCART_VERSION') . '-OpenCart.zip';
-        $this->downloadOpenCart();
+        $this->downloadOpenCart($filename);
         $this->extractOpenCart($filename);
     }
 
@@ -53,9 +53,9 @@ class RoboFile extends \Robo\Tasks
         $url = 'https://github.com/opencart/opencart/releases/download/' . getenv('OPENCART_VERSION') . '/' . $filename;
         $headers = get_headers($url, 1);
         $filesize = $headers['Content-Length'];
-        if (!file_exists($filename) || filesize($filename) != $filedize) {
+        if (!file_exists($filename) || filesize($filename) != $filesize) {
             $remote = fopen($url, 'r');
-            $local = fopen($filename, 'x');
+            $local = fopen($filename, 'w');
             $progress = new ProgressBar($this->output(), $filesize / 1024);
             $progress->start();
             $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%');
