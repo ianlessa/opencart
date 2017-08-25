@@ -1,5 +1,6 @@
 <?php
 use Symfony\Component\Console\Helper\ProgressBar;
+use Behat\Gherkin\Exception\Exception;
 
 require_once 'vendor/autoload.php';
 
@@ -54,7 +55,13 @@ class RoboFile extends \Robo\Tasks
         $filesize = $headers['Content-Length'];
         if (!file_exists($filename) || filesize($filename) != $filesize) {
             $remote = fopen($url, 'r');
+            if ($remote === false) {
+                throw new Exception('Failed to access '.$url);
+            }
             $local = fopen($filename, 'w');
+            if ($remote === false) {
+                throw new Exception('Failed to write '.$filename);
+            }
             $progress = new ProgressBar($this->output(), $filesize / 1024);
             $progress->start();
             $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%');
@@ -66,6 +73,7 @@ class RoboFile extends \Robo\Tasks
                 $progress->advance();
             }
             $progress->finish();
+            $this->output()->writeln('');
             fclose($remote);
             fclose($local);
         }
@@ -90,7 +98,7 @@ class RoboFile extends \Robo\Tasks
     private function filesToRunTests()
     {
         $this->taskFileSystemStack()
-            ->copy('vendor/beyondit/opencart-test-suite/src/upload/system/config/test-config.php', getenv('OC_ROOT') . 'system/config/test-config.php')
+            ->copy('vendor/beyondit/opencart-test-suite/src/upload/system/config/test-config.', getenv('OC_ROOT') . 'system/config/test-config.php')
             ->copy('vendor/beyondit/opencart-test-suite/src/upload/system/library/session/test.php', getenv('OC_ROOT') . 'system/library/session/test.php')
             ->copy('vendor/beyondit/opencart-test-suite/src/upload/admin/controller/startup/test_startup.php', getenv('OC_ROOT') . 'admin/controller/startup/test_startup.php')
             ->run();
