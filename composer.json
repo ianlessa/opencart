@@ -18,7 +18,7 @@
 		],
         "phpcs" : "phpcs --standard=ruleset.xml -n admin catalog system RoboFile.php --ignore=vendor",
         "phpcbf" : "phpcbf --standard=ruleset.xml -n admin catalog system RoboFile.php --ignore=vendor",
-        "behat" : "behat",
+        "behat" : "behat --colors",
         "setup" : "robo opencart:setup",
         "build" : "composer install --prefer-dist -q -d system/library/mundipagg/",
         "post-install-cmd": [
