@@ -23,13 +23,12 @@ before_script:
 
   # Change MySQL root password
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-    #- composer self-update
-  - composer install
 
   # Setup Behat base_url
   - "export BEHAT_PARAMS='{\"extensions\" : {\"Behat\\\\MinkExtension\" : {\"base_url\" : \"'$HTTP_SERVER'\"}}}'"
 
   # start build-in server
+  - composer install
   - composer setup
   - (php -S localhost:8080 -t www &) 2> /dev/null > /dev/null
 script:
