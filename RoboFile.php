@@ -50,17 +50,19 @@ class RoboFile extends \Robo\Tasks
 
     private function downloadOpenCart(string $filename)
     {
-        $url = 'https://github.com/opencart/opencart/releases/download/' . getenv('OPENCART_VERSION') . '/' . $filename;
+        $url = 'https://github.com/opencart/opencart/releases/download/'
+            . getenv('OPENCART_VERSION')
+            . '/' . $filename;
         $headers = get_headers($url, 1);
         $filesize = $headers['Content-Length'];
         if (!file_exists($filename) || filesize($filename) != $filesize) {
             $remote = fopen($url, 'r');
             if ($remote === false) {
-                throw new Exception('Failed to access '.$url);
+                throw new Exception('Failed to access ' . $url);
             }
             $local = fopen($filename, 'w');
-            if ($remote === false) {
-                throw new Exception('Failed to write '.$filename);
+            if ($local === false) {
+                throw new Exception('Failed to write ' . $filename);
             }
             $progress = new ProgressBar($this->output(), $filesize / 1024);
             $progress->start();
@@ -90,7 +92,7 @@ class RoboFile extends \Robo\Tasks
         $zip->extractTo($tmpPath);
         $this->taskFilesystemStack()->mkdir(getenv('OC_ROOT'));
         $this->taskMirrorDir([
-            $tmpPath.DIRECTORY_SEPARATOR.'upload' => getenv('OC_ROOT')
+            $tmpPath . DIRECTORY_SEPARATOR . 'upload' => getenv('OC_ROOT')
         ])->run();
         $this->taskDeleteDir($tmpPath)->run();
     }
@@ -110,7 +112,11 @@ class RoboFile extends \Robo\Tasks
             return;
         }
         try {
-            $conn = new PDO('mysql:host=' . $this->opencart_config['db_hostname'], $this->opencart_config['db_username'], $this->opencart_config['db_password']);
+            $conn = new PDO(
+                'mysql:host=' . $this->opencart_config['db_hostname'],
+                $this->opencart_config['db_username'],
+                $this->opencart_config['db_password']
+            );
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $conn->exec('DROP DATABASE IF EXISTS `' . $this->opencart_config['db_database'] . '`');
             $conn->exec('CREATE DATABASE `' . $this->opencart_config['db_database'] . '`');
@@ -127,22 +133,24 @@ class RoboFile extends \Robo\Tasks
         $this->taskFileSystemStack()
             ->chmod(getenv('OC_ROOT'), 0777, 0000, true)->run();
 
-        $this->taskReplaceInFile(getenv('OC_ROOT').'install/cli_install.php')
+        $this->taskReplaceInFile(getenv('OC_ROOT') . 'install/cli_install.php')
             ->from("error_reporting(E_ALL);\r\n")
             ->to(
                 "error_reporting(E_ALL);\r\n" .
-                "define('DIR_STORAGE', '".__DIR__."/system/storage/');"
+                "define('DIR_STORAGE', '" . __DIR__ . "/system/storage/');"
             )
             ->run();
 
         $this->taskConcat([
             getenv('OC_ROOT') . 'tmp_setup.php',
-            getenv('OC_ROOT').'install/cli_install.php'
+            getenv('OC_ROOT') . 'install/cli_install.php'
         ])
-        ->to(getenv('OC_ROOT').'install/cli_install.php')
+        ->to(getenv('OC_ROOT') . 'install/cli_install.php')
         ->run();
 
-        $install = $this->taskExec('php')->arg(getenv('OC_ROOT').'install/cli_install.php')->arg('install');
+        $install = $this->taskExec('php')
+            ->arg(getenv('OC_ROOT') . 'install/cli_install.php')
+            ->arg('install');
         foreach ($this->opencart_config as $option => $value) {
             $install->option($option, $value);
         }
@@ -150,25 +158,25 @@ class RoboFile extends \Robo\Tasks
         $install->run();
 
         $this->taskMirrorDir([
-            getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage' => __DIR__.DIRECTORY_SEPARATOR.'storage'
+            getenv('OC_ROOT') . 'system' . DIRECTORY_SEPARATOR . 'storage' => __DIR__ . DIRECTORY_SEPARATOR . 'storage'
         ])->run();
 
         $this->taskDeleteDir(getenv('OC_ROOT') . 'system'.DIRECTORY_SEPARATOR.'storage')->run();
 
-        $this->taskReplaceInFile(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'config.php')
+        $this->taskReplaceInFile(getenv('OC_ROOT') . DIRECTORY_SEPARATOR . 'config.php')
             ->from("define('DIR_STORAGE', DIR_SYSTEM . 'storage/');")
-            ->to("define('DIR_STORAGE', '".__DIR__.DIRECTORY_SEPARATOR."storage/');")
+            ->to("define('DIR_STORAGE', '" . __DIR__ . DIRECTORY_SEPARATOR."storage/');")
             ->run();
 
-        $this->taskReplaceInFile(getenv('OC_ROOT').DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'config.php')
+        $this->taskReplaceInFile(getenv('OC_ROOT') . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'config.php')
             ->from("define('DIR_STORAGE', DIR_SYSTEM . 'storage/');")
-            ->to("define('DIR_STORAGE', '".__DIR__.DIRECTORY_SEPARATOR."storage/');")
+            ->to("define('DIR_STORAGE', '" . __DIR__ . DIRECTORY_SEPARATOR . "storage/');")
             ->run();
 
-        $this->taskReplaceInFile(getenv('OC_ROOT').'install/cli_install.php')
+        $this->taskReplaceInFile(getenv('OC_ROOT') . 'install/cli_install.php')
             ->from(
                 "error_reporting(E_ALL);\r\n" .
-                "define('DIR_STORAGE', '".__DIR__."/system/storage/');"
+                "define('DIR_STORAGE', '" . __DIR__ . "/system/storage/');"
             )
             ->to("error_reporting(E_ALL);\r\n")
             ->run();
