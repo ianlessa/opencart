@@ -166,27 +166,13 @@ class FeatureContext extends MinkContext implements Context
     }
     
     /**
-     * @Then instalo o OpenCart
+     * @When preencho a :arg1 key de :arg2
      */
-    public function installOpenCart()
+    public function preenchoAKeyDe($arg1, $arg2)
     {
-        $output = shell_exec(
-            'mysql -u '.$_ENV['DB_USER'].' -p'.$_ENV['DB_PASSWORD'].' -e "DROP DATABASE IF EXISTS '.$_ENV['DB_NAME'].'" &'.
-            'mysql -u '.$_ENV['DB_USER'].' -p'.$_ENV['DB_PASSWORD'].' -e "CREATE DATABASE '.$_ENV['DB_NAME'].'" &'.
-            'php ../../install/cli_install.php install '.
-            '--http_server http://localhost:8080/ '.
-            '--db_username '.$_ENV['DB_USER'].' '.
-            '--db_password '.$_ENV['DB_PASSWORD'].' '.
-            '--password admin '.
-            '--email admin-mundipagg@opencart.com'
+        $this->fillField(
+            ucfirst($arg1).' key ['.($arg2 == 'test' ? 'test' : 'production').']',
+            getenv(strtoupper($arg2).'_'.strtoupper($arg1).'_KEY')
         );
-    }
-    
-    /**
-     * @When preencho a secret key de produção
-     */
-    public function preenchoASecretKeyDeProducao()
-    {
-        $this->fillField('Secret key [production]', $_ENV['PROD_SECURITY_KEY']);
     }
 }
