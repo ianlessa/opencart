@@ -52,7 +52,8 @@ class RoboFile extends \Robo\Tasks
     {
         $url = 'https://github.com/opencart/opencart/releases/download/'
             . getenv('OPENCART_VERSION')
-            . '/' . $filename;
+            . '/'
+            . $filename;
         $headers = get_headers($url, 1);
         $filesize = $headers['Content-Length'];
         if (!file_exists($filename) || filesize($filename) != $filesize) {
