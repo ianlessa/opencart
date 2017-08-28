@@ -85,7 +85,7 @@ class RoboFile extends \Robo\Tasks
     private function extractOpenCart(string $filename)
     {
         $zip = new ZipArchive;
-        $res = $zip->open('./'.$filename);
+        $res = $zip->open('./' . $filename);
         if ($res !== true) {
             throw new Exception('Failed to open ./' . $filename);
         }
