@@ -263,14 +263,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $boletoSettings = new BoletoSettings($this);
 
         $this->data['settings'] = array(
-            'general_status'          => $this->config->get('payment_mundipagg_status'),
-            'general_prod_secret_key' => $this->config->get('payment_mundipagg_prod_secret_key'),
-            'general_test_secret_key' => $this->config->get('payment_mundipagg_test_secret_key'),
-            'general_prod_pub_key'    => $this->config->get('payment_mundipagg_prod_public_key'),
-            'general_test_pub_key'    => $this->config->get('payment_mundipagg_test_public_key'),
-            'general_test_mode'       => $this->config->get('payment_mundipagg_test_mode'),
-            'general_log_enabled'     => $this->config->get('payment_mundipagg_log_enabled'),
-            'general_payment_title'   => $this->config->get('payment_mundipagg_title'),
+            'general_status'             => $this->config->get('payment_mundipagg_status'),
+            'general_mapping_number'     => $this->config->get('payment_mundipagg_mapping_number'),
+            'general_mapping_complement' => $this->config->get('payment_mundipagg_mapping_complement'),
+            'general_prod_secret_key'    => $this->config->get('payment_mundipagg_prod_secret_key'),
+            'general_test_secret_key'    => $this->config->get('payment_mundipagg_test_secret_key'),
+            'general_prod_pub_key'       => $this->config->get('payment_mundipagg_prod_public_key'),
+            'general_test_pub_key'       => $this->config->get('payment_mundipagg_test_public_key'),
+            'general_test_mode'          => $this->config->get('payment_mundipagg_test_mode'),
+            'general_log_enabled'        => $this->config->get('payment_mundipagg_log_enabled'),
+            'general_payment_title'      => $this->config->get('payment_mundipagg_title'),
         );
 
         $this->data['settings'] = array_merge(

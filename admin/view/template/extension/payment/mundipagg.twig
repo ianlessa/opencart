@@ -59,6 +59,23 @@
 
 
                             <div class="panel-heading">
+                                <h3>{{ general.mapping_section }}</h3>
+                            </div>
+                            <div class="form-group required">
+                                <label class="col-sm-2 control-label" for="mapping-number">{{ general.mapping_number }}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_mapping_number" placeholder="{{ general.mapping_number }}" id="mapping-number" class="form-control" value="{{ settings.general_mapping_number }}"/>
+                                </div>
+                            </div>
+                            <div class="form-group required">
+                                <label class="col-sm-2 control-label" for="mapping-complement">{{ general.mapping_complement }}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_mundipagg_mapping_complement" placeholder="{{ general.mapping_complement }}" id="mapping-complement" class="form-control" value="{{ settings.general_mapping_complement }}"/>
+                                </div>
+                            </div>
+
+
+                            <div class="panel-heading">
                                 <h3>{{ general.api_section }}</h3>
                             </div>
 			                <div class="form-group required">
