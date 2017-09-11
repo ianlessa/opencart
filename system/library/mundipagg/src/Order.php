@@ -185,7 +185,9 @@ class Order
             //Street
             $orderData['payment_address_1'],
             //Number
-            $orderData['payment_custom_field'][1],
+            $orderData['payment_custom_field'][
+                $this->config->get('payment_mundipagg_mapping_number')
+            ],
             //Zipcode
             preg_replace('/\D/', '', $orderData['payment_postcode']),
             //Neighborhood
@@ -197,7 +199,9 @@ class Order
             //Country
             $orderData['shipping_iso_code_2'],
             //Complement
-            $orderData['payment_custom_field'][2],
+            $orderData['payment_custom_field'][
+                $this->config->get('payment_mundipagg_mapping_complement')
+            ],
             //Metadata
             null
         );

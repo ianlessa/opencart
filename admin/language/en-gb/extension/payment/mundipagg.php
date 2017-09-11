@@ -8,6 +8,9 @@ $_['text_mundipagg'] = '<a href="https://github.com/mundipagg/opencart" target="
 $_['general'] = [
     'label' => 'General',
     'payment_title' => 'Payment title',
+    'mapping_section' => 'Field mapping',
+    'mapping_number' => 'Number',
+    'mapping_complement' => 'Complement',
     'api_section' => 'Api data',
     'api_prod_key' => 'Secret key [production]',
     'api_test_key' => 'Secret key [test]',
