@@ -305,7 +305,26 @@
                             <div class="panel-heading">
                                 <h3>{{ credit_card.manage_section }}</h3>
                             </div>
-
+                            <div class="form-group">
+                                <label class="col-sm-2 text-right">
+                                    Bandeira
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    Ativar
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    Max parcelas
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    parcelas sem juros
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    Juros incial
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    Incremento nos juros
+                                </label>
+                            </div>
                             {% for cC in creditCard %}
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label" for="credit-card-enabled">
@@ -349,6 +368,15 @@
                                             id="invoice-name"
                                             class="form-control"
                                             value="{{ cC['interest'] }}">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input
+                                            type="text"
+                                            name="creditCard[{{ cC['incremental_interest'] }}][interest]"
+                                            placeholder="Incremental interest"
+                                            id="incremental-interest"
+                                            class="form-control"
+                                            value="{{ cC['incremental_interest'] }}">
                                     </div>
                                 </div>
                             {% endfor %}
