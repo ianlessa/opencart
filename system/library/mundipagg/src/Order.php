@@ -40,15 +40,10 @@ class Order
         $this->orderInterest = 0;
         $this->mundipaggCustomerModel = $mundipaggCustomerModel;
 
-        $testKey = $this->settings->getTestSecretKey();
-        $prodKey = $this->settings->getProdSecretKey();
-        $pass = $this->settings->getPassword();
-
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
 
         $this->orderInstance = $this->apiClient->getOrders();
         $this->customerInstance = $this->apiClient->getCustomers();
-        $a = 1;
     }
     
     public function setInterest($interest)
@@ -155,6 +150,11 @@ class Order
     {
         return ($price + ($price * (number_format($this->orderInterest/100, 2, '.', ',')))) * 100;
     }
+    
+    private function getIncrementalInterest()
+    {
+        
+    }
 
     /**
      * Prepare items to API's format
@@ -175,7 +175,6 @@ class Order
     }
 
     /**
-     * @todo Retirar valores mockados
      * @param array $orderData
      * @return \MundiAPILib\Models\CreateAddressRequest
      */

@@ -307,22 +307,22 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 text-right">
-                                    Bandeira
+                                    {{ credit_card.brand_name }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    Ativar
+                                    {{ credit_card.enable }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    Max parcelas
+                                    {{ credit_card.max_installments }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    parcelas sem juros
+                                    {{ credit_card.installments_without_interest }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    Juros incial
+                                    {{ credit_card.intial_interest }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    Incremento nos juros
+                                    {{ credit_card.incremental_interest }}
                                 </label>
                             </div>
                             {% for cC in creditCard %}
@@ -372,7 +372,7 @@
                                     <div class="col-sm-2">
                                         <input
                                             type="text"
-                                            name="creditCard[{{ cC['incremental_interest'] }}][interest]"
+                                            name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
                                             placeholder="Incremental interest"
                                             id="incremental-interest"
                                             class="form-control"
