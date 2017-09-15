@@ -86,7 +86,8 @@ class ModelExtensionPaymentMundipagg extends Model
                 `is_enabled` TINYINT(1),
                 `installments_up_to` TINYINT,
                 `installments_without_interest` TINYINT,
-                `interest` DOUBLE
+                `interest` DOUBLE,
+                `incremental_interest` DOUBLE
             );"
         );
     }
@@ -115,13 +116,14 @@ class ModelExtensionPaymentMundipagg extends Model
         foreach ($preset as $brand => $value) {
             $this->db->query(
                 "INSERT INTO `" . DB_PREFIX . "mundipagg_payments`
-                (brand_name, is_enabled, installments_up_to, installments_without_interest, interest)
+                (brand_name, is_enabled, installments_up_to, installments_without_interest, interest, incremental_interest)
                 VALUES ('" .
                     $brand . "', " .
                     $value->enabled . ", " .
                     $value->installmentsUpTo . ", " .
                     $value->installmentsWithoutInterest . ", " .
-                    $value->interest . "
+                    $value->interest . ", " .
+                    $value->incrementalInterest . "
                 );"
             );
         }
@@ -140,7 +142,8 @@ class ModelExtensionPaymentMundipagg extends Model
             "is_enabled='" . $info['is_enabled'] . "', " .
             "installments_up_to='" . $info['installments_up_to'] . "', " .
             "installments_without_interest='" . $info['installments_without_interest'] . "', " .
-            "interest='" . $info['interest'] . "' " .
+            "interest='" . $info['interest'] . "', " .
+            "incremental_interest='" . $info['incremental_interest'] . "' " .
             "WHERE brand_name='" . $brand . "'";
 
             $this->db->query($sql);
