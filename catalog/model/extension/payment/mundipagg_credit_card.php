@@ -47,7 +47,7 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
     private function getInstallmentsWithInterest($creditCardInfo, $amount)
     {
         $installmentsData = [];
-        $percentualInterest =  $creditCardInfo['interest'];
+        $percentualInterest = $creditCardInfo['interest'];
         $incrementalInterest = $creditCardInfo['incremental_interest'];
         
         for ($i = $creditCardInfo['installments_without_interest']; $i < $creditCardInfo['installments_up_to']; $i++) {

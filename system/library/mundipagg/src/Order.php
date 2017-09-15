@@ -142,21 +142,15 @@ class Order
      * element for multiplication, thus, apply this function to every item
      * without set a value other than zero to interest has no effect to
      * orders without interest.
-     *
-     * @param double item price
+     * @param double $price item price
      * @return integer item price plus interest in cents
      */
     private function getPriceWithInterest($price)
     {
-        
         $interest = number_format($this->orderInterest/100, 2, '.', ',');
         $priceWithInterest = $price + ($price * $interest * 100);
-        return $priceWithInterest;
-    }
-    
-    private function getIncrementalInterest()
-    {
         
+        return $priceWithInterest;
     }
 
     /**
