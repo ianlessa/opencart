@@ -148,7 +148,10 @@ class Order
      */
     private function getPriceWithInterest($price)
     {
-        return ($price + ($price * (number_format($this->orderInterest/100, 2, '.', ',')))) * 100;
+        
+        $interest = number_format($this->orderInterest/100, 2, '.', ',');
+        $priceWithInterest = $price + ($price * $interest * 100);
+        return $priceWithInterest;
     }
     
     private function getIncrementalInterest()

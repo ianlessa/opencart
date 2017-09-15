@@ -37,22 +37,53 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
         return $query->rows;
     }
     
+    /**
+     * Return an array with installment amount, interest, amount with interest 
+     * and installments number
+     * @param array $creditCardInfo
+     * @param float $amount
+     * @return array
+     */
     private function getInstallmentsWithInterest($creditCardInfo, $amount)
     {
-        $installments = [];
-        $interestAmount = number_format($amount * ((double)$creditCardInfo['interest']/100), 2, '.', ',');
-        $amountWithInterest = number_format($amount + $interestAmount, 2, '.', ',');
+        $installmentsData = [];
+        $percentualInterest =  $creditCardInfo['interest'];
+        $incrementalInterest = $creditCardInfo['incremental_interest'];
         
         for ($i = $creditCardInfo['installments_without_interest']; $i < $creditCardInfo['installments_up_to']; $i++) {
-            $installments[$i] = [
+            $interestAmount = $this->getInterestAmount($amount, $percentualInterest);
+            $totalAmountWithInterest = number_format($amount + $interestAmount, 2, '.', ',');
+            $installmentsData[$i] = [
                 'installments' => $i + 1,
-                'amount' => number_format($amountWithInterest/($i + 1), 2, '.', ','),
-                'interest' => $creditCardInfo['interest'],
-                'total' => $amountWithInterest
+                'amount' => $this->getInstallmentAmount($totalAmountWithInterest,$i + 1),
+                'interest' => $percentualInterest,
+                'total' => $totalAmountWithInterest
             ];
+            $percentualInterest = $percentualInterest + $incrementalInterest;
         }
         
-        return $installments;
+        return $installmentsData;
+    }
+    
+    /**
+     * Return $totalAmountWithInterest/$installments
+     * @param float $totalAmountWithInterest
+     * @return float
+     */
+    private function getInstallmentAmount($totalAmountWithInterest, $installments)
+    {
+        return number_format($totalAmountWithInterest/$installments, 2, '.', ',');
+    }
+    
+    /**
+     * Returns how much interest will be increased in total amount.
+     * @param float $amount
+     * @param float $interest
+     * @return float
+     */
+    private function getInterestAmount($amount, $interest) 
+    {
+        return number_format($amount * ((double)$interest/100), 2, '.', ',');
     }
     
     private function getInstallmentsWithoutInterest($creditCardInfo, $amount)
