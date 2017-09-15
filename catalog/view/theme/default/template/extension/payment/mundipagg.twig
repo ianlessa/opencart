@@ -49,16 +49,16 @@
                                     </div>
 
                                     <div class="col-sm-4">
-                                        <label>Installments</label>
+                                        <label>{{ credit_card.installments }}</label>
                                         <div>
                                             <select name="payment-details" class="form-control installments" data-brand="{{ brand }}" required>
                                                 <option value="">Selecione</option>
                                                 {% for brand, installment in installments %}
                                                     {% for details in installment %}
                                                         {% if details.interest == 0 %}
-                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - sem juros'}}</option>
+                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
                                                         {% else %}
-                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - juros de ' ~ details.interest ~ '%'}}</option>
+                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% endfor %}
@@ -89,7 +89,7 @@
 
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <label for="cardName">Nome no cartão</label>
+                                    <label for="cardName">{{ credit_card.holder_name }}</label>
                                     <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-input="holder_name">
                                 </div>                            
 
