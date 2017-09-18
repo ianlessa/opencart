@@ -113,6 +113,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->setBreadCrumbs();
         $this->setFormControlData();
         $this->getSavedSettings();
+        $this->getCustomFields();
 
         $this->response->setOutput(
             $this->load->view(
@@ -318,5 +319,15 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         return !$this->error;
+    }
+    
+    /**
+     * Return an array with custom fields
+     */
+    private function getCustomFields() 
+    {
+        $this->load->model('customer/custom_field');
+        $customFields = $this->model_customer_custom_field->getCustomFields();
+        $this->data['general_custom_fields'] = $customFields;
     }
 }

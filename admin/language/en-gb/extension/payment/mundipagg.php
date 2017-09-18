@@ -18,7 +18,8 @@ $_['general'] = [
     'api_test_pub_key' => 'Public key [test]',
     'api_test_mode' => 'Test mode',
     'module_section' => 'Module',
-    'log_section' => 'Log'
+    'log_section' => 'Log',
+    'select' => 'Select'
 ];
 // -----------------------------------------------------------------
 
