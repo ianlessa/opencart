@@ -38,7 +38,7 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
     }
     
     /**
-     * Return an array with installment amount, interest, amount with interest 
+     * Return an array with installment amount, interest, amount with interest
      * and installments number
      * @param array $creditCardInfo
      * @param float $amount
@@ -55,7 +55,7 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
             $totalAmountWithInterest = number_format($amount + $interestAmount, 2, '.', ',');
             $installmentsData[$i] = [
                 'installments' => $i + 1,
-                'amount' => $this->getInstallmentAmount($totalAmountWithInterest,$i + 1),
+                'amount' => $this->getInstallmentAmount($totalAmountWithInterest, $i + 1),
                 'interest' => $percentualInterest,
                 'total' => $totalAmountWithInterest
             ];
@@ -81,7 +81,7 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
      * @param float $interest
      * @return float
      */
-    private function getInterestAmount($amount, $interest) 
+    private function getInterestAmount($amount, $interest)
     {
         return number_format($amount * ((double)$interest/100), 2, '.', ',');
     }
