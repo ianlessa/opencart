@@ -2,17 +2,12 @@ language: php
 php:
   - 7.0
   - 7.1
-  - nightly
 services:
   - mysql
 addons:
   apt:
     packages:
       - google-chrome-stable
-before_install:
-  # Setup display for Selenium
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
 before_script:
   # Start Chrome headless
   - google-chrome-stable --no-sandbox --no-first-run --disable-extensions --disable-gpu --headless --remote-debugging-port=9222 about:blank &>/dev/null &
