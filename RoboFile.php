@@ -192,6 +192,6 @@ class RoboFile extends \Robo\Tasks
             $this->taskExec('vendor/bin/modman init ' . getenv('OC_ROOT'))->run();
             $this->taskExec('ln -sf "$(pwd)" .modman/')->run();
         }
-        $this->taskExec('vendor/bin/modman deploy-all --no-clean > /dev/null')->run();
+        $this->taskExec('vendor/bin/modman repair > /dev/null')->run();
     }
 }
