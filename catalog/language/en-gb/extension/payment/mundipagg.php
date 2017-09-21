@@ -10,13 +10,17 @@ $_['boleto'] = [
 ];
 
 $_['credit_card'] = [
-      'payment_method_name' => 'Credit card',
-      'credit_card_number' => 'Credit card number',
-      'valid_thru' => 'Valid Thru',
-      'brand' => 'Brand',
-      'holder_name' => 'Holder name',
-      'cvv' => 'CVV',
-      'no_brands_enabled' => 'No brands enabled'
+    'payment_method_name' => 'Credit card',
+    'credit_card_number' => 'Credit card number',
+    'valid_thru' => 'Valid Thru',
+    'brand' => 'Brand',
+    'holder_name' => 'Holder name',
+    'cvv' => 'CVV',
+    'no_brands_enabled' => 'No brands enabled',
+    'installments' => 'Installments',
+    'holder_name' => 'Holder name',
+    'without_interest' => 'without interest',
+    'interest' => 'interest: '
 ];
 
 $_['order'] = [

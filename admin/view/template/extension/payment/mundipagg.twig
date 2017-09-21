@@ -64,13 +64,41 @@
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-number">{{ general.mapping_number }}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="payment_mundipagg_mapping_number" placeholder="{{ general.mapping_number }}" id="mapping-number" class="form-control" value="{{ settings.general_mapping_number }}"/>
+                                    <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control"/>
+                                        <option value=''> -- {{ general.select }} -- </option>
+                                        {% for custom_field in general_custom_fields %}
+                                            {% if custom_field.custom_field_id == settings.general_mapping_number %}
+                                                {% set selected = "selected='selected'" %}
+                                            {% else %}
+                                                {% if setting.general_mapping_number == '' and custom_field.name == general.mapping_number %}
+                                                    {% set selected = "selected='selected'" %}
+                                                {% else %}
+                                                    {% set selected = '' %}
+                                                {% endif %}
+                                            {% endif %}
+                                            <option {{ selected }} value="{{ custom_field.custom_field_id }}">{{ custom_field.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-complement">{{ general.mapping_complement }}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="payment_mundipagg_mapping_complement" placeholder="{{ general.mapping_complement }}" id="mapping-complement" class="form-control" value="{{ settings.general_mapping_complement }}"/>
+                                    <select name="payment_mundipagg_mapping_complement" id="mapping-complement" class="form-control"/>
+                                        <option value=''> -- {{ general.select }} -- </option>
+                                        {% for custom_field in general_custom_fields %}
+                                            {% if custom_field.custom_field_id == settings.general_mapping_complement %}
+                                                {% set selected = "selected='selected'" %}
+                                            {% else %}
+                                                {% if setting.general_mapping_complement == '' and custom_field.name == general.complement %}
+                                                    {% set selected = "selected='selected'" %}
+                                                {% else %}
+                                                    {% set selected = '' %}
+                                                {% endif %}
+                                            {% endif %}
+                                            <option {{ selected }} value="{{ custom_field.custom_field_id }}">{{ custom_field.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
 
@@ -305,7 +333,26 @@
                             <div class="panel-heading">
                                 <h3>{{ credit_card.manage_section }}</h3>
                             </div>
-
+                            <div class="form-group">
+                                <label class="col-sm-2 text-right">
+                                    {{ credit_card.brand_name }}
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    {{ credit_card.enable }}
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    {{ credit_card.max_installments }}
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    {{ credit_card.installments_without_interest }}
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    {{ credit_card.intial_interest }}
+                                </label>
+                                <label class="col-sm-2 text-center">
+                                    {{ credit_card.incremental_interest }}
+                                </label>
+                            </div>
                             {% for cC in creditCard %}
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label" for="credit-card-enabled">
@@ -349,6 +396,15 @@
                                             id="invoice-name"
                                             class="form-control"
                                             value="{{ cC['interest'] }}">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input
+                                            type="text"
+                                            name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
+                                            placeholder="Incremental interest"
+                                            id="incremental-interest"
+                                            class="form-control"
+                                            value="{{ cC['incremental_interest'] }}">
                                     </div>
                                 </div>
                             {% endfor %}

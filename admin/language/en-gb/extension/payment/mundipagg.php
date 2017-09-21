@@ -18,7 +18,8 @@ $_['general'] = [
     'api_test_pub_key' => 'Public key [test]',
     'api_test_mode' => 'Test mode',
     'module_section' => 'Module',
-    'log_section' => 'Log'
+    'log_section' => 'Log',
+    'select' => 'Select'
 ];
 // -----------------------------------------------------------------
 
@@ -32,7 +33,13 @@ $_['credit_card'] = [
     'configure_auth_capture_label' => 'Auth and capture',
     'manage_section' => 'Manage cards',
     'manage_remove_button' => 'Remove',
-    'manage_add_card' => 'Add another card'
+    'manage_add_card' => 'Add another card',
+    'brand_name' => 'Brand name',
+    'enable' => 'Enable',
+    'max_installments' => 'Max installments',
+    'installments_without_interest' => 'Installments without interest',
+    'intial_interest' => 'Initial interest',
+    'incremental_interest' => 'Incremental interest'
 ];
 // -----------------------------------------------------------------
 

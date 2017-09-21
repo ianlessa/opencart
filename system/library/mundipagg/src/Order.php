@@ -40,15 +40,10 @@ class Order
         $this->orderInterest = 0;
         $this->mundipaggCustomerModel = $mundipaggCustomerModel;
 
-        $testKey = $this->settings->getTestSecretKey();
-        $prodKey = $this->settings->getProdSecretKey();
-        $pass = $this->settings->getPassword();
-
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
 
         $this->orderInstance = $this->apiClient->getOrders();
         $this->customerInstance = $this->apiClient->getCustomers();
-        $a = 1;
     }
     
     public function setInterest($interest)
@@ -147,13 +142,15 @@ class Order
      * element for multiplication, thus, apply this function to every item
      * without set a value other than zero to interest has no effect to
      * orders without interest.
-     *
-     * @param double item price
+     * @param double $price item price
      * @return integer item price plus interest in cents
      */
     private function getPriceWithInterest($price)
     {
-        return ($price + ($price * (number_format($this->orderInterest/100, 2, '.', ',')))) * 100;
+        $interest = number_format($this->orderInterest/100, 2, '.', ',');
+        $priceWithInterest = $price + ($price * $interest * 100);
+        
+        return $priceWithInterest;
     }
 
     /**
@@ -175,7 +172,6 @@ class Order
     }
 
     /**
-     * @todo Retirar valores mockados
      * @param array $orderData
      * @return \MundiAPILib\Models\CreateAddressRequest
      */
@@ -186,7 +182,7 @@ class Order
             $orderData['payment_address_1'],
             //Number
             $orderData['payment_custom_field'][
-                $this->config->get('payment_mundipagg_mapping_number')
+                $this->openCart->config->get('payment_mundipagg_mapping_number')
             ],
             //Zipcode
             preg_replace('/\D/', '', $orderData['payment_postcode']),
@@ -200,7 +196,7 @@ class Order
             $orderData['shipping_iso_code_2'],
             //Complement
             $orderData['payment_custom_field'][
-                $this->config->get('payment_mundipagg_mapping_complement')
+                $this->openCart->config->get('payment_mundipagg_mapping_complement')
             ],
             //Metadata
             null

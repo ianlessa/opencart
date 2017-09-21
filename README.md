@@ -26,8 +26,7 @@ modman clone https://github.com/mundipagg/opencart
 ```
 
 ## OpenCart Installer
-Download the latest release and paste the directories inside your store webroot.
-For releases, refer to [releases](https://github.com/mundipagg/opencart/releases).
+Download the Mundipagg.ocmod.zip file from last module [release](https://github.com/mundipagg/opencart/releases) and paste the upload folder content into your OpenCart root folder.
 
 # Development
 
