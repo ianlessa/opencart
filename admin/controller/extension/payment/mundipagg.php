@@ -22,7 +22,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @var array
      */
     private $data = array();
-
+    
     /**
      * Load basic data and call postRequest or getRequest methods accordingly
      *

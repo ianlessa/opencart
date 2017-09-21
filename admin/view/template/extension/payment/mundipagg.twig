@@ -356,7 +356,7 @@
                             {% for cC in creditCard %}
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label" for="credit-card-enabled">
-                                        {{ cC['brand_name'] }}                                
+                                        <img src="{{ cC['image'] }}" width="30" title="{{ cC['brand_name'] }}" alt="{{ cC['brand_name'] }}"/>
                                     </label>
                                     <div class="col-sm-2">
                                         <select
@@ -371,40 +371,56 @@
                                             {% endif %}
                                         </select>
                                     </div>
+                                    
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            max="12"
+                                            step="1"
                                             name="creditCard[{{ cC['brand_name'] }}][installments_up_to]"
+                                            id="installments_up_to_{{ cC['brand_name'] }}"
                                             placeholder="Installments up to"
                                             class="form-control"
-                                            value="{{ cC['installments_up_to'] }}">
+                                            value="{{ cC['installments_up_to'] }}"
+                                            onchange="checkInstallments('{{ cC['brand_name'] }}')"
+                                            >
                                     </div>
+                                    
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            max="12"
+                                            step="1"
                                             name="creditCard[{{ cC['brand_name'] }}][installments_without_interest]"
+                                            id="installments_without_interest_{{ cC['brand_name'] }}"
                                             placeholder="Installments without interest"
-                                            id="invoice-name"
                                             class="form-control"
-                                            value="{{ cC['installments_without_interest'] }}">
+                                            value="{{ cC['installments_without_interest'] }}"
+                                        >
                                     </div>
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
                                             name="creditCard[{{ cC['brand_name'] }}][interest]"
                                             placeholder="Interest"
-                                            id="invoice-name"
                                             class="form-control"
                                             value="{{ cC['interest'] }}">
                                     </div>
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
                                             name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
                                             placeholder="Incremental interest"
                                             id="incremental-interest"
                                             class="form-control"
-                                            value="{{ cC['incremental_interest'] }}">
+                                            value="{{ cC['incremental_interest'] }}"
+                                        >
                                     </div>
                                 </div>
                             {% endfor %}
