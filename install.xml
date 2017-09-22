@@ -9,7 +9,7 @@
               <![CDATA[return $this->load->view('common/column_left', $data);]]>
             </search>
             <add position="before">
-                <![CDATA[$data['mundipaggModuleLink'] = $this->url->link('extension/payment/mundipagg', 'user_token=' . $this->session->data['user_token'], true);]]>
+                <![CDATA[$data['frontlinkUrl'] = HTTPS_CATALOG;]]>
             </add>
         </operation>
     </file>
@@ -20,7 +20,7 @@
             </search>
             <add position="after">
                 <![CDATA[
-                    <li id="menu-dashboard">
+                    <li id="mundipagg">
                         <a href="{{ mundipaggModuleLink }}">
                             <img id="magepal_block" alt="" border="0" width="16" src="https://dashboard.mundipagg.com/images/logo-mundipagg-versao-reduzida.png">
                             &nbsp;Mundipagg
