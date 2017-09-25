@@ -324,7 +324,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     /**
      * Return an array with custom fields
      */
-    private function getCustomFields() 
+    private function getCustomFields()
     {
         $this->load->model('customer/custom_field');
         $customFields = $this->model_customer_custom_field->getCustomFields();
