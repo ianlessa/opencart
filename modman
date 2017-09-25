@@ -35,7 +35,6 @@ catalog/model/extension/payment/mundipagg_webhook_logging.php catalog/model/exte
 
 # view
 catalog/view/theme/default/template/extension/payment/mundipagg.twig catalog/view/theme/default/template/extension/payment/mundipagg.twig
-catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig
 
 # scripts
 catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/

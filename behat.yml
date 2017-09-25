@@ -3,8 +3,6 @@ default:
     DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~
     Behat\MinkExtension:
       sessions:
-        default:
-          goutte: ~
         javascript:
           chrome:
             api_url: "http://localhost:9222"

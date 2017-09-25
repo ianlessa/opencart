@@ -159,8 +159,45 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments`";
         $query = $this->db->query($sql);
+        $brands = $query->rows;
+        $brandImages = $this->getCreditCardBrands();
+        
+        foreach ($brands as $index => $brand) {
+            $brands[$index]['image'] = $brandImages[$brand['brand_name']]['image'];
+        }
+        
+        return $brands;
+    }
+    
+    /**
+     * Get credit cards images from json
+     *
+     * @param Strin $brandName Credit card brand name
+     * @return Object
+     */
+    public function getCreditCardBrands()
+    {
+        try {
+            $json = json_decode(
+                file_get_contents(
+                    'http://embeddables.eastus2.cloudapp.azure.com/payment/bank_info.json'
+                )
+            );
+            if (isset($brandName)) {
+                $brandName = ucfirst($brandName);
+                return $json->brands->$brandName;
+            }
 
-        return $query->rows;
+            $brands = (array) $json->brands;
+            foreach ($brands as $brandName => $brandImage) {
+                $creditCardBrands[$brandName] = [
+                    'name' => $brandName,
+                    'image' => $brandImage->image
+                ];
+            }
+            return $creditCardBrands;
+        } catch (Exception $exc) {
+        }
     }
 
     /**
