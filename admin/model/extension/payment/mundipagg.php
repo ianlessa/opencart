@@ -175,7 +175,8 @@ class ModelExtensionPaymentMundipagg extends Model
      * @param Strin $brandName Credit card brand name
      * @return Object
      */
-    public function getCreditCardBrands() {
+    public function getCreditCardBrands()
+    {
         try {
             $json = json_decode(
                 file_get_contents(
@@ -196,7 +197,6 @@ class ModelExtensionPaymentMundipagg extends Model
             }
             return $creditCardBrands;
         } catch (Exception $exc) {
-            
         }
     }
 
