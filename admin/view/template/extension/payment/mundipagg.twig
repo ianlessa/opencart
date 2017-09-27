@@ -24,9 +24,9 @@
 	        <div class="panel-body">
 	            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-mundipagg" class="form-horizontal">
 		            <ul class="nav nav-tabs">
-		                <li class="active"><a href="#tab-general" data-toggle="tab">{{ general.label }}</a></li>
-		                <li><a href="#tab-credit-card" data-toggle="tab">{{ credit_card.label }}</a></li>
-		                <li><a href="#tab-boleto" data-toggle="tab">{{ boleto.label }}</a></li>
+		                <li class="active"><a href="#tab-general" data-toggle="tab" title="{{ general.label }}">{{ general.label }}</a></li>
+		                <li><a href="#tab-credit-card" data-toggle="tab" title="{{ credit_card.label }}">{{ credit_card.label }}</a></li>
+		                <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
 		            </ul>
 
 		            <div class="tab-content">
@@ -64,7 +64,7 @@
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-number">{{ general.mapping_number }}</label>
                                 <div class="col-sm-10">
-                                    <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control"/>
+                                    <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control" title="{{ general.mapping_number }}"/>
                                         <option value=''> -- {{ general.select }} -- </option>
                                         {% for custom_field in general_custom_fields %}
                                             {% if custom_field.custom_field_id == settings.general_mapping_number %}
@@ -84,7 +84,7 @@
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-complement">{{ general.mapping_complement }}</label>
                                 <div class="col-sm-10">
-                                    <select name="payment_mundipagg_mapping_complement" id="mapping-complement" class="form-control"/>
+                                    <select name="payment_mundipagg_mapping_complement" id="mapping-complement" class="form-control" title="{{ general.mapping_complement }}"/>
                                         <option value=''> -- {{ general.select }} -- </option>
                                         {% for custom_field in general_custom_fields %}
                                             {% if custom_field.custom_field_id == settings.general_mapping_complement %}
@@ -139,13 +139,13 @@
 			                    <div class="col-sm-10">
                                 {% if not settings.general_test_mode %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.general_test_mode == '0' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.general_test_mode == '1' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1" checked="checked">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" >{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" >{{ misc.no }}</label>
                                 {% endif %}
 			                    </div>
 			                </div>
@@ -238,7 +238,7 @@
 			                </div>
 
 			                <div class="form-group required">
-			                    <label class="col-sm-2 control-label" for="payment-title">
+			                    <label class="col-sm-2 control-label" for="credit-card-title">
                                     {{ credit_card.configure_payment_title }}
                                 </label>
 			                    <div class="col-sm-10">
@@ -246,7 +246,7 @@
                                         type="text"
                                         name="payment_mundipagg_credit_card_payment_title"
                                         placeholder="{{ credit_card.configure_payment_title }}"
-                                        id="payment-title"
+                                        id="credit-card-title"
                                         class="form-control"
                                         value="{{ settings.credit_card_payment_title }}"/>
 			                    </div>
