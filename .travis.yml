@@ -9,6 +9,7 @@ addons:
     packages:
       - google-chrome-stable
 before_script:
+  - env
   # Start Chrome headless
   - google-chrome-stable --no-sandbox --no-first-run --disable-extensions --disable-gpu --headless --remote-debugging-port=9222 about:blank &>/dev/null &
 
