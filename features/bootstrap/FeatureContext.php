@@ -164,7 +164,7 @@ class FeatureContext extends MinkContext implements Context
         $user_token = $query['user_token'];
         $this->visit($url.'?'.$link.'&user_token='.$user_token);
     }
-    
+
     /**
      * @When preencho a :arg1 key de :arg2
      */

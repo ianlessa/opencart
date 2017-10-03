@@ -26,7 +26,7 @@ before_script:
   - (php -S localhost:8080 -t www &) 2> /dev/null > /dev/null
   - sleep 2
 script:
-  - composer behat
-  - composer setup
   - composer test
+  - composer setup
+  - composer behat
   - composer phpcs

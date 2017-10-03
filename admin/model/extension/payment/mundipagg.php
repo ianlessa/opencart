@@ -52,7 +52,7 @@ class ModelExtensionPaymentMundipagg extends Model
             'catalog/model/account/customer/editCustomer/after',
             'extension/payment/mundipagg_events/onCustomerEdit'
         );
-                                                                                 
+
         $this->model_setting_event->addEvent(
             'payment_mundipagg',
             'catalog/model/account/address/addAddress/after',
