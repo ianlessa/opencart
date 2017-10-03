@@ -9,6 +9,9 @@ addons:
     packages:
       - google-chrome-stable
 before_script:
+  # Start Chrome headless
+  - google-chrome-stable --no-sandbox --no-first-run --disable-extensions --disable-gpu --headless --remote-debugging-port=9222 about:blank &>/dev/null &
+
   # Change MySQL root password
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
 
