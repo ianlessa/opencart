@@ -148,9 +148,9 @@ class Order
     private function getPriceWithInterest($price)
     {
         $interest = number_format($this->orderInterest/100, 2, '.', ',');
-        $priceWithInterest = $price + ($price * $interest * 100);
+        $priceWithInterest = $price + ($price * $interest);
         
-        return $priceWithInterest;
+        return (int) $priceWithInterest * 100;
     }
 
     /**
@@ -163,12 +163,7 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => number_format(
-                    $this->getPriceWithInterest($product['price']),
-                    2,
-                    '',
-                    ''
-                ),
+                'amount'      => $this->getPriceWithInterest($product['price']),
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
