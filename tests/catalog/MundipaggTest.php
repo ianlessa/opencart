@@ -88,7 +88,7 @@ class MundipaggCatalogTest extends OpenCartTest
                 'type' => 'credit_card',
                 'number' => '4556809418730432',
                 'exp_month' => '1',
-                'exp_year' => '2018',
+                'exp_year' => date('Y') + 1,
                 'holder_name' => 'Jose das Couves',
                 'cvv' => '123'
             ]
