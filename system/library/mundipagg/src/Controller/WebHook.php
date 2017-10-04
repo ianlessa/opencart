@@ -103,11 +103,6 @@ class WebHook
         }
     }
 
-    public function getOrderFromWebHook()
-    {
-        return $this->model->getOrderFromWebHook($this->mPOrderId);
-    }
-
     // --------------------------- ORDER --------------------------------------------
     private function updateOrder()
     {

@@ -255,7 +255,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private function getOrder()
     {
         if (!is_object($this->Order)) {
-            $this->Order = new Order($this->model_extension_payment_mundipagg_customer, $this);
+            $this->Order = new Order($this);
+            $this->Order->setCustomerModel(
+                $this->model_extension_payment_mundipagg_customer
+            );
         }
         return $this->Order;
     }

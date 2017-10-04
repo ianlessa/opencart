@@ -34,16 +34,14 @@ class Order
     private $mundipaggCustomerModel;
 
     /**
-     * @param Object $mundipaggCustomerModel
      * @param array $openCart
      */
-    public function __construct($mundipaggCustomerModel, $openCart)
+    public function __construct($openCart)
     {
         $this->settings = new Settings($openCart);
 
         $this->openCart = $openCart;
         $this->orderInterest = 0;
-        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
 
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
     }
@@ -320,5 +318,10 @@ class Order
             return $customer['mundipagg_customer_id'];
         }
         return null;
+    }
+    
+    public function setCustomerModel($mundipaggCustomerModel)
+    {
+        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
     }
 }
