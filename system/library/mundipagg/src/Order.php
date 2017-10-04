@@ -163,7 +163,9 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => $this->getPriceWithInterest($product['price']),
+                'amount'      => number_format(
+                    $this->getPriceWithInterest($product['price']), 2, '', ''
+                ),
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
