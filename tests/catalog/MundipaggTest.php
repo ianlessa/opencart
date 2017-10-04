@@ -12,13 +12,13 @@ class MundipaggCatalogTest extends OpenCartTest
             'customer_group_id' => 1,
             'firstname' => 'firstname',
             'lastname' => 'lastname',
-            'email' => 'customer@localhost',
+            'email' => 'customer@mundipagg.com',
             'telephone' => 'telephone',
             'password' => 'password',
             'custom_field' => array(),
         ]);
-        $this->model_account_customer->editPassword('customer@localhost', 'password');
-        $this->login('customer@localhost', 'password');
+        $this->model_account_customer->editPassword('customer@mundipagg.com', 'password');
+        $this->login('customer@mundipagg.com', 'password');
     }
 
     public function testAddCart()
@@ -30,30 +30,70 @@ class MundipaggCatalogTest extends OpenCartTest
         $this->assertRegExp('/Success: You have added/', $response->getOutput());
     }
 
-    public function _testBillingDetails()
+    public function testBillingDetails()
     {
         $response = $this->dispatchAction('checkout/payment_address/save', 'POST', [
             'firstname' => 'José',
             'lastname' => 'Das Couves',
             'company' => '',
-            'address_1' => 'Rua dos Bobos',
-            'address_2' => '',
+            'address_2' => 'Rua dos Bobos',
+            'address_1' => '171',
             'city' => 'Neverland',
             'postcode' => '171171171',
             'country_id' => '30',
-            'zone_id' => '446'
+            'zone_id' => '446',
+            'custom_field' => array(
+                'address' => array(
+                    2 => 'fundos',
+                    1 => 171
+                )
+            )
         ]);
         $this->assertEquals('[]', $response->getOutput());
     }
-
-    public function _testDeliveryMethod()
+    
+    public function testDeliveryMethod()
     {
-        $response = $this->dispatchAction( 'checkout/shipping_method/save', 'POST', [
+        $response = $this->dispatchAction('checkout/shipping_method/save', 'POST', [
             'shipping_method' => 'flat.flat',
+            'comment' => ''
+        ]);
+        $this->assertRegExp('/route=checkout/', $response->getOutput());
+    }
+    
+    public function testPaymentMethod()
+    {
+        $response = $this->dispatchAction('checkout/payment_method/save', 'POST', [
+            'payment_method' => 'mundipagg',
             'comment' => '',
             'agree' => 1
         ]);
         $this->assertRegExp('/route=checkout/', $response->getOutput());
+    }
+
+    public function testConfirmOrder()
+    {
+        $response = $this->dispatchAction('extension/payment/mundipagg/processCreditCard', 'POST', [
+            'payment-details' => '1|0',
+            'munditoken' => $this->getTokenId()
+        ]);
+        $this->assertRegExp('/route=checkout/', $response->getOutput());
+    }
+
+    private function getTokenId()
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post('https://api.mundipagg.com/core/v1.0/tokens?appId=' . getenv('TEST_PUBLIC_KEY'), [
+            'body' => [
+                'type' => 'credit_card',
+                'number' => '4556809418730432',
+                'exp_month' => '1',
+                'exp_year' => date('Y') + 1,
+                'holder_name' => 'Jose das Couves',
+                'cvv' => '123'
+            ]
+        ]);
+        return json_decode($response->getBody())->id;
     }
 
     public function _tearDown()
