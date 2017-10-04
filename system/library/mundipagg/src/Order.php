@@ -50,7 +50,7 @@ class Order
     
     public function __call(string $name, array $arguments)
     {
-        if(method_exists($this->apiClient, $name)) {
+        if (method_exists($this->apiClient, $name)) {
             return call_user_func_array($this->apiClient, $arguments);
         }
     }
