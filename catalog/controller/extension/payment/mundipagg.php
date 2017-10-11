@@ -124,12 +124,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
-                    $order = new Order(
-                        $this->model_extension_payment_mundipagg_customer,
-                        $this
-                    );
-
-                    $response = $order->create($orderData, $this->cart, 'boleto');
+                    $response = $this->getOrder()->create($orderData, $this->cart, 'boleto');
 
                     if (isset($response->charges[0]->last_transaction->success)) {
                         $this->success($response);
@@ -249,12 +244,23 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load();
         
-        $order = new Order($this->model_extension_payment_mundipagg_customer, $this);
+        $order = $this->getOrder();
         
         $order->setInterest($interest);
         $order->setInstallments($installments);
         
         return $order->create($orderData, $this->cart, 'creditCard', $cardToken);
+    }
+    
+    private function getOrder()
+    {
+        if (!is_object($this->Order)) {
+            $this->Order = new Order($this);
+            $this->Order->setCustomerModel(
+                $this->model_extension_payment_mundipagg_customer
+            );
+        }
+        return $this->Order;
     }
 
     /**

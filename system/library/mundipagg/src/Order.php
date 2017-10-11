@@ -3,7 +3,6 @@ namespace Mundipagg;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\CreditCard;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
 use MundiAPILib\MundiAPIClient;
@@ -13,37 +12,45 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
-use Unirest\Exception;
+use MundiAPILib\Controllers\CustomersController;
+use MundiAPILib\Controllers\OrdersController;
 
+/**
+ * @method OrdersController getOrders()
+ * @method CustomersController getCustomers()
+ */
 class Order
 {
     private $orderInterest;
     private $orderInstallments;
     
+    /**
+     * @var MundiAPIClient
+     */
     private $apiClient;
-    private $orderInstance;
-    private $customerInstance;
     private $openCart;
     private $settings;
 
     private $mundipaggCustomerModel;
 
     /**
-     * @param Object $mundipaggCustomerModel
      * @param array $openCart
      */
-    public function __construct($mundipaggCustomerModel, $openCart)
+    public function __construct($openCart)
     {
         $this->settings = new Settings($openCart);
 
         $this->openCart = $openCart;
         $this->orderInterest = 0;
-        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
 
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
-
-        $this->orderInstance = $this->apiClient->getOrders();
-        $this->customerInstance = $this->apiClient->getCustomers();
+    }
+    
+    public function __call(string $name, array $arguments)
+    {
+        if (method_exists($this->apiClient, $name)) {
+            return call_user_func_array($this->apiClient, $arguments);
+        }
     }
     
     public function setInterest($interest)
@@ -88,7 +95,7 @@ class Order
                 ->withOrderId($orderData['order_id'])
                 ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
 
-            $order = $this->orderInstance->createOrder($CreateOrderRequest);
+            $order = $this->getOrders()->createOrder($CreateOrderRequest);
 
             Log::create()
                 ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -311,5 +318,10 @@ class Order
             return $customer['mundipagg_customer_id'];
         }
         return null;
+    }
+    
+    public function setCustomerModel($mundipaggCustomerModel)
+    {
+        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
     }
 }
