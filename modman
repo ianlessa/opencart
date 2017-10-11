@@ -1,10 +1,11 @@
 ## Admin
+admin/controller/extension/payment/mundipagg_events.php admin/controller/extension/payment/mundipagg_events.php
 
 # model
 admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
 
 # view
-admin/view/template/extension/payment/mundipagg.twig admin/view/template/extension/payment/mundipagg.twig
+admin/view/template/extension/payment/* admin/view/template/extension/payment/
 
 # controller
 admin/controller/extension/payment/mundipagg.php admin/controller/extension/payment/mundipagg.php

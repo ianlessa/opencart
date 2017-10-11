@@ -22,8 +22,10 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->createPaymentTable();
         $this->createCustomerTable();
         $this->createOrderTable();
+        $this->createChargeTable();
 
         $this->populatePaymentTable();
+        $this->installEvents();
     }
 
     /**
@@ -36,6 +38,8 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->dropPaymentTable();
         $this->dropCustomerTable();
         $this->dropOrderTable();
+        $this->dropChargeTable();
+        $this->uninstallEvents();
     }
 
     /**
@@ -45,18 +49,10 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     private function installEvents()
     {
-        $this->load->model('setting/event');
-
         $this->model_setting_event->addEvent(
             'payment_mundipagg',
-            'catalog/model/account/customer/editCustomer/after',
-            'extension/payment/mundipagg_events/onCustomerEdit'
-        );
-
-        $this->model_setting_event->addEvent(
-            'payment_mundipagg',
-            'catalog/model/account/address/addAddress/after',
-            'extension/payment/mundipagg_events/onAddressAdd'
+            'admin/view/sale/order_list/before',
+            'extension/payment/mundipagg_events/onOrderList'
         );
     }
 
@@ -89,6 +85,29 @@ class ModelExtensionPaymentMundipagg extends Model
                 `interest` DOUBLE,
                 `incremental_interest` DOUBLE
             );"
+        );
+    }
+
+    private function createChargeTable()
+    {
+        $this->db->query(
+            'CREATE TABLE `opencart`.`' . DB_PREFIX . 'mundipagg_charge` (
+                `opencart_id` INT NOT NULL,
+                `charge_id` VARCHAR(30) NOT NULL,
+                `payment_method` VARCHAR(45) NOT NULL,
+                `status` VARCHAR(45) NOT NULL,
+                `paid_amount` INT NOT NULL,
+                `amount` INT NOT NULL,
+                `canceled_amount` INT NULL,
+                PRIMARY KEY (`opencart_id`, `charge_id`),
+                UNIQUE INDEX `charge_id_UNIQUE` (`charge_id` ASC));'
+        );
+    }
+
+    private function dropChargeTable()
+    {
+        $this->db->query(
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_charge` CASCADE;'
         );
     }
 

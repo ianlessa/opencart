@@ -14,6 +14,7 @@ use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
 use MundiAPILib\Controllers\CustomersController;
 use MundiAPILib\Controllers\OrdersController;
+use MundiAPILib\Exceptions\ErrorException;
 
 /**
  * @method OrdersController getOrders()
@@ -49,7 +50,7 @@ class Order
     public function __call(string $name, array $arguments)
     {
         if (method_exists($this->apiClient, $name)) {
-            return call_user_func_array($this->apiClient, $arguments);
+            return call_user_func_array([$this->apiClient, $name], $arguments);
         }
     }
     
@@ -96,6 +97,7 @@ class Order
                 ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
 
             $order = $this->getOrders()->createOrder($CreateOrderRequest);
+            $this->createOrUpdateCharge($orderData, $order);
 
             Log::create()
                 ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -110,6 +112,43 @@ class Order
                 ->withException($exc->getMessage())
                 ->withRequest(json_encode($CreateOrderRequest))
                 ->withLineNumber(__LINE__);
+        }
+    }
+
+    public function createOrUpdateCharge(array $opencartOrder, $mundipaggOrder)
+    {
+        try {
+            foreach ($mundipaggOrder->charges as $charge) {
+                $rows = $this->openCart->db->query(
+                    'SELECT 1 FROM `' . DB_PREFIX . 'mundipagg_charge`'.
+                    ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
+                    '   AND charge_id = "' . $charge->id . '"'
+                );
+                if ($this->openCart->db->countAffected()) {
+                    $query = 'UPDATE `' . DB_PREFIX . 'mundipagg_charge` ' .
+                        'SET status = "' . $mundipaggOrder->status . '",' .
+                        '    canceled_amount = "' . $charge->payment_method . '"' .
+                        ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
+                        '   AND charge_id = "' . $charge->id . '"';
+                } else {
+                    $query = 'INSERT INTO `' . DB_PREFIX . 'mundipagg_charge` ' .
+                        '(opencart_id, charge_id, payment_method, status, paid_amount, amount) ' .
+                        'VALUES (' .
+                        $opencartOrder['order_id'] . ', ' .
+                        '"' . $charge->id . '",' .
+                        '"' . $charge->payment_method . '", ' .
+                        '"' . $mundipaggOrder->status . '",' .
+                        $charge->paid_amount . ',' .
+                        $charge->amount .
+                        ');';
+                }
+                $this->openCart->db->query($query);
+            }
+        } catch (Exception $e) {
+            Log::create()
+            ->error(LogMessages::UNABLE_TO_CREATE_MUNDI_CHARGE, __METHOD__)
+            ->withLineNumber(__LINE__)
+            ->withQuery($query);
         }
     }
 
