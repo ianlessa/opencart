@@ -5,6 +5,8 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\CreditCardSettings;
 use Mundipagg\Controller\BoletoSettings;
+use MundiAPILib\MundiAPIClient;
+use Mundipagg\Order;
 
 /**
  * ControllerExtensionPaymentMundipagg
@@ -22,7 +24,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @var array
      */
     private $data = array();
-    
+
     /**
      * Load basic data and call postRequest or getRequest methods accordingly
      *
@@ -67,6 +69,119 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load->model('extension/payment/mundipagg');
         $this->model_extension_payment_mundipagg->uninstall();
+    }
+
+    public function previewCancelOrder()
+    {
+        $this->load->model('sale/order');
+
+        if (isset($this->request->get['order_id'])) {
+            $order_id = $this->request->get['order_id'];
+            $order_info = $this->model_sale_order->getOrder($order_id);
+        }
+
+        if (isset($order_info)) {
+            $result = $this->db->query(
+                'SELECT *, CASE WHEN status != "canceled" AND status != "failed" THEN 1 ELSE 0 END AS cancel FROM `' . DB_PREFIX . 'mundipagg_charge`'.
+                ' WHERE opencart_id = ' . $order_id
+            );
+            foreach ($result->rows as $key => $row) {
+                $data['charges'][$key] = $row;
+                if ($row['cancel']) {
+                    $data['charges'][$key]['cancel'] = $this->url->link(
+                        'extension/payment/mundipagg/cancelOrder',
+                        'user_token=' . $this->session->data['user_token'].
+                        '&order_id='.$order_id.
+                        '&charge=' . $row['charge_id'],
+                        true
+                    );
+                }
+            }
+            $data['cancel'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'], true);
+
+            $data['text_order'] = sprintf('Order (#%s)', $order_id);
+            $data['column_product'] = 'Product';
+            $data['column_model'] = 'Model';
+            $data['column_quantity'] = 'Quantity';
+            $data['column_price'] = 'Unit Price';
+            $data['column_total'] = 'Total';
+            $data['products'] = array();
+
+            $products = $this->model_sale_order->getOrderProducts($this->request->get['order_id']);
+
+            foreach ($products as $product) {
+                $option_data = array();
+
+                $options = $this->model_sale_order->getOrderOptions($this->request->get['order_id'], $product['order_product_id']);
+
+                foreach ($options as $option) {
+                    if ($option['type'] != 'file') {
+                        $option_data[] = array(
+                            'name'  => $option['name'],
+                            'value' => $option['value'],
+                            'type'  => $option['type']
+                        );
+                    } else {
+                        $upload_info = $this->model_tool_upload->getUploadByCode($option['value']);
+
+                        if ($upload_info) {
+                            $option_data[] = array(
+                                'name'  => $option['name'],
+                                'value' => $upload_info['name'],
+                                'type'  => $option['type'],
+                                'href'  => $this->url->link('tool/upload/download', 'user_token=' . $this->session->data['user_token'] . '&code=' . $upload_info['code'], true)
+                            );
+                        }
+                    }
+                }
+
+                $data['products'][] = array(
+                    'order_product_id' => $product['order_product_id'],
+                    'product_id'       => $product['product_id'],
+                    'name'             => $product['name'],
+                    'model'            => $product['model'],
+                    'option'           => $option_data,
+                    'quantity'         => $product['quantity'],
+                    'price'            => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+                    'total'            => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
+                    'href'             => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $product['product_id'], true)
+                );
+            }
+
+            $data['vouchers'] = array();
+
+            $vouchers = $this->model_sale_order->getOrderVouchers($this->request->get['order_id']);
+
+            foreach ($vouchers as $voucher) {
+                $data['vouchers'][] = array(
+                    'description' => $voucher['description'],
+                    'amount'      => $this->currency->format($voucher['amount'], $order_info['currency_code'], $order_info['currency_value']),
+                    'href'        => $this->url->link('sale/voucher/edit', 'user_token=' . $this->session->data['user_token'] . '&voucher_id=' . $voucher['voucher_id'], true)
+                );
+            }
+
+            $data['totals'] = array();
+
+            $totals = $this->model_sale_order->getOrderTotals($this->request->get['order_id']);
+
+            foreach ($totals as $total) {
+                $data['totals'][] = array(
+                    'title' => $total['title'],
+                    'text'  => $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value'])
+                );
+            }
+
+            $data['header'] = $this->load->controller('common/header');
+            $data['column_left'] = $this->load->controller('common/column_left');
+            $data['footer'] = $this->load->controller('common/footer');
+
+            $this->response->setOutput($this->load->view(
+                'extension/payment/mundipagg_previewCancelOrder',
+                $data
+            ));
+        } else {
+            return new Action('error/not_found');
+        }
     }
 
     /**
@@ -320,7 +435,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         return !$this->error;
     }
-    
+
     /**
      * Return an array with custom fields
      */
