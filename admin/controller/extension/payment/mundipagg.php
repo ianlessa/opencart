@@ -184,6 +184,48 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
     }
 
+    public function cancelOrder()
+    {
+        $this->load->model('sale/order');
+
+        if (isset($this->request->get['order_id'])) {
+            $order_id = $this->request->get['order_id'];
+            $order_info = $this->model_sale_order->getOrder($order_id);
+            if (isset($order_info)) {
+                try {
+                    $order = new Order($this);
+                    $result = $this->db->query(
+                        'SELECT charge_id, '.
+                        '       CASE WHEN status != "canceled" AND status != "failed" THEN 1 ELSE 0 END AS cancel'.
+                        '  FROM `' . DB_PREFIX . 'mundipagg_charge`'.
+                        ' WHERE opencart_id = ' . $order_id
+                    );
+                    $charge_id = $this->request->get['charge'];
+                    foreach ($result->rows as $charge) {
+                        if ($charge['charge_id'] == $charge_id) {
+                            if ($charge['cancel']) {
+                                $charge = $order->cancelCharge($charge_id);
+                                $this->session->data['success'] = 'Charge canceled with sucess!';
+                            } else {
+                                $this->session->data['error_warning'] = 'Charge don\'t available to cancel';
+                            }
+                            break;
+                        }
+                    }
+                    if (empty($this->session->data['success']) && !$this->session->data['error_warning']) {
+                        $this->session->data['error_warning'] = 'Fail on cancel charge';
+                    } else {
+                        $order->createOrUpdateCharge($order_info, $charge);
+                    }
+                } catch (\Exception $e) {
+                    $this->session->data['error_warning'] = $e->getMessage();
+                }
+                return new Action('sale/order');
+            }
+        }
+        return new Action('error/not_found');
+    }
+
     /**
      * Deal with post requests, in other words, settings being changed
      *

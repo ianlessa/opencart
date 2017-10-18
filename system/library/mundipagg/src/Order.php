@@ -3,8 +3,6 @@ namespace Mundipagg;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Log;
-use Mundipagg\LogMessages;
 use MundiAPILib\MundiAPIClient;
 use MundiAPILib\Models\CreateShippingRequest;
 use MundiAPILib\Models\CreateOrderRequest;
@@ -12,13 +10,11 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
-use MundiAPILib\Controllers\CustomersController;
-use MundiAPILib\Controllers\OrdersController;
 use MundiAPILib\Exceptions\ErrorException;
 
 /**
- * @method OrdersController getOrders()
- * @method CustomersController getCustomers()
+ * @method \MundiAPILib\Controllers\OrdersController getOrders()
+ * @method \MundiAPILib\Controllers\CustomersController getCustomers()
  */
 class Order
 {
@@ -90,63 +86,105 @@ class Order
             $this->settings->getModuleMetaData()
         );
 
+        \Mundipagg\Log::create()
+            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
+
+        $order = $this->getOrders()->createOrder($CreateOrderRequest);
+        $this->createOrUpdateCharge($orderData, $order);
+
+        \Mundipagg\Log::create()
+            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
+
+        return $order;
+    }
+
+    public function cancelCharge($chargeId)
+    {
         try {
-            Log::create()
-                ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
-
-            $order = $this->getOrders()->createOrder($CreateOrderRequest);
-            $this->createOrUpdateCharge($orderData, $order);
-
-            Log::create()
-                ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
-
-            return $order;
-        } catch (\Exception $exc) {
-            Log::create()
-                ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withException($exc->getMessage())
-                ->withRequest(json_encode($CreateOrderRequest))
+            return $this->getCharges()->cancelCharge($chargeId);
+        } catch (ErrorException $e) {
+            \Mundipagg\Log::create()
+                ->error($e->getMessage(), __METHOD__)
                 ->withLineNumber(__LINE__);
+            throw new \Exception($e->getMessage());
+        } catch (\Exception $e) {
+            \Mundipagg\Log::create()
+                ->error(\Mundipagg\LogMessages::UNABLE_TO_CANCEL_MUNDI_CHARGE, __METHOD__)
+                ->withLineNumber(__LINE__);
+            throw new \Exception(\Mundipagg\LogMessages::UNABLE_TO_CANCEL_MUNDI_CHARGE);
         }
     }
 
     public function createOrUpdateCharge(array $opencartOrder, $mundipaggOrder)
     {
         try {
-            foreach ($mundipaggOrder->charges as $charge) {
+            if(!is_object($mundipaggOrder)) {
+                throw new \Exception();
+            }
+            if (property_exists($mundipaggOrder, 'charges')) {
+                foreach ($mundipaggOrder->charges as $charge) {
+                    $rows = $this->openCart->db->query(
+                        'SELECT 1 FROM `' . DB_PREFIX . 'mundipagg_charge`'.
+                        ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
+                        '   AND charge_id = "' . $charge->id . '"'
+                    );
+                    if ($this->openCart->db->countAffected()) {
+                        $query = 'UPDATE `' . DB_PREFIX . 'mundipagg_charge` ' .
+                            'SET status = "' . $mundipaggOrder->status . '",' .
+                            '    canceled_amount = "' . $charge->payment_method . '"' .
+                            ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
+                            '   AND charge_id = "' . $charge->id . '"';
+                    } else {
+                        $query = 'INSERT INTO `' . DB_PREFIX . 'mundipagg_charge` ' .
+                            '(opencart_id, charge_id, payment_method, status, paid_amount, amount) ' .
+                            'VALUES (' .
+                            $opencartOrder['order_id'] . ', ' .
+                            '"' . $charge->id . '",' .
+                            '"' . $charge->payment_method . '", ' .
+                            '"' . $mundipaggOrder->status . '",' .
+                            $charge->paid_amount . ',' .
+                            $charge->amount .
+                            ');';
+                    }
+                }
+            } else if (property_exists($mundipaggOrder, 'canceledAt')) {
                 $rows = $this->openCart->db->query(
                     'SELECT 1 FROM `' . DB_PREFIX . 'mundipagg_charge`'.
-                    ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
-                    '   AND charge_id = "' . $charge->id . '"'
+                    ' WHERE opencart_id = ' . $mundipaggOrder->code .
+                    '   AND charge_id = "' . $mundipaggOrder->id . '"'
                 );
                 if ($this->openCart->db->countAffected()) {
                     $query = 'UPDATE `' . DB_PREFIX . 'mundipagg_charge` ' .
                         'SET status = "' . $mundipaggOrder->status . '",' .
-                        '    canceled_amount = "' . $charge->payment_method . '"' .
-                        ' WHERE opencart_id = ' . $opencartOrder['order_id'] .
-                        '   AND charge_id = "' . $charge->id . '"';
+                        '    canceled_amount = "' . $mundipaggOrder->amount . '"' .
+                        ' WHERE opencart_id = ' . $mundipaggOrder->code .
+                        '   AND charge_id = "' . $mundipaggOrder->id . '"';
                 } else {
                     $query = 'INSERT INTO `' . DB_PREFIX . 'mundipagg_charge` ' .
-                        '(opencart_id, charge_id, payment_method, status, paid_amount, amount) ' .
+                        '(opencart_id, charge_id, payment_method, status, amount) ' .
                         'VALUES (' .
-                        $opencartOrder['order_id'] . ', ' .
-                        '"' . $charge->id . '",' .
-                        '"' . $charge->payment_method . '", ' .
+                        $mundipaggOrder->code . ', ' .
+                        '"' . $mundipaggOrder->id . '",' .
+                        '"' . $mundipaggOrder->paymentMethod . '", ' .
                         '"' . $mundipaggOrder->status . '",' .
-                        $charge->paid_amount . ',' .
-                        $charge->amount .
+                        $mundipaggOrder->amount .
                         ');';
                 }
-                $this->openCart->db->query($query);
+                $orderStatus = $this->translateStatusFromMP($mundipaggOrder);
+                $this->openCart->db->query(
+                    "UPDATE `" . DB_PREFIX . "order`
+                        SET order_status_id = " . $orderStatus . "
+                        WHERE order_id = ". $mundipaggOrder->code
+                );
             }
+            $this->openCart->db->query($query);
         } catch (Exception $e) {
-            Log::create()
-            ->error(LogMessages::UNABLE_TO_CREATE_MUNDI_CHARGE, __METHOD__)
+            \Mundipagg\Log::create()
+            ->error(\Mundipagg\LogMessages::UNABLE_TO_CREATE_MUNDI_CHARGE, __METHOD__)
             ->withLineNumber(__LINE__)
             ->withQuery($query);
         }
@@ -194,9 +232,9 @@ class Order
     private function getPriceWithInterest($price)
     {
         $interest = number_format($this->orderInterest/100, 2, '.', ',');
-        $priceWithInterest = $price + ($price * $interest);
+        $priceWithInterest = $price + ($price * $interest * 100);
         
-        return (int) $priceWithInterest * 100;
+        return $priceWithInterest;
     }
 
     /**
@@ -362,5 +400,64 @@ class Order
     public function setCustomerModel($mundipaggCustomerModel)
     {
         $this->mundipaggCustomerModel = $mundipaggCustomerModel;
+    }
+
+    /**
+     * Update opencart order status with the mundipagg translated status
+     *
+     * @param mixed $orderStatus
+     * @return void
+     */
+    public function updateOrderStatus($orderStatus)
+    {
+        $this->openCart->load->model('checkout/order');
+        $this->openCart->load->model('extension/payment/mundipagg_order_processing');
+
+        $this->openCart->model_checkout_order->addOrderHistory(
+            $this->openCart->session->data['order_id'],
+            $orderStatus,
+            '',
+            true
+        );
+
+        $this->openCart->load->model('extension/payment/mundipagg_order_processing');
+
+        $this->openCart->model_extension_payment_mundipagg_order_processing->setOrderStatus(
+            $this->openCart->session->data['order_id'],
+            $orderStatus
+        );
+    }
+
+    /**
+     * It maps the statuses from mundipagg and those used in opencart
+     *
+     * @param mixed $response
+     * @return string
+     */
+    public function translateStatusFromMP($response)
+    {
+        $statusFromMP = strtolower($response->status);
+
+        $this->openCart->load->model('localisation/order_status');
+        $statusModel = $this->openCart->model_localisation_order_status;
+
+        switch ($statusFromMP) {
+            case 'paid':
+                $status = $statusModel->getOrderStatus(2)['order_status_id'];
+                break;
+            case 'pending':
+                $status = $statusModel->getOrderStatus(1)['order_status_id'];
+                break;
+            case 'canceled':
+                $status = $statusModel->getOrderStatus(7)['order_status_id'];
+                break;
+            case 'failed':
+                $status = $statusModel->getOrderStatus(10)['order_status_id'];
+                break;
+            default:
+                $status = false;
+        }
+
+        return $status;
     }
 }

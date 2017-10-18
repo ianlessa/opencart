@@ -264,77 +264,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
     }
 
     /**
-     * It maps the statuses from mundipagg and those used in opencart
-     *
-     * @param mixed $response
-     * @return string
-     */
-    private function translateStatusFromMP($response)
-    {
-        $statusFromMP = strtolower($response->status);
-        
-        $this->load->model('localisation/order_status');
-        $statusModel = $this->model_localisation_order_status;
-        
-        switch ($statusFromMP) {
-            case 'paid':
-                $status = $statusModel->getOrderStatus(2)['order_status_id'];
-                break;
-            case 'pending':
-                $status = $statusModel->getOrderStatus(1)['order_status_id'];
-                break;
-           
-            case 'canceled':
-                $status = $statusModel->getOrderStatus(7)['order_status_id'];
-                break;
-            
-            case 'failed':
-                $status = $statusModel->getOrderStatus(10)['order_status_id'];
-                break;
-            
-            default:
-                $status = false;
-        }
-        
-        return $status;
-    }
-
-    /**
-     * Update opencart order status with the mundipagg translated status
-     *
-     * @param mixed $response
-     * @return void
-     */
-    private function updateOrderStatus($response)
-    {
-        $orderStatus = $this->translateStatusFromMP($response);
-        
-        if (!$orderStatus) {
-            Log::create()
-                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
-                ->withResponseStatus($response->status)
-                ->withOrderId($this->session->data['order_id']);
-
-            $this->response->redirect($this->url->link('checkout/failure'));
-        }
-        
-        $this->load->model('checkout/order');
-        $this->load->model('extension/payment/mundipagg_order_processing');
-        
-        $this->model_checkout_order->addOrderHistory(
-            $this->session->data['order_id'],
-            $orderStatus,
-            '',
-            true
-        );
-
-        $this->model_extension_payment_mundipagg_order_processing->setOrderStatus(
-            $this->session->data['order_id'],
-            $orderStatus
-        );
-    }
-
-    /**
      * This method stores the received order id from mundipagg with the opencart order id
      *
      * @param string $mundiOrderId
@@ -388,7 +317,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $this->updateOrderStatus($response);
+        $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+        if (!$orderStatus) {
+            Log::create()
+            ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+            ->withResponseStatus($response->status)
+            ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+        $this->getOrder()->updateOrderStatus($orderStatus);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
