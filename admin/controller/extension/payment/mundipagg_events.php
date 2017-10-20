@@ -18,14 +18,41 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $footer = <<<FOOTER
 <script>
 jQuery('#form-order table tbody tr').each(function(){
-  $(this).find('td:last').css({display:'flex'}).prepend(
-    '<div class="btn-group" style="margin-left:10px;">'+
-    '<a href="?route=extension/payment/mundipagg/previewCancelOrder&amp;user_token='+
-        getURLVar('user_token')+'&amp;order_id='+
-        $(this).find('[name="selected[]"]').val()+
-        '" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Cancel"><i class="fa fa-trash"></i></a>'+
-    '</div>'
-  );
+    template = function(status, tr) {
+        return '<li><a href="?route=extension/payment/mundipagg/previewChangeCharge'+
+            '&amp;status='+status+
+            '&amp;user_token='+
+            getURLVar('user_token')+'&amp;order_id='+
+            $(tr).find('[name="selected[]"]').val()+
+            '"><i class="fa fa-'+(status == 'cancel'?'trash':'thumbs-up')+'"></i> '+
+                (status == 'cancel'?'Cancel':'Capture')+
+            '</a></li>';
+    }
+    var status = $(this).find("td:eq('3')").text();
+    var html = '';
+    if (status == 'Pending') {
+        html+=template('cancel', this);
+        html+=template('capture', this);
+    } else if (status == 'Processed' || status == 'Processing') {
+        html+=template('cancel', this)
+    }
+    if (html) {
+        $(this).find('td:last').prepend(
+          '<div class="btn-group" style="display: block; margin-left: 50px;">'+
+            '<a href="?route=extension/payment/mundipagg/previewChangeCharge'+
+                '&amp;user_token='+
+                getURLVar('user_token')+'&amp;order_id='+
+                $(this).find('[name="selected[]"]').val()+
+                '" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="MundiPagg">'+
+                '<img src="../image/payment/mundipagg/mundipagg-mini.png" alt="MundiPagg" style="width: 15px;" />'+
+            '</a>'+
+            '<button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false"><span class="caret"></span></button>'+
+            '<ul class="dropdown-menu dropdown-menu-right" style="margin-top: 39px; margin-right: 91px;">'+
+                html+
+            '</ul>'+
+          '</div>'
+        );
+    }
 });
 </script>
 FOOTER;

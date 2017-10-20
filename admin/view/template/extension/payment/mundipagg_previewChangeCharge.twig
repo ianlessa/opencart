@@ -90,8 +90,10 @@
                             <td class="text-right">{{ charge.paid_amount }}</td>
                             <td class="text-right">{{ charge.amount }}</td>
                             <td class="text-center">
-                              {% if charge.cancel %}
-                                  <a href="{{ charge.cancel }}">Cancel</a>
+                              {% if charge.actions %}
+                                  {% for action in charge.actions %}
+                                      <a href="{{ action.url }}">{{ action.name }}</a>
+                                  {% endfor %}
                               {% endif %}
                             </td>
                           </tr>

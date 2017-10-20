@@ -311,8 +311,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
                 ->withOrderId($this->session->data['order_id'])
-                ->withException($e)
-                ->withBackTraceInfo();
+                ->withException($e);
 
             $this->response->redirect($this->url->link('checkout/failure'));
         }

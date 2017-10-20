@@ -102,27 +102,52 @@ class Order
         return $order;
     }
 
-    public function cancelCharge($chargeId)
+    public function getCharges($order_id)
+    {
+        return $this->openCart->db->query(
+            "SELECT charge_id, \n".
+            "       payment_method,\n".
+            "       status,\n".
+            "       paid_amount,\n".
+            "       amount,\n".
+            "       opencart_id AS order_id,\n".
+            '       CASE WHEN (status != "canceled" OR status = "paid")'."\n".
+            "            THEN 1\n".
+            "            ELSE 0\n".
+            '             END AS can_cancel,'."\n".
+            '       CASE WHEN status != "canceled"'."\n".
+            '             AND status != "paid"'."\n".
+            "            THEN 1\n".
+            "            ELSE 0\n".
+            '             END AS can_capture'."\n".
+            '  FROM `' . DB_PREFIX . "mundipagg_charge`\n".
+            ' WHERE opencart_id = ' . $order_id
+        );
+    }
+
+    public function updateCharge($chargeId, $action)
     {
         try {
-            return $this->getCharges()->cancelCharge($chargeId);
+            $charges = $this->apiClient->getCharges();
+            return call_user_func_array(array($charges, $action.'Charge'), array($chargeId));
         } catch (ErrorException $e) {
             \Mundipagg\Log::create()
                 ->error($e->getMessage(), __METHOD__)
                 ->withLineNumber(__LINE__);
             throw new \Exception($e->getMessage());
         } catch (\Exception $e) {
+            $const = "UNABLE_TO_{$action}_MUNDI_CHARGE";
             \Mundipagg\Log::create()
-                ->error(\Mundipagg\LogMessages::UNABLE_TO_CANCEL_MUNDI_CHARGE, __METHOD__)
+            ->error(\Mundipagg\LogMessages::$const, __METHOD__)
                 ->withLineNumber(__LINE__);
-            throw new \Exception(\Mundipagg\LogMessages::UNABLE_TO_CANCEL_MUNDI_CHARGE);
+                throw new \Exception(\Mundipagg\LogMessages::$const);
         }
     }
 
     public function createOrUpdateCharge(array $opencartOrder, $mundipaggOrder)
     {
         try {
-            if(!is_object($mundipaggOrder)) {
+            if (!is_object($mundipaggOrder)) {
                 throw new \Exception();
             }
             if (property_exists($mundipaggOrder, 'charges')) {
@@ -146,7 +171,7 @@ class Order
                             '"' . $charge->id . '",' .
                             '"' . $charge->payment_method . '", ' .
                             '"' . $mundipaggOrder->status . '",' .
-                            $charge->paid_amount . ',' .
+                            '"'.$charge->paid_amount . '",' .
                             $charge->amount .
                             ');';
                     }
@@ -166,6 +191,35 @@ class Order
                 } else {
                     $query = 'INSERT INTO `' . DB_PREFIX . 'mundipagg_charge` ' .
                         '(opencart_id, charge_id, payment_method, status, amount) ' .
+                        'VALUES (' .
+                        $mundipaggOrder->code . ', ' .
+                        '"' . $mundipaggOrder->id . '",' .
+                        '"' . $mundipaggOrder->paymentMethod . '", ' .
+                        '"' . $mundipaggOrder->status . '",' .
+                        $mundipaggOrder->amount .
+                        ');';
+                }
+                $orderStatus = $this->translateStatusFromMP($mundipaggOrder);
+                $this->openCart->db->query(
+                    "UPDATE `" . DB_PREFIX . "order`
+                        SET order_status_id = " . $orderStatus . "
+                        WHERE order_id = ". $mundipaggOrder->code
+                );
+            } else if (property_exists($mundipaggOrder, 'paidAt')) {
+                $rows = $this->openCart->db->query(
+                    'SELECT 1 FROM `' . DB_PREFIX . 'mundipagg_charge`'.
+                    ' WHERE opencart_id = ' . $mundipaggOrder->code .
+                    '   AND charge_id = "' . $mundipaggOrder->id . '"'
+                );
+                if ($this->openCart->db->countAffected()) {
+                    $query = 'UPDATE `' . DB_PREFIX . 'mundipagg_charge` ' .
+                        'SET status = "' . $mundipaggOrder->status . '",' .
+                        '    paid_amount = "' . $mundipaggOrder->amount . '"' .
+                        ' WHERE opencart_id = ' . $mundipaggOrder->code .
+                        '   AND charge_id = "' . $mundipaggOrder->id . '"';
+                } else {
+                    $query = 'INSERT INTO `' . DB_PREFIX . 'mundipagg_charge` ' .
+                        '(opencart_id, charge_id, payment_method, status, paid_amount) ' .
                         'VALUES (' .
                         $mundipaggOrder->code . ', ' .
                         '"' . $mundipaggOrder->id . '",' .
@@ -343,6 +397,17 @@ class Order
         );
     }
 
+    /**
+     * Get global setting of module and return true if is AuthAndCapture and
+     * false if is AuthOnly
+     *
+     * @return boolean
+     */
+    private function isCapture()
+    {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_operation') != 'Auth';
+    }
+
     private function getCreditCardPaymentDetails($token, $installments)
     {
         return array(
@@ -350,6 +415,7 @@ class Order
                 'payment_method' => 'credit_card',
                 'credit_card' => array(
                     'installments' => $installments,
+                    'capture' => $this->isCapture(),
                     'card_token' => $token
                 )
             )
@@ -396,7 +462,7 @@ class Order
         }
         return null;
     }
-    
+
     public function setCustomerModel($mundipaggCustomerModel)
     {
         $this->mundipaggCustomerModel = $mundipaggCustomerModel;
