@@ -287,8 +287,7 @@ class Order
     {
         $interest = number_format($this->orderInterest/100, 2, '.', ',');
         $priceWithInterest = $price + ($price * $interest * 100);
-        
-        return $priceWithInterest;
+        return number_format($priceWithInterest, 2, '', '');
     }
 
     /**
