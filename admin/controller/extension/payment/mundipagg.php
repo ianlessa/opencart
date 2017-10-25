@@ -80,7 +80,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $order_info = $this->model_sale_order->getOrder($order_id);
         }
 
-        if(isset($this->request->get['status'])) {
+        if (isset($this->request->get['status'])) {
             $status = $this->request->get['status'];
         } else {
             $status = '';
