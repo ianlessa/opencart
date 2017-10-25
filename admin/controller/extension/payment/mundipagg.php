@@ -88,6 +88,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $order = new Order($this);
         $charges = $order->getCharges($order_id);
         foreach ($charges->rows as $key => $row) {
+            $row['amount'] = number_format($row['amount'] / 100, 2);
             $data['charges'][$key] = $row;
             if ($row['can_cancel'] && ($status == 'cancel' || !$status)) {
                 $data['charges'][$key]['actions'][] =
