@@ -85,8 +85,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         } else {
             $status = '';
         }
-        $order = new Order($this);
-        $charges = $order->getCharges($order_id);
+        $order = new Mundipagg\Model\Order($this);
+        $charges = $order->getCharge($order_id);
         foreach ($charges->rows as $key => $row) {
             $row['amount'] = $this->currency->format($row['amount'] / 100, $order_info['currency_code'], $order_info['currency_value']);
             $data['charges'][$key] = $row;
@@ -233,8 +233,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 throw new \Exception('Order not found');
             }
             $status = $this->request->get['status'];
-            $order = new Order($this);
-            $charges = $order->getCharges($order_id);
+            $order = new Mundipagg\Order($this);
+            $charges = $order->getCharge($order_id);
             $charge_id = $this->request->get['charge'];
             foreach ($charges->rows as $charge) {
                 if ($charge['charge_id'] == $charge_id) {
