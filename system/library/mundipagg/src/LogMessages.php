@@ -28,6 +28,8 @@ class LogMessages
     const REQUEST_INFO = 'Request information';
     const CREATE_ORDER_MUNDIPAGG_REQUEST = 'Create a Mundipagg order';
     const CREATE_ORDER_MUNDIPAGG_RESPONSE = 'Response from Mundipagg';
+    const UPDATE_CHARGE_MUNDIPAGG_REQUEST = 'Update a Mundipagg charge';
+    const UPDATE_CHARGE_MUNDIPAGG_RESPONSE = 'Response from Mundipagg';
     const ORDER_CREATED = 'Received an order created';
 
     /** Warning Messages */

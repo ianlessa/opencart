@@ -112,7 +112,18 @@ class Order
     {
         try {
             $charges = $this->apiClient->getCharges();
-            return call_user_func_array(array($charges, $action.'Charge'), array($chargeId));
+
+            \Mundipagg\Log::create()
+                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_REQUEST, __METHOD__)
+                ->withRequest('Action: ' . $action . ',ChargeId: '.$chargeId);
+
+            $response = call_user_func_array(array($charges, $action.'Charge'), array($chargeId));
+
+            \Mundipagg\Log::create()
+                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_RESPONSE, __METHOD__)
+                ->withResponse(json_encode($response, JSON_PRETTY_PRINT));
+
+            return $response;
         } catch (ErrorException $e) {
             \Mundipagg\Log::create()
                 ->error($e->getMessage(), __METHOD__)
@@ -162,7 +173,7 @@ class Order
                 if (property_exists($mundipaggOrder, 'canceledAt')) {
                     $data['canceled_amount'] = $mundipaggOrder->amount;
                 } elseif (property_exists($mundipaggOrder, 'paidAt')) {
-                    $data['paid_amount'] = $mundipaggOrder->amount
+                    $data['paid_amount'] = $mundipaggOrder->amount;
                 }
                 if ($data) {
                     $data+=array(
