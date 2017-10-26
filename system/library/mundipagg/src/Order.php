@@ -178,7 +178,7 @@ class Order
             }
         } catch (Exception $e) {
             \Mundipagg\Log::create()
-            ->error(\Mundipagg\LogMessages::UNABLE_TO_CREATE_MUNDI_CHARGE, __METHOD__)
+            ->error(\Mundipagg\LogMessages::UNABLE_TO_SAVE_MUNDI_CHARGE, __METHOD__)
             ->withLineNumber(__LINE__);
         }
     }
