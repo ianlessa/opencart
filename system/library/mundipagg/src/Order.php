@@ -161,10 +161,10 @@ class Order
                 $data = array();
                 if (property_exists($mundipaggOrder, 'canceledAt')) {
                     $data['canceled_amount'] = $mundipaggOrder->amount;
-                } elseif(property_exists($mundipaggOrder, 'paidAt')) {
+                } elseif (property_exists($mundipaggOrder, 'paidAt')) {
                     $data['paid_amount'] = $mundipaggOrder->amount
                 }
-                if($data) {
+                if ($data) {
                     $data+=array(
                         'opencart_id'     => $mundipaggOrder->code,
                         'charge_id'       => $mundipaggOrder->id,
@@ -172,8 +172,8 @@ class Order
                         'status'          => $mundipaggOrder->status,
                     );
                     $ModelOrder->saveCharge($data);
-                    $orderStatus = $this->translateStatusFromMP($mundipaggOrder);
-                    $ModelOrder->updateOrderStatus($mundipaggOrder->code, $orderStatus);
+                    $orderStatusId = $this->translateStatusFromMP($mundipaggOrder);
+                    $ModelOrder->updateOrderStatus($mundipaggOrder->code, $orderStatusId);
                 }
             }
         } catch (Exception $e) {
