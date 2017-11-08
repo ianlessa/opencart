@@ -141,7 +141,6 @@ class ModelExtensionPaymentMundipaggCreditCard extends Model
                 ->withOrderId($openCartOrderId)
                 ->withMundiOrderId($mundiOrderId)
                 ->withLineNumber(__LINE__)
-                ->withBackTraceInfo()
                 ->withQuery($insertOrder);
         }
     }
