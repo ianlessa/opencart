@@ -28,7 +28,7 @@ catalog/language/pt-br/extension/payment/mundipagg.php catalog/language/pt-br/ex
 
 # model
 catalog/model/extension/payment/* catalog/model/extension/payment/
-
+catalog/model/extension/total/* catalog/model/extension/total/
 
 # view
 catalog/view/theme/default/template/extension/payment/mundipagg.twig catalog/view/theme/default/template/extension/payment/mundipagg.twig
