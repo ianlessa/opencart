@@ -80,7 +80,7 @@ class Order
         $createAddressRequest = $this->createAddressRequest($orderData);
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
-        $payments = $this->preparePayments($paymentMethod, $cardToken);
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $orderData['total']);
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -223,22 +223,6 @@ class Order
             $metadata
         );
     }
-    
-    /**
-     * This function was created only because the current sdk has no support for
-     * global amount. The initial value for orderInterest is 0, the neutral
-     * element for multiplication, thus, apply this function to every item
-     * without set a value other than zero to interest has no effect to
-     * orders without interest.
-     * @param double $price item price
-     * @return integer item price plus interest in cents
-     */
-    private function getPriceWithInterest($price)
-    {
-        $interest = number_format($this->orderInterest/100, 2, '.', ',');
-        $priceWithInterest = $price + ($price * $interest * 100);
-        return number_format($priceWithInterest, 2, '', '');
-    }
 
     /**
      * Prepare items to API's format
@@ -250,7 +234,7 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => $this->getPriceWithInterest($product['price']),
+                'amount'      => $product['price'],
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
@@ -311,10 +295,11 @@ class Order
     /**
      * @param string $paymentType
      * @param string $cardToken
+     * @param float $orderAmount
      * @throws \Exception Unsupported payment type
      * @return array
      */
-    private function preparePayments($paymentType, $cardToken)
+    private function preparePayments($paymentType, $cardToken, $orderAmount)
     {
         switch ($paymentType) {
             case 'boleto':
@@ -322,7 +307,8 @@ class Order
             case 'creditCard':
                 return $this->getCreditCardPaymentDetails(
                     $cardToken,
-                    $this->orderInstallments
+                    $this->orderInstallments,
+                    $orderAmount
                 );
             default:
                 /** TODO: log it */
@@ -357,11 +343,13 @@ class Order
         return $this->openCart->config->get('payment_mundipagg_credit_card_operation') != 'Auth';
     }
 
-    private function getCreditCardPaymentDetails($token, $installments)
+    private function getCreditCardPaymentDetails($token, $installments, $amount)
     {
+        $amountInCents = $this->setInterestToAmount($amount, $this->orderInterest) * 100;
         return array(
             array(
                 'payment_method' => 'credit_card',
+                'amount' => $amountInCents,
                 'credit_card' => array(
                     'installments' => $installments,
                     'capture' => $this->isCapture(),
@@ -474,5 +462,10 @@ class Order
         }
 
         return $status;
+    }
+
+    private function setInterestToAmount($amount, $interest)
+    {
+        return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 }

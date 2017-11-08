@@ -248,6 +248,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         
         $order->setInterest($interest);
         $order->setInstallments($installments);
+
+        $this->setInterestToOrder($orderData, $interest);
         
         return $order->create($orderData, $this->cart, 'creditCard', $cardToken);
     }
@@ -328,5 +330,15 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->getOrder()->updateOrderStatus($orderStatus);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    /**
+     * Update order data in database
+     * @param array $orderData
+     * @param float $interest
+     */
+    private function setInterestToOrder($orderData, $interest)
+    {
+
     }
 }
