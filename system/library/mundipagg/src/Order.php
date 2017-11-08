@@ -80,7 +80,13 @@ class Order
         $createAddressRequest = $this->createAddressRequest($orderData);
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
-        $payments = $this->preparePayments($paymentMethod, $cardToken, $orderData['total']);
+        $totalOrderAmount = $orderData['total'];
+        if ($orderData['amountWithInterest']) {
+            $totalOrderAmount = $orderData['amountWithInterest'];
+        }
+
+
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -345,7 +351,7 @@ class Order
 
     private function getCreditCardPaymentDetails($token, $installments, $amount)
     {
-        $amountInCents = $this->setInterestToAmount($amount, $this->orderInterest) * 100;
+        $amountInCents = $amount * 100;
         return array(
             array(
                 'payment_method' => 'credit_card',
