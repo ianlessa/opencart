@@ -14,7 +14,8 @@ class LogMessages
     const API_REQUEST_FAIL = 'Mundipagg api request failed';
     const UNABLE_TO_CREATE_ORDER = 'Unable to create Order in Mundipagg';
     const UNABLE_TO_CREATE_MUNDI_ORDER = 'Unable to create order in mundipagg_order';
-    const UNABLE_TO_CREATE_MUNDI_CHARGE = 'Unable to create charge in mundipagg_charge';
+    const UNABLE_TO_SAVE_MUNDI_CHARGE = 'Unable to save charge in table mundipagg_charge';
+    const UNABLE_TO_CANCEL_MUNDI_CHARGE = 'Unable to cancel charge';
     const UNKNOWN_WEBHOOK_TYPE = 'Unknown webhook type received';
 
     /** Debug Messages */
@@ -27,6 +28,8 @@ class LogMessages
     const REQUEST_INFO = 'Request information';
     const CREATE_ORDER_MUNDIPAGG_REQUEST = 'Create a Mundipagg order';
     const CREATE_ORDER_MUNDIPAGG_RESPONSE = 'Response from Mundipagg';
+    const UPDATE_CHARGE_MUNDIPAGG_REQUEST = 'Update a Mundipagg charge';
+    const UPDATE_CHARGE_MUNDIPAGG_RESPONSE = 'Response from Mundipagg';
     const ORDER_CREATED = 'Received an order created';
 
     /** Warning Messages */

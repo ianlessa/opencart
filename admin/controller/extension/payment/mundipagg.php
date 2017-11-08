@@ -5,6 +5,8 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\CreditCardSettings;
 use Mundipagg\Controller\BoletoSettings;
+use MundiAPILib\MundiAPIClient;
+use Mundipagg\Order;
 
 /**
  * ControllerExtensionPaymentMundipagg
@@ -22,7 +24,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @var array
      */
     private $data = array();
-    
+
     /**
      * Load basic data and call postRequest or getRequest methods accordingly
      *
@@ -69,6 +71,196 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->model_extension_payment_mundipagg->uninstall();
     }
 
+    public function previewChangeCharge()
+    {
+        $this->load->model('sale/order');
+
+        if (isset($this->request->get['order_id'])) {
+            $order_id = $this->request->get['order_id'];
+            $order_info = $this->model_sale_order->getOrder($order_id);
+        }
+
+        if (isset($this->request->get['status'])) {
+            $status = $this->request->get['status'];
+        } else {
+            $status = '';
+        }
+        $order = new Mundipagg\Model\Order($this);
+        $charges = $order->getCharge($order_id);
+        foreach ($charges->rows as $key => $row) {
+            $row['amount'] = $this->currency->format($row['amount'] / 100, $order_info['currency_code'], $order_info['currency_value']);
+            $data['charges'][$key] = $row;
+            if ($row['can_cancel'] && ($status == 'cancel' || !$status)) {
+                $data['charges'][$key]['actions'][] =
+                    array(
+                        'name' => 'Cancel',
+                        'url'  => $this->url->link(
+                            'extension/payment/mundipagg/updateCharge',
+                            'user_token=' . $this->session->data['user_token'].
+                                      '&order_id='.$order_id.
+                                      '&charge=' . $row['charge_id'].
+                                      '&status=cancel',
+                            true
+                        )
+                    );
+            }
+            if ($row['can_capture'] && ($status == 'capture' || !$status)) {
+                $data['charges'][$key]['actions'][] =
+                array(
+                    'name' => 'Capture',
+                    'url'  => $this->url->link(
+                        'extension/payment/mundipagg/updateCharge',
+                        'user_token=' . $this->session->data['user_token'].
+                                  '&order_id='.$order_id.
+                                  '&charge=' . $row['charge_id'].
+                                  '&status=capture',
+                        true
+                    )
+                );
+            }
+        }
+
+        $data['cancel'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'] . '&route=sale/order', true);
+
+        $data['text_order'] = sprintf('Order (#%s)', $order_id);
+        $data['column_product'] = 'Product';
+        $data['column_model'] = 'Model';
+        $data['column_quantity'] = 'Quantity';
+        $data['column_price'] = 'Unit Price';
+        $data['column_total'] = 'Total';
+        $data['products'] = array();
+
+        $products = $this->model_sale_order->getOrderProducts($this->request->get['order_id']);
+
+        foreach ($products as $product) {
+            $option_data = array();
+
+            $options = $this->model_sale_order->getOrderOptions($this->request->get['order_id'], $product['order_product_id']);
+
+            foreach ($options as $option) {
+                if ($option['type'] != 'file') {
+                    $option_data[] = array(
+                        'name'  => $option['name'],
+                        'value' => $option['value'],
+                        'type'  => $option['type']
+                    );
+                } else {
+                    $upload_info = $this->model_tool_upload->getUploadByCode($option['value']);
+
+                    if ($upload_info) {
+                        $option_data[] = array(
+                            'name'  => $option['name'],
+                            'value' => $upload_info['name'],
+                            'type'  => $option['type'],
+                            'href'  => $this->url->link('tool/upload/download', 'user_token=' . $this->session->data['user_token'] . '&code=' . $upload_info['code'], true)
+                        );
+                    }
+                }
+            }
+
+            $data['products'][] = array(
+                'order_product_id' => $product['order_product_id'],
+                'product_id'       => $product['product_id'],
+                'name'             => $product['name'],
+                'model'            => $product['model'],
+                'option'           => $option_data,
+                'quantity'         => $product['quantity'],
+                'price'            => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+                'total'            => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
+                'href'             => $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $product['product_id'], true)
+            );
+        }
+
+        $data['vouchers'] = array();
+
+        $vouchers = $this->model_sale_order->getOrderVouchers($this->request->get['order_id']);
+
+        foreach ($vouchers as $voucher) {
+            $data['vouchers'][] = array(
+                'description' => $voucher['description'],
+                'amount'      => $this->currency->format($voucher['amount'], $order_info['currency_code'], $order_info['currency_value']),
+                'href'        => $this->url->link('sale/voucher/edit', 'user_token=' . $this->session->data['user_token'] . '&voucher_id=' . $voucher['voucher_id'], true)
+            );
+        }
+
+        $data['totals'] = array();
+
+        $totals = $this->model_sale_order->getOrderTotals($this->request->get['order_id']);
+
+        foreach ($totals as $total) {
+            $data['totals'][] = array(
+                'title' => $total['title'],
+                'text'  => $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value'])
+            );
+        }
+
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['footer'] = $this->load->controller('common/footer');
+        $word = $status;
+        $data['heading_title'] = "Preview $word charge";
+
+        $this->response->setOutput($this->load->view(
+            'extension/payment/mundipagg_previewChangeCharge',
+            $data
+        ));
+    }
+
+    private function validateUpdateCharge()
+    {
+        if (!isset($this->request->get['order_id'])) {
+            return false;
+        }
+        if (!isset($this->request->get['order_id'])) {
+            return false;
+        }
+        if (!in_array($this->request->get['status'], array('cancel', 'capture'))) {
+            return false;
+        }
+        return true;
+    }
+
+    public function updateCharge()
+    {
+        try {
+            if (!$this->validateUpdateCharge()) {
+                throw new \Exception('Invalid data');
+            }
+            $this->load->model('sale/order');
+            $order_id = $this->request->get['order_id'];
+            $order_info = $this->model_sale_order->getOrder($order_id);
+            if (!$order_info) {
+                throw new \Exception('Order not found');
+            }
+            $status = $this->request->get['status'];
+            $order = new Mundipagg\Order($this);
+            $charges = $order->getCharge($order_id);
+            $charge_id = $this->request->get['charge'];
+            foreach ($charges->rows as $charge) {
+                if ($charge['charge_id'] == $charge_id) {
+                    if ($charge['can_cancel']) {
+                        $charge = call_user_func_array(array($order, 'updateCharge'), array($charge_id, $status));
+                        $word = $status == 'cancel' ? 'canceled' : 'captured';
+                        $this->session->data['success'] = "Charge $word with sucess!";
+                    } else {
+                        $word = $status == 'cancel' ? 'cancel' : 'capture';
+                        $this->session->data['error_warning'] = "Charge don't available to $word";
+                    }
+                    break;
+                }
+            }
+            if (empty($this->session->data['success']) && !$this->session->data['error_warning']) {
+                $word = $status == 'cancel' ? 'cancel' : 'capture';
+                $this->session->data['error_warning'] = "Fail on $word charge";
+            } else {
+                $order->createOrUpdateCharge($order_info, $charge);
+            }
+        } catch (\Exception $e) {
+            $this->session->data['error_warning'] = $e->getMessage();
+        }
+        $this->redirect('sale/order');
+    }
+
     /**
      * Deal with post requests, in other words, settings being changed
      *
@@ -84,14 +276,19 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->saveSettings($this->request->post);
 
         $this->session->data['success'] = $this->language->get('misc')['success'];
-        http_response_code(302);
+        $this->redirect('marketplace/extension', '&type=payment');
+    }
+
+    private function redirect($route, $queryString = '', $responseCode = 302)
+    {
+        http_response_code($responseCode);
         $this->response->addHeader('Location: '.
             str_replace(
                 ['&amp;', "\n", "\r"],
                 ['&', '', ''],
                 $this->url->link(
-                    'marketplace/extension',
-                    'user_token=' . $this->session->data['user_token'] . '&type=payment',
+                    $route,
+                    'user_token=' . $this->session->data['user_token'] . $queryString,
                     true
                 )
             ));
@@ -320,7 +517,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         return !$this->error;
     }
-    
+
     /**
      * Return an array with custom fields
      */
