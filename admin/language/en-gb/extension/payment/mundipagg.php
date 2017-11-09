@@ -1,7 +1,7 @@
 <?php
 // Heading
 $_['heading_title'] = 'MundiPagg';
-$_['text_mundipagg'] = '<a href="https://github.com/mundipagg/opencart" target="_blank"><img src="../image/payment/mundipagg/mundipagg.png" alt="MundiPagg" title="MundiPagg" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_mundipagg'] = '<a href="https://github.com/mundipagg/opencart" target="_blank"><img src="/admin/view/image/mundipagg/mundipagg.png" alt="MundiPagg" title="MundiPagg" style="border: 1px solid #EEEEEE;" /></a>';
 // -----------------------------------------------------------------
 
 // General tab settings
