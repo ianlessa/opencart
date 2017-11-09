@@ -44,7 +44,7 @@ jQuery('#form-order table tbody tr').each(function(){
                 getURLVar('user_token')+'&amp;order_id='+
                 $(this).find('[name="selected[]"]').val()+
                 '" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="MundiPagg">'+
-                '<img src="../image/payment/mundipagg/mundipagg-mini.png" alt="MundiPagg" style="width: 15px;" />'+
+                '<img src="/admin/view/image/mundipagg/mundipagg-mini.png" alt="MundiPagg" style="width: 15px;" />'+
             '</a>'+
             '<button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false"><span class="caret"></span></button>'+
             '<ul class="dropdown-menu dropdown-menu-right" style="margin-top: 39px; margin-right: 91px;">'+
