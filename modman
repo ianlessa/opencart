@@ -1,5 +1,6 @@
 ## Admin
 admin/controller/extension/payment/mundipagg_events.php admin/controller/extension/payment/mundipagg_events.php
+admin/view/image/mundipagg/ admin/view/image/mundipagg/
 
 # model
 admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
@@ -43,5 +44,5 @@ catalog/view/theme/default/stylesheet/mundipagg/* catalog/view/theme/default/sty
 system/library/mundipagg/* system/library/mundipagg/
 
 # image
-image/payment/mundipagg/* image/payment/mundipagg/
+image/catalog/mundipagg/ image/catalog/mundipagg/
 
