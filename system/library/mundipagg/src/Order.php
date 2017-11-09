@@ -3,9 +3,6 @@ namespace Mundipagg;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\CreditCard;
-use Mundipagg\Log;
-use Mundipagg\LogMessages;
 use MundiAPILib\MundiAPIClient;
 use MundiAPILib\Models\CreateShippingRequest;
 use MundiAPILib\Models\CreateOrderRequest;
@@ -13,44 +10,57 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
-use Unirest\Exception;
+use MundiAPILib\Exceptions\ErrorException;
 
+/**
+ * @method \MundiAPILib\Controllers\OrdersController getOrders()
+ * @method \MundiAPILib\Controllers\CustomersController getCustomers()
+ */
 class Order
 {
     private $orderInterest;
     private $orderInstallments;
-    
+
+    /**
+     * @var MundiAPIClient
+     */
     private $apiClient;
-    private $orderInstance;
-    private $customerInstance;
     private $openCart;
     private $settings;
+    private $modelOrder;
 
     private $mundipaggCustomerModel;
 
     /**
-     * @param Object $mundipaggCustomerModel
      * @param array $openCart
      */
-    public function __construct($mundipaggCustomerModel, $openCart)
+    public function __construct($openCart)
     {
         $this->settings = new Settings($openCart);
 
         $this->openCart = $openCart;
         $this->orderInterest = 0;
-        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
 
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
-
-        $this->orderInstance = $this->apiClient->getOrders();
-        $this->customerInstance = $this->apiClient->getCustomers();
     }
-    
+
+    public function __call(string $name, array $arguments)
+    {
+        if (method_exists($this->apiClient, $name)) {
+            return call_user_func_array([$this->apiClient, $name], $arguments);
+        }
+    }
+
+    public function getCharge($opencart_id)
+    {
+        return $this->modelOrder()->getCharge($opencart_id);
+    }
+
     public function setInterest($interest)
     {
         $this->orderInterest = $interest;
     }
-    
+
     public function setInstallments($installments)
     {
         $this->orderInstallments = $installments;
@@ -70,7 +80,13 @@ class Order
         $createAddressRequest = $this->createAddressRequest($orderData);
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
-        $payments = $this->preparePayments($paymentMethod, $cardToken);
+        $totalOrderAmount = $orderData['total'];
+        if ($orderData['amountWithInterest']) {
+            $totalOrderAmount = $orderData['amountWithInterest'];
+        }
+
+
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -82,27 +98,105 @@ class Order
             $this->settings->getModuleMetaData()
         );
 
+        \Mundipagg\Log::create()
+            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
+
+        $order = $this->getOrders()->createOrder($CreateOrderRequest);
+        $this->createOrUpdateCharge($orderData, $order);
+
+        \Mundipagg\Log::create()
+            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
+
+        return $order;
+    }
+
+    public function updateCharge($chargeId, $action)
+    {
         try {
-            Log::create()
-                ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
+            $charges = $this->apiClient->getCharges();
 
-            $order = $this->orderInstance->createOrder($CreateOrderRequest);
+            \Mundipagg\Log::create()
+                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_REQUEST, __METHOD__)
+                ->withRequest('Action: ' . $action . ',ChargeId: '.$chargeId);
 
-            Log::create()
-                ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
+            $response = call_user_func_array(array($charges, $action.'Charge'), array($chargeId));
 
-            return $order;
-        } catch (\Exception $exc) {
-            Log::create()
-                ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
-                ->withOrderId($orderData['order_id'])
-                ->withException($exc->getMessage())
-                ->withRequest(json_encode($CreateOrderRequest))
+            \Mundipagg\Log::create()
+                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_RESPONSE, __METHOD__)
+                ->withResponse(json_encode($response, JSON_PRETTY_PRINT));
+
+            return $response;
+        } catch (ErrorException $e) {
+            \Mundipagg\Log::create()
+                ->error($e->getMessage(), __METHOD__)
                 ->withLineNumber(__LINE__);
+            throw new \Exception($e->getMessage());
+        } catch (\Exception $e) {
+            $const = "UNABLE_TO_{$action}_MUNDI_CHARGE";
+            \Mundipagg\Log::create()
+            ->error(\Mundipagg\LogMessages::$const, __METHOD__)
+                ->withLineNumber(__LINE__);
+                throw new \Exception(\Mundipagg\LogMessages::$const);
+        }
+    }
+
+    public function modelOrder()
+    {
+        if (!$this->modelOrder) {
+            $this->modelOrder = new Model\Order($this->openCart);
+        }
+        return $this->modelOrder;
+    }
+
+    public function createOrUpdateCharge(array $opencartOrder, $mundipaggOrder)
+    {
+        try {
+            if (!is_object($mundipaggOrder)) {
+                throw new \Exception();
+            }
+            $ModelOrder = $this->modelOrder();
+
+            if (property_exists($mundipaggOrder, 'charges')) {
+                foreach ($mundipaggOrder->charges as $charge) {
+                    $data = array(
+                        'opencart_id'     => $mundipaggOrder->code,
+                        'charge_id'       => $charge->id,
+                        'payment_method'  => $charge->payment_method,
+                        'status'          => $charge->status,
+                        'amount'          => $charge->amount,
+                    );
+                    if (isset($charge->paid_amount)) {
+                        $data['paid_amount'] = $charge->paid_amount;
+                    }
+                    $ModelOrder->saveCharge($data);
+                }
+            } else {
+                $data = array();
+                if (property_exists($mundipaggOrder, 'canceledAt')) {
+                    $data['canceled_amount'] = $mundipaggOrder->amount;
+                } elseif (property_exists($mundipaggOrder, 'paidAt')) {
+                    $data['paid_amount'] = $mundipaggOrder->amount;
+                }
+                if ($data) {
+                    $data+=array(
+                        'opencart_id'     => $mundipaggOrder->code,
+                        'charge_id'       => $mundipaggOrder->id,
+                        'payment_method'  => $mundipaggOrder->paymentMethod,
+                        'status'          => $mundipaggOrder->status,
+                    );
+                    $ModelOrder->saveCharge($data);
+                    $orderStatusId = $this->translateStatusFromMP($mundipaggOrder);
+                    $ModelOrder->updateOrderStatus($mundipaggOrder->code, $orderStatusId);
+                }
+            }
+        } catch (Exception $e) {
+            \Mundipagg\Log::create()
+            ->error(\Mundipagg\LogMessages::UNABLE_TO_SAVE_MUNDI_CHARGE, __METHOD__)
+            ->withLineNumber(__LINE__);
         }
     }
 
@@ -135,23 +229,6 @@ class Order
             $metadata
         );
     }
-    
-    /**
-     * This function was created only because the current sdk has no support for
-     * global amount. The initial value for orderInterest is 0, the neutral
-     * element for multiplication, thus, apply this function to every item
-     * without set a value other than zero to interest has no effect to
-     * orders without interest.
-     * @param double $price item price
-     * @return integer item price plus interest in cents
-     */
-    private function getPriceWithInterest($price)
-    {
-        $interest = number_format($this->orderInterest/100, 2, '.', ',');
-        $priceWithInterest = $price + ($price * $interest * 100);
-        
-        return $priceWithInterest;
-    }
 
     /**
      * Prepare items to API's format
@@ -163,7 +240,7 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => $this->getPriceWithInterest($product['price']),
+                'amount'      => $product['price'],
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
@@ -224,10 +301,11 @@ class Order
     /**
      * @param string $paymentType
      * @param string $cardToken
+     * @param float $orderAmount
      * @throws \Exception Unsupported payment type
      * @return array
      */
-    private function preparePayments($paymentType, $cardToken)
+    private function preparePayments($paymentType, $cardToken, $orderAmount)
     {
         switch ($paymentType) {
             case 'boleto':
@@ -235,7 +313,8 @@ class Order
             case 'creditCard':
                 return $this->getCreditCardPaymentDetails(
                     $cardToken,
-                    $this->orderInstallments
+                    $this->orderInstallments,
+                    $orderAmount
                 );
             default:
                 /** TODO: log it */
@@ -259,13 +338,27 @@ class Order
         );
     }
 
-    private function getCreditCardPaymentDetails($token, $installments)
+    /**
+     * Get global setting of module and return true if is AuthAndCapture and
+     * false if is AuthOnly
+     *
+     * @return boolean
+     */
+    private function isCapture()
     {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_operation') != 'Auth';
+    }
+
+    private function getCreditCardPaymentDetails($token, $installments, $amount)
+    {
+        $amountInCents = $amount * 100;
         return array(
             array(
                 'payment_method' => 'credit_card',
+                'amount' => $amountInCents,
                 'credit_card' => array(
                     'installments' => $installments,
+                    'capture' => $this->isCapture(),
                     'card_token' => $token
                 )
             )
@@ -311,5 +404,74 @@ class Order
             return $customer['mundipagg_customer_id'];
         }
         return null;
+    }
+
+    public function setCustomerModel($mundipaggCustomerModel)
+    {
+        $this->mundipaggCustomerModel = $mundipaggCustomerModel;
+    }
+
+    /**
+     * Update opencart order status with the mundipagg translated status
+     *
+     * @param mixed $orderStatus
+     * @return void
+     */
+    public function updateOrderStatus($orderStatus)
+    {
+        $this->openCart->load->model('checkout/order');
+        $this->openCart->load->model('extension/payment/mundipagg_order_processing');
+
+        $this->openCart->model_checkout_order->addOrderHistory(
+            $this->openCart->session->data['order_id'],
+            $orderStatus,
+            '',
+            true
+        );
+
+        $this->openCart->load->model('extension/payment/mundipagg_order_processing');
+
+        $this->openCart->model_extension_payment_mundipagg_order_processing->setOrderStatus(
+            $this->openCart->session->data['order_id'],
+            $orderStatus
+        );
+    }
+
+    /**
+     * It maps the statuses from mundipagg and those used in opencart
+     *
+     * @param mixed $response
+     * @return string
+     */
+    public function translateStatusFromMP($response)
+    {
+        $statusFromMP = strtolower($response->status);
+
+        $this->openCart->load->model('localisation/order_status');
+        $statusModel = $this->openCart->model_localisation_order_status;
+
+        switch ($statusFromMP) {
+            case 'paid':
+                $status = $statusModel->getOrderStatus(2)['order_status_id'];
+                break;
+            case 'pending':
+                $status = $statusModel->getOrderStatus(1)['order_status_id'];
+                break;
+            case 'canceled':
+                $status = $statusModel->getOrderStatus(7)['order_status_id'];
+                break;
+            case 'failed':
+                $status = $statusModel->getOrderStatus(10)['order_status_id'];
+                break;
+            default:
+                $status = false;
+        }
+
+        return $status;
+    }
+
+    private function setInterestToAmount($amount, $interest)
+    {
+        return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 }

@@ -86,7 +86,7 @@ class Log
      */
     public function withBackTraceInfo()
     {
-        $this->logIt("- Stack Traceback\n" . debug_backtrace() . "\n");
+        $this->logIt("- Stack Traceback\n" . print_r(debug_backtrace(), true) . "\n");
         return $this;
     }
 

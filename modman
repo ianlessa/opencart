@@ -1,10 +1,11 @@
 ## Admin
+admin/controller/extension/payment/mundipagg_events.php admin/controller/extension/payment/mundipagg_events.php
 
 # model
 admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
 
 # view
-admin/view/template/extension/payment/mundipagg.twig admin/view/template/extension/payment/mundipagg.twig
+admin/view/template/extension/payment/* admin/view/template/extension/payment/
 
 # controller
 admin/controller/extension/payment/mundipagg.php admin/controller/extension/payment/mundipagg.php
@@ -26,16 +27,11 @@ catalog/language/en-gb/extension/payment/mundipagg.php catalog/language/en-gb/ex
 catalog/language/pt-br/extension/payment/mundipagg.php catalog/language/pt-br/extension/payment/mundipagg.php
 
 # model
-catalog/model/extension/payment/mundipagg.php catalog/model/extension/payment/mundipagg.php
-catalog/model/extension/payment/mundipagg_credit_card.php catalog/model/extension/payment/mundipagg_credit_card.php
-catalog/model/extension/payment/mundipagg_customer.php catalog/model/extension/payment/mundipagg_customer.php
-catalog/model/extension/payment/mundipagg_events.php catalog/model/extension/payment/mundipagg_events.php
-catalog/model/extension/payment/mundipagg_order_processing.php catalog/model/extension/payment/mundipagg_order_processing.php
-catalog/model/extension/payment/mundipagg_webhook_logging.php catalog/model/extension/payment/mundipagg_webhook_logging.php
+catalog/model/extension/payment/* catalog/model/extension/payment/
+catalog/model/extension/total/* catalog/model/extension/total/
 
 # view
 catalog/view/theme/default/template/extension/payment/mundipagg.twig catalog/view/theme/default/template/extension/payment/mundipagg.twig
-catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig catalog/view/theme/default/template/extension/payment/mundipagg_credit_card.twig
 
 # scripts
 catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/

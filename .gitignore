@@ -7,6 +7,9 @@ storage
 ### Composer ###
 composer.phar
 vendor
+composer.lock
+system/library/mundipagg/composer.lock
+
 
 ### Vim ###
 # swap

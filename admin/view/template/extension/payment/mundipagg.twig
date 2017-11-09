@@ -24,9 +24,9 @@
 	        <div class="panel-body">
 	            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-mundipagg" class="form-horizontal">
 		            <ul class="nav nav-tabs">
-		                <li class="active"><a href="#tab-general" data-toggle="tab">{{ general.label }}</a></li>
-		                <li><a href="#tab-credit-card" data-toggle="tab">{{ credit_card.label }}</a></li>
-		                <li><a href="#tab-boleto" data-toggle="tab">{{ boleto.label }}</a></li>
+		                <li class="active"><a href="#tab-general" data-toggle="tab" title="{{ general.label }}">{{ general.label }}</a></li>
+		                <li><a href="#tab-credit-card" data-toggle="tab" title="{{ credit_card.label }}">{{ credit_card.label }}</a></li>
+		                <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
 		            </ul>
 
 		            <div class="tab-content">
@@ -64,13 +64,41 @@
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-number">{{ general.mapping_number }}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="payment_mundipagg_mapping_number" placeholder="{{ general.mapping_number }}" id="mapping-number" class="form-control" value="{{ settings.general_mapping_number }}"/>
+                                    <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control" title="{{ general.mapping_number }}"/>
+                                        <option value=''> -- {{ general.select }} -- </option>
+                                        {% for custom_field in general_custom_fields %}
+                                            {% if custom_field.custom_field_id == settings.general_mapping_number %}
+                                                {% set selected = "selected='selected'" %}
+                                            {% else %}
+                                                {% if setting.general_mapping_number == '' and custom_field.name == general.mapping_number %}
+                                                    {% set selected = "selected='selected'" %}
+                                                {% else %}
+                                                    {% set selected = '' %}
+                                                {% endif %}
+                                            {% endif %}
+                                            <option {{ selected }} value="{{ custom_field.custom_field_id }}">{{ custom_field.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group required">
                                 <label class="col-sm-2 control-label" for="mapping-complement">{{ general.mapping_complement }}</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="payment_mundipagg_mapping_complement" placeholder="{{ general.mapping_complement }}" id="mapping-complement" class="form-control" value="{{ settings.general_mapping_complement }}"/>
+                                    <select name="payment_mundipagg_mapping_complement" id="mapping-complement" class="form-control" title="{{ general.mapping_complement }}"/>
+                                        <option value=''> -- {{ general.select }} -- </option>
+                                        {% for custom_field in general_custom_fields %}
+                                            {% if custom_field.custom_field_id == settings.general_mapping_complement %}
+                                                {% set selected = "selected='selected'" %}
+                                            {% else %}
+                                                {% if setting.general_mapping_complement == '' and custom_field.name == general.complement %}
+                                                    {% set selected = "selected='selected'" %}
+                                                {% else %}
+                                                    {% set selected = '' %}
+                                                {% endif %}
+                                            {% endif %}
+                                            <option {{ selected }} value="{{ custom_field.custom_field_id }}">{{ custom_field.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
 
@@ -111,13 +139,13 @@
 			                    <div class="col-sm-10">
                                 {% if not settings.general_test_mode %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.general_test_mode == '0' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.general_test_mode == '1' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="1" checked="checked">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-enabled" value="0" >{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_test_mode" id="test-mode-disabled" value="0" >{{ misc.no }}</label>
                                 {% endif %}
 			                    </div>
 			                </div>
@@ -210,7 +238,7 @@
 			                </div>
 
 			                <div class="form-group required">
-			                    <label class="col-sm-2 control-label" for="payment-title">
+			                    <label class="col-sm-2 control-label" for="credit-card-title">
                                     {{ credit_card.configure_payment_title }}
                                 </label>
 			                    <div class="col-sm-10">
@@ -218,7 +246,7 @@
                                         type="text"
                                         name="payment_mundipagg_credit_card_payment_title"
                                         placeholder="{{ credit_card.configure_payment_title }}"
-                                        id="payment-title"
+                                        id="credit-card-title"
                                         class="form-control"
                                         value="{{ settings.credit_card_payment_title }}"/>
 			                    </div>
@@ -327,12 +355,13 @@
                             </div>
                             {% for cC in creditCard %}
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label" for="credit-card-enabled">
-                                        {{ cC['brand_name'] }}                                
+                                    <label class="col-sm-2 control-label" for="CC-{{ cC['brand_name'] }}">
+                                        <img src="{{ cC['image'] }}" width="30" title="{{ cC['brand_name'] }}" alt="{{ cC['brand_name'] }}"/>
                                     </label>
                                     <div class="col-sm-2">
                                         <select
                                             class="form-control"
+                                            id="CC-{{ cC['brand_name'] }}"
                                             name="creditCard[{{ cC['brand_name'] }}][is_enabled]">
                                             {% if cC['is_enabled'] %}
                                                 <option value="1" selected="selected">Enabled</option>
@@ -343,40 +372,56 @@
                                             {% endif %}
                                         </select>
                                     </div>
+                                    
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            max="12"
+                                            step="1"
                                             name="creditCard[{{ cC['brand_name'] }}][installments_up_to]"
+                                            id="installments_up_to_{{ cC['brand_name'] }}"
                                             placeholder="Installments up to"
                                             class="form-control"
-                                            value="{{ cC['installments_up_to'] }}">
+                                            value="{{ cC['installments_up_to'] }}"
+                                            onchange="checkInstallments('{{ cC['brand_name'] }}')"
+                                            >
                                     </div>
+                                    
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            max="12"
+                                            step="1"
                                             name="creditCard[{{ cC['brand_name'] }}][installments_without_interest]"
+                                            id="installments_without_interest_{{ cC['brand_name'] }}"
                                             placeholder="Installments without interest"
-                                            id="invoice-name"
                                             class="form-control"
-                                            value="{{ cC['installments_without_interest'] }}">
+                                            value="{{ cC['installments_without_interest'] }}"
+                                        >
                                     </div>
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
                                             name="creditCard[{{ cC['brand_name'] }}][interest]"
                                             placeholder="Interest"
-                                            id="invoice-name"
                                             class="form-control"
                                             value="{{ cC['interest'] }}">
                                     </div>
                                     <div class="col-sm-2">
                                         <input
-                                            type="text"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
                                             name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
                                             placeholder="Incremental interest"
                                             id="incremental-interest"
                                             class="form-control"
-                                            value="{{ cC['incremental_interest'] }}">
+                                            value="{{ cC['incremental_interest'] }}"
+                                        >
                                     </div>
                                 </div>
                             {% endfor %}
@@ -388,17 +433,17 @@
                             </div>
 
                             <div class="form-group">
-			                    <label class="col-sm-2 control-label" for="boleto-card-enabled">{{ misc.enabled }}</label>
+			                    <label class="col-sm-2 control-label" for="boleto-enabled">{{ misc.enabled }}</label>
 			                    <div class="col-sm-10">
                                 {% if not settings.boleto_enabled %}
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-card-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-card-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="1">{{ misc.yes }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.boleto_enabled == '0' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="1">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-disabled" value="0" checked="checked">{{ misc.no }}</label>
                                 {% elseif settings.boleto_enabled == '1' %}
                                     <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="1" checked="checked">{{ misc.yes }}</label>
-                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-enabled" value="0">{{ misc.no }}</label>
+                                    <label class="radio-inline"><input type="radio" name="payment_mundipagg_boleto_status" id="boleto-disabled" value="0">{{ misc.no }}</label>
                                 {% endif %}
 			                    </div>
 			                </div>

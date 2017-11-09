@@ -101,8 +101,7 @@ class RoboFile extends \Robo\Tasks
     private function filesToRunTests()
     {
         $this->taskFileSystemStack()
-            ->copy('vendor/beyondit/opencart-test-suite/src/upload/system/config/test-config.php', getenv('OC_ROOT') . 'system/config/test-config.php')
-            ->copy('vendor/beyondit/opencart-test-suite/src/upload/system/library/session/test.php', getenv('OC_ROOT') . 'system/library/session/test.php')
+            ->copy('system/config/test-config.php', getenv('OC_ROOT') . 'system/config/test-config.php')
             ->copy('vendor/beyondit/opencart-test-suite/src/upload/admin/controller/startup/test_startup.php', getenv('OC_ROOT') . 'admin/controller/startup/test_startup.php')
             ->run();
     }
@@ -192,6 +191,6 @@ class RoboFile extends \Robo\Tasks
             $this->taskExec('vendor/bin/modman init ' . getenv('OC_ROOT'))->run();
             $this->taskExec('ln -sf "$(pwd)" .modman/')->run();
         }
-        $this->taskExec('vendor/bin/modman deploy-all --no-clean > /dev/null')->run();
+        $this->taskExec('vendor/bin/modman repair > /dev/null')->run();
     }
 }

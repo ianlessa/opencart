@@ -19,28 +19,6 @@ use MundiAPILib\Models\UpdateCustomerRequest;
 class ControllerExtensionPaymentMundipaggEvents extends Controller
 {
     /**
-     * Method called when a new user is registered on the store
-     *
-     * Whenever a new user is created, it is also created in Mundipagg.
-     *
-     * @return void
-     */
-    public function onCustomerAdd()
-    {
-        $customer = $this->customer;
-        $oCCustomerId = $customer->getId();
-     
-        $mPCustomerId = $this->createMPCustomer(
-            array(
-                'name' => $customer->getFirstName() . ' ' . $customer->getLastName(),
-                'email' => $customer->getEmail(),
-            ),
-            $oCCustomerId,
-            $this->getStoreCredentials()
-        );
-    }
-
-    /**
      * Edit MundiPagg customer information
      *
      * @return void

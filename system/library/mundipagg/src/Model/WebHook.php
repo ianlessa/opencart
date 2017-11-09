@@ -8,7 +8,6 @@
 
 namespace Mundipagg\Model;
 
-use Mundipagg\Controller\Order;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
 
@@ -19,13 +18,6 @@ class WebHook
     public function __construct($openCart)
     {
         $this->openCart = $openCart;
-    }
-
-    public function getOrderFromWebHook($mundiPaggOrderId)
-    {
-        $openCartOrderId = $this->getOpenCartOrderId($mundiPaggOrderId);
-
-        return new Order($openCartOrderId);
     }
 
     public function getOpenCartOrderId($mundiPaggOrderId)

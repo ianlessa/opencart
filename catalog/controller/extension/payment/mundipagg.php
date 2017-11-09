@@ -36,6 +36,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private $mundipaggModel;
 
     /**
+     * @var object $mundipaggOrderUpdateModel
+     */
+    private $mundipaggOrderUpdateModel;
+
+    /**
      * It loads opencart/mundipagg models
      *
      * From time to time it is necessary to load a ton of models. This method just
@@ -49,12 +54,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->model('setting/setting');
         $this->load->model('extension/payment/mundipagg_customer');
         $this->load->model('extension/payment/mundipagg_credit_card');
+        $this->load->model('extension/payment/mundipagg_orderdata_update');
         $this->load->language('extension/payment/mundipagg');
 
         $this->data['misc'] = $this->language->get('misc');
         $this->setting = $this->model_setting_setting;
         $this->mundipaggModel = $this->model_mundipagg;
         $this->creditCardModel = $this->model_extension_payment_mundipagg_credit_card;
+        $this->mundipaggOrderUpdateModel = $this->model_extension_payment_mundipagg_orderdata_update;
     }
 
     /**
@@ -124,12 +131,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
-                    $order = new Order(
-                        $this->model_extension_payment_mundipagg_customer,
-                        $this
-                    );
-
-                    $response = $order->create($orderData, $this->cart, 'boleto');
+                    $response = $this->getOrder()->create($orderData, $this->cart, 'boleto');
 
                     if (isset($response->charges[0]->last_transaction->success)) {
                         $this->success($response);
@@ -249,83 +251,26 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load();
         
-        $order = new Order($this->model_extension_payment_mundipagg_customer, $this);
+        $order = $this->getOrder();
         
         $order->setInterest($interest);
         $order->setInstallments($installments);
+
+        $orderData['amountWithInterest'] =
+            $this->setInterestToOrder($orderData, $interest);
         
         return $order->create($orderData, $this->cart, 'creditCard', $cardToken);
     }
-
-    /**
-     * It maps the statuses from mundipagg and those used in opencart
-     *
-     * @param mixed $response
-     * @return string
-     */
-    private function translateStatusFromMP($response)
+    
+    private function getOrder()
     {
-        $statusFromMP = strtolower($response->status);
-        
-        $this->load->model('localisation/order_status');
-        $statusModel = $this->model_localisation_order_status;
-        
-        switch ($statusFromMP) {
-            case 'paid':
-                $status = $statusModel->getOrderStatus(2)['order_status_id'];
-                break;
-            case 'pending':
-                $status = $statusModel->getOrderStatus(1)['order_status_id'];
-                break;
-           
-            case 'canceled':
-                $status = $statusModel->getOrderStatus(7)['order_status_id'];
-                break;
-            
-            case 'failed':
-                $status = $statusModel->getOrderStatus(10)['order_status_id'];
-                break;
-            
-            default:
-                $status = false;
+        if (!is_object($this->Order)) {
+            $this->Order = new Order($this);
+            $this->Order->setCustomerModel(
+                $this->model_extension_payment_mundipagg_customer
+            );
         }
-        
-        return $status;
-    }
-
-    /**
-     * Update opencart order status with the mundipagg translated status
-     *
-     * @param mixed $response
-     * @return void
-     */
-    private function updateOrderStatus($response)
-    {
-        $orderStatus = $this->translateStatusFromMP($response);
-        
-        if (!$orderStatus) {
-            Log::create()
-                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
-                ->withResponseStatus($response->status)
-                ->withOrderId($this->session->data['order_id']);
-
-            $this->response->redirect($this->url->link('checkout/failure'));
-        }
-        
-        $this->load->model('checkout/order');
-        $this->load->model('extension/payment/mundipagg_order_processing');
-        
-        $this->model_checkout_order->addOrderHistory(
-            $this->session->data['order_id'],
-            $orderStatus,
-            '',
-            true
-        );
-
-        $this->model_extension_payment_mundipagg_order_processing->setOrderStatus(
-            $this->session->data['order_id'],
-            $orderStatus
-        );
+        return $this->Order;
     }
 
     /**
@@ -376,14 +321,61 @@ class ControllerExtensionPaymentMundipagg extends Controller
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
                 ->withOrderId($this->session->data['order_id'])
-                ->withException($e)
-                ->withBackTraceInfo();
+                ->withException($e);
 
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $this->updateOrderStatus($response);
+        $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+        if (!$orderStatus) {
+            Log::create()
+            ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+            ->withResponseStatus($response->status)
+            ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+        $this->getOrder()->updateOrderStatus($orderStatus);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    /**
+     * Update order data in database
+     * @param array $orderData
+     * @param float $interest
+     * @return mixed (bool, float)
+     */
+    private function setInterestToOrder($orderData, $interest)
+    {
+        if ($interest > 0) {
+            $amountWithInterest = $this->setInterestToAmount($orderData['total'], $interest);
+            $interestAmount = $amountWithInterest - $orderData['total'];
+
+            $this->mundipaggOrderUpdateModel->
+                updateOrderAmountInOrder(
+                    $orderData['order_id'], $amountWithInterest
+                );
+
+            $this->mundipaggOrderUpdateModel->
+            updateOrderAmountInOrderTotals(
+                $orderData['order_id'], $amountWithInterest
+            );
+
+            $this->mundipaggOrderUpdateModel->
+            insertInterestInOrderTotals(
+                $orderData['order_id'], $interestAmount
+            );
+
+            return $amountWithInterest;
+
+        }
+        return false;
+
+    }
+
+    private function setInterestToAmount($amount, $interest)
+    {
+        return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 }
