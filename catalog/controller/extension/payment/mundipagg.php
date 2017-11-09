@@ -36,6 +36,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private $mundipaggModel;
 
     /**
+     * @var object $mundipaggOrderUpdateModel
+     */
+    private $mundipaggOrderUpdateModel;
+
+    /**
      * It loads opencart/mundipagg models
      *
      * From time to time it is necessary to load a ton of models. This method just
@@ -49,12 +54,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->model('setting/setting');
         $this->load->model('extension/payment/mundipagg_customer');
         $this->load->model('extension/payment/mundipagg_credit_card');
+        $this->load->model('extension/payment/mundipagg_orderdata_update');
         $this->load->language('extension/payment/mundipagg');
 
         $this->data['misc'] = $this->language->get('misc');
         $this->setting = $this->model_setting_setting;
         $this->mundipaggModel = $this->model_mundipagg;
         $this->creditCardModel = $this->model_extension_payment_mundipagg_credit_card;
+        $this->mundipaggOrderUpdateModel = $this->model_extension_payment_mundipagg_orderdata_update;
     }
 
     /**
@@ -248,6 +255,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
         
         $order->setInterest($interest);
         $order->setInstallments($installments);
+
+        $orderData['amountWithInterest'] =
+            $this->setInterestToOrder($orderData, $interest);
         
         return $order->create($orderData, $this->cart, 'creditCard', $cardToken);
     }
@@ -328,5 +338,44 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->getOrder()->updateOrderStatus($orderStatus);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    /**
+     * Update order data in database
+     * @param array $orderData
+     * @param float $interest
+     * @return mixed (bool, float)
+     */
+    private function setInterestToOrder($orderData, $interest)
+    {
+        if ($interest > 0) {
+            $amountWithInterest = $this->setInterestToAmount($orderData['total'], $interest);
+            $interestAmount = $amountWithInterest - $orderData['total'];
+
+            $this->mundipaggOrderUpdateModel->
+                updateOrderAmountInOrder(
+                    $orderData['order_id'], $amountWithInterest
+                );
+
+            $this->mundipaggOrderUpdateModel->
+            updateOrderAmountInOrderTotals(
+                $orderData['order_id'], $amountWithInterest
+            );
+
+            $this->mundipaggOrderUpdateModel->
+            insertInterestInOrderTotals(
+                $orderData['order_id'], $interestAmount
+            );
+
+            return $amountWithInterest;
+
+        }
+        return false;
+
+    }
+
+    private function setInterestToAmount($amount, $interest)
+    {
+        return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 }
