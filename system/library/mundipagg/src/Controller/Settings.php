@@ -76,7 +76,7 @@ class Settings
 
     public function getModuleVersion()
     {
-        return 'V.0.1';
+        return 'V1.0';
     }
 
     public function getModuleMetaData()
