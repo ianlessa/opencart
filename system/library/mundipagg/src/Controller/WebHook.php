@@ -147,6 +147,7 @@ class WebHook
     private function setOrderStatus($mPOrderId, $status, $message, $amount = null)
     {
         $this->load();
+
         $orderId = $this->model->getOpenCartOrderIdFromMundiPaggOrderId($mPOrderId);
         $comment = $this->getOrderComment($message, $amount);
 
@@ -251,7 +252,7 @@ class WebHook
 
     private function isValidWebHook()
     {
-        // mark one is not returning the authorization header yet
+        // MundiPagg api is not returning the authorization header yet
         return true;
     }
 }

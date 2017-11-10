@@ -12,11 +12,13 @@ use Mundipagg\Controller\WebHook;
  * @package Mundipagg
  *
  */
-class ControllerMundipaggWebhook extends Controller
+class ControllerExtensionPaymentMundipaggWebhook extends Controller
 {
     public function index()
     {
-        $webhook = new WebHook($this, file_get_contents('php://input'));
-        $webhook->updateStatus();
+        if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+            $webhook = new WebHook($this, file_get_contents('php://input'));
+            $webhook->updateStatus();
+        }
     }
 }
