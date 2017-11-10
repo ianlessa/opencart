@@ -18,10 +18,10 @@ admin/language/pt-br/payment/mundipagg.php admin/language/pt-br/extension/paymen
 ##Catalog
 
 # controller
-catalog/controller/extension/payment/mundipagg_events.php catalog/controller/extension/payment/mundipagg_events.php
-catalog/controller/extension/payment/mundipagg_credit_card.php catalog/controller/extension/payment/mundipagg_credit_card.php
 catalog/controller/extension/payment/mundipagg.php catalog/controller/extension/payment/mundipagg.php
-catalog/controller/mundipagg/* catalog/controller/mundipagg/
+catalog/controller/extension/payment/mundipagg_credit_card.php catalog/controller/extension/payment/mundipagg_credit_card.php
+catalog/controller/extension/payment/mundipagg_events.php catalog/controller/extension/payment/mundipagg_events.php
+catalog/controller/extension/payment/mundipagg_webhook.php catalog/controller/extension/payment/mundipagg_webhook.php
 
 # language
 catalog/language/en-gb/extension/payment/mundipagg.php catalog/language/en-gb/extension/payment/mundipagg.php
