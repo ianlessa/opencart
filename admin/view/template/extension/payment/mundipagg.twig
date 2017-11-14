@@ -26,8 +26,9 @@
 		            <ul class="nav nav-tabs">
 		                <li class="active"><a href="#tab-general" data-toggle="tab" title="{{ general.label }}">{{ general.label }}</a></li>
 		                <li><a href="#tab-credit-card" data-toggle="tab" title="{{ credit_card.label }}">{{ credit_card.label }}</a></li>
-		                <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
-		            </ul>
+                        <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
+                        <li><a href="#tab-antifraud" data-toggle="tab" title="{{ antifraud.label }}">{{ antifraud.label }}</a></li>
+                    </ul>
 
 		            <div class="tab-content">
 		                <div class="tab-pane active" id="tab-general">
@@ -67,7 +68,7 @@
                                     <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control" title="{{ general.mapping_number }}"/>
                                         <option value=''> -- {{ general.select }} -- </option>
                                         {% for custom_field in general_custom_fields %}
-                                            {% if custom_field.custom_field_id == settings.general_mapping_number %}
+                                            {% if custom_field.name == settings.general_mapping_number %}
                                                 {% set selected = "selected='selected'" %}
                                             {% else %}
                                                 {% if setting.general_mapping_number == '' and custom_field.name == general.mapping_number %}
@@ -480,7 +481,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="boleto-due-date"><span data-toggle="tooltip" title="tooltip">{{ boleto.configure_due_at }}</span></label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="payment_mundipagg_boleto_due_date" placeholder="{{ boleto.configure_due_at }}" id="boleto-name" class="form-control" value="{{ settings.boleto_name }}"/>
+                                    <input type="number" min="1" step="1" name="payment_mundipagg_boleto_due_date" placeholder="{{ boleto.configure_due_at }}" id="boleto-name" class="form-control" value="{{ settings.boleto_name }}"/>
                                 </div>
                             </div>
 
@@ -492,6 +493,35 @@
                             </div>
 
 		                </div> <!-- tab-boleto -->
+
+                        <div class="tab-pane" id="tab-antifraud">
+                            <div class="panel-heading">
+                                <h3>{{ antifraud.configure_section }}</h3>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="antifraud-enabled">{{ misc.enabled }}</label>
+                                <div class="col-sm-10">
+                                    {% if not settings.antifraud_status %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-enabled" value="1">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    {% elseif settings.antifraud_status == '0' %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-enabled" value="1">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    {% elseif settings.antifraud_status == '1' %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_antifraud_status" id="antifraud-disabled" value="0">{{ misc.no }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="antifraud-minval"><span data-toggle="tooltip" title="Select minimum order value to send to anti fraud.">{{ antifraud.configure_minval }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="number" min="0" step="0.01" name="payment_mundipagg_antifraud_minval" placeholder="{{ antifraud.configure_minval }}" id="antifraud-minval" class="form-control" value="{{ settings.antifraud_minval }}"/>
+                                </div>
+                            </div>
+                        </div> <!-- tab-antifraud -->
 		            </div>
 	            </form>
 	        </div>
