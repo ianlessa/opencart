@@ -1,16 +1,10 @@
 {
     "require": {
-        "apimatic/mundiapi": "v0.2.x-dev"
+        "mundipagg/mundiapi": "dev-master"
     },
     "autoload": {
         "psr-4": {
             "Mundipagg\\": "src/"
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:mundipagg/MundiAPI-PHP.git"
-        }
-    ]
+    }
 }
