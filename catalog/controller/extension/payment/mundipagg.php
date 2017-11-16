@@ -354,24 +354,25 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrder(
-                    $orderData['order_id'], $amountWithInterest
+                    $orderData['order_id'],
+                    $amountWithInterest
                 );
 
             $this->mundipaggOrderUpdateModel->
             updateOrderAmountInOrderTotals(
-                $orderData['order_id'], $amountWithInterest
+                $orderData['order_id'],
+                $amountWithInterest
             );
 
             $this->mundipaggOrderUpdateModel->
             insertInterestInOrderTotals(
-                $orderData['order_id'], $interestAmount
+                $orderData['order_id'],
+                $interestAmount
             );
 
             return $amountWithInterest;
-
         }
         return false;
-
     }
 
     private function setInterestToAmount($amount, $interest)
