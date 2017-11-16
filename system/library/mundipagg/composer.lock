@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0d4f951b0ae01a6d7c47cee03f001e3",
+    "content-hash": "5318020a5b9d41fcae869b38b9f01b72",
     "packages": [
         {
             "name": "apimatic/jsonmapper",
@@ -52,61 +52,6 @@
             "time": "2017-04-06T13:14:24+00:00"
         },
         {
-            "name": "apimatic/mundiapi",
-            "version": "v0.2.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mundipagg/MundiAPI-PHP.git",
-                "reference": "66e383c84bdb7a59854dd699000e68481aac7bf1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mundipagg/MundiAPI-PHP/zipball/66e383c84bdb7a59854dd699000e68481aac7bf1",
-                "reference": "66e383c84bdb7a59854dd699000e68481aac7bf1",
-                "shasum": ""
-            },
-            "require": {
-                "apimatic/jsonmapper": "~1.2.0",
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "mashape/unirest-php": "~3.0.1",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "squizlabs/php_codesniffer": "^2.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "MundiAPILib\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "APIMatic SDK Generator",
-                    "email": "support@apimatic.io",
-                    "homepage": "https://apimatic.io",
-                    "role": "API Tool"
-                }
-            ],
-            "description": "Mundipagg API",
-            "homepage": "https://apimatic.io",
-            "keywords": [
-                "API",
-                "MundiAPI",
-                "SDK"
-            ],
-            "support": {
-                "source": "https://github.com/mundipagg/MundiAPI-PHP/tree/v0.2",
-                "issues": "https://github.com/mundipagg/MundiAPI-PHP/issues"
-            },
-            "time": "2017-06-27 21:56:17"
-        },
-        {
             "name": "mashape/unirest-php",
             "version": "v3.0.4",
             "source": {
@@ -151,13 +96,65 @@
                 "rest"
             ],
             "time": "2016-08-11T17:49:21+00:00"
+        },
+        {
+            "name": "mundipagg/mundiapi",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mundipagg/MundiAPI-PHP.git",
+                "reference": "2a1af6b6f6eaf3cd040d27fb802ec36d55a56983"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mundipagg/MundiAPI-PHP/zipball/2a1af6b6f6eaf3cd040d27fb802ec36d55a56983",
+                "reference": "2a1af6b6f6eaf3cd040d27fb802ec36d55a56983",
+                "shasum": ""
+            },
+            "require": {
+                "apimatic/jsonmapper": "~1.2.0",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "mashape/unirest-php": "~3.0.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MundiAPILib\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "APIMatic SDK Generator",
+                    "email": "support@apimatic.io",
+                    "homepage": "https://apimatic.io",
+                    "role": "API Tool"
+                }
+            ],
+            "description": "Mundipagg API",
+            "homepage": "https://apimatic.io",
+            "keywords": [
+                "MundiAPI",
+                "api",
+                "sdk"
+            ],
+            "time": "2017-11-09T19:23:59+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "apimatic/mundiapi": 20
+        "mundipagg/mundiapi": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

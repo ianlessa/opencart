@@ -57,7 +57,4 @@ class ModelExtensionPaymentMundipaggOrderdataUpdate extends Model
 
         $this->updateOrderAmount($orderId, $sql);
     }
-
-
-
 }

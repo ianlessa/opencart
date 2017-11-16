@@ -1,5 +1,6 @@
 <?php
 
-class ModelExtensionTotalMundipaggInterest extends Model {
+class ModelExtensionTotalMundipaggInterest extends Model
+{
 
 }
