@@ -133,7 +133,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 if ($orderData['payment_code'] === 'mundipagg') {
                     $response = $this->getOrder()->create($orderData, $this->cart, 'boleto');
 
-                    if (isset($response->charges[0]->last_transaction->success)) {
+                    if (isset($response->charges[0]->lastTransaction->success)) {
                         $this->success($response);
                     }
 
@@ -155,12 +155,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $orderComment =
                 $this->language->get('boleto')['pending_order_status'] . " <br>" .
                 "<a href='" .
-                $response->charges[0]->last_transaction->url.
+                $response->charges[0]->lastTransaction->url.
                 "' target='_blank'>" .
                 $this->language->get('boleto')['click_to_generate'] .
                 "</a>";
         $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 1, $orderComment, true);
-        $this->response->redirect($response->charges[0]->last_transaction->url);
+        $this->response->redirect($response->charges[0]->lastTransaction->url);
     }
 
     /**

@@ -81,12 +81,14 @@ class Order
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
         $totalOrderAmount = $orderData['total'];
-        if ($orderData['amountWithInterest']) {
+        if (isset($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
-
+        //Antifraud
+        $isAntiFraudEnabled = false;
 
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
+
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -95,8 +97,15 @@ class Order
             $orderData['order_id'],
             $this->getMundipaggCustomerId($orderData['customer_id']),
             $createShippingRequest,
-            $this->settings->getModuleMetaData()
+            $this->settings->getModuleMetaData(),
+            $isAntiFraudEnabled
         );
+
+
+
+        if (!$CreateOrderRequest->items) {
+            return false;
+        }
 
         \Mundipagg\Log::create()
             ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
@@ -201,15 +210,31 @@ class Order
     }
 
     /**
-     * @param array                 $items
+     * @param array $items
      * @param CreateCustomerRequest $customer
-     * @param array                 $payments
-     * @param string                $code
-     * @param string                $customerId
+     * @param array $payments
+     * @param string $code
+     * @param string $customerId
      * @param CreateShippingRequest $shipping
-     * @param array                 $metadata
+     * @param array $metadata
+     * @param bool $isAntiFraudEnabled
      * @return CreateOrderRequest
      */
+
+
+
+    /*$this->items            = func_get_arg(0);
+     $this->customer         = func_get_arg(1);
+     $this->payments         = func_get_arg(2);
+     $this->code             = func_get_arg(3);
+     $this->customerId       = func_get_arg(4);
+     $this->shipping         = func_get_arg(5);
+     $this->metadata         = func_get_arg(6);
+     $this->antifraudEnabled = func_get_arg(7);
+     $this->ip               = func_get_arg(8);
+     $this->sessionId        = func_get_arg(9);
+     $this->location         = func_get_arg(10);
+     $this->device           = func_get_arg(11);*/
     private function createOrderRequest(
         $items,
         $customer,
@@ -217,7 +242,12 @@ class Order
         $code,
         $customerId,
         $shipping,
-        $metadata = null
+        $metadata = null,
+        $isAntiFraudEnabled = false,
+        $ip = null,
+        $sessionId = null,
+        $location = null,
+        $device = null
     ) {
         return new CreateOrderRequest(
             $items,
@@ -226,9 +256,16 @@ class Order
             $code,
             $customerId,
             $shipping,
-            $metadata
+            $metadata,
+            $isAntiFraudEnabled,
+            $ip,
+            $sessionId,
+            $location,
+            $device
         );
     }
+
+
 
     /**
      * Prepare items to API's format
