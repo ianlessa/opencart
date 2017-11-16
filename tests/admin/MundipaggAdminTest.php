@@ -6,7 +6,7 @@ class MundipaggAdminTest extends OpenCartTest
 {
     public function testLoggedInCall()
     {
-        $this->login('admin', 'admin');
+        $this->login(getenv('OC_ADMIN_USER'), getenv('OC_ADMIN_PASS'));
         $response = $this->dispatchAction(
             'extension/extension/payment/install',
             'GET',
