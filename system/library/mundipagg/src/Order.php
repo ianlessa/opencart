@@ -81,11 +81,10 @@ class Order
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
         $totalOrderAmount = $orderData['total'];
-        if (isset($orderData['amountWithInterest'])) {
+        if (!empty($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
-        //Antifraud
-        $isAntiFraudEnabled = false;
+        $isAntiFraudEnabled = $this->isAntiFraudEnabled($paymentMethod, $totalOrderAmount);
 
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
 
@@ -510,5 +509,20 @@ class Order
     private function setInterestToAmount($amount, $interest)
     {
         return round($amount + ($amount * ($interest * 0.01)), 2);
+    }
+
+    private function isAntiFraudEnabled($paymentMethod, $orderAmount)
+    {
+        $minOrderAmount = $this->settings->getAntiFraudMinVal();
+        $antiFraudStatus = $this->settings->isAntiFraudEnabled();
+
+        if ($antiFraudStatus &&
+            $paymentMethod === 'creditCard' &&
+            $orderAmount >= $minOrderAmount
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
