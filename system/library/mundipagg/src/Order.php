@@ -217,8 +217,6 @@ class Order
      * @param bool $isAntiFraudEnabled
      * @return CreateOrderRequest
      */
-
-
     private function createOrderRequest(
         $items,
         $customer,
@@ -248,8 +246,6 @@ class Order
             $device
         );
     }
-
-
 
     /**
      * Prepare items to API's format
