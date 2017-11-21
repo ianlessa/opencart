@@ -81,12 +81,13 @@ class Order
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
         $totalOrderAmount = $orderData['total'];
-        if ($orderData['amountWithInterest']) {
+        if (!empty($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
-
+        $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
 
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
+
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -95,8 +96,13 @@ class Order
             $orderData['order_id'],
             $this->getMundipaggCustomerId($orderData['customer_id']),
             $createShippingRequest,
-            $this->settings->getModuleMetaData()
+            $this->settings->getModuleMetaData(),
+            $isAntiFraudEnabled
         );
+
+        if (!$CreateOrderRequest->items) {
+            return false;
+        }
 
         \Mundipagg\Log::create()
             ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
@@ -201,13 +207,14 @@ class Order
     }
 
     /**
-     * @param array                 $items
+     * @param array $items
      * @param CreateCustomerRequest $customer
-     * @param array                 $payments
-     * @param string                $code
-     * @param string                $customerId
+     * @param array $payments
+     * @param string $code
+     * @param string $customerId
      * @param CreateShippingRequest $shipping
-     * @param array                 $metadata
+     * @param array $metadata
+     * @param bool $isAntiFraudEnabled
      * @return CreateOrderRequest
      */
     private function createOrderRequest(
@@ -217,7 +224,12 @@ class Order
         $code,
         $customerId,
         $shipping,
-        $metadata = null
+        $metadata = null,
+        $isAntiFraudEnabled = false,
+        $ip = null,
+        $sessionId = null,
+        $location = null,
+        $device = null
     ) {
         return new CreateOrderRequest(
             $items,
@@ -226,7 +238,12 @@ class Order
             $code,
             $customerId,
             $shipping,
-            $metadata
+            $metadata,
+            $isAntiFraudEnabled,
+            $ip,
+            $sessionId,
+            $location,
+            $device
         );
     }
 
@@ -473,5 +490,27 @@ class Order
     private function setInterestToAmount($amount, $interest)
     {
         return round($amount + ($amount * ($interest * 0.01)), 2);
+    }
+
+    /**
+     * Check if anti fraud is enabled and order
+     * amount is bigger than minimum value.
+     * @param string $paymentMethod
+     * @param float $orderAmount
+     * @return bool
+     */
+    private function shouldSendAntiFraud($paymentMethod, $orderAmount)
+    {
+        $minOrderAmount = $this->settings->getAntiFraudMinVal();
+        $antiFraudStatus = $this->settings->isAntiFraudEnabled();
+
+        if ($antiFraudStatus &&
+            $paymentMethod === 'creditCard' &&
+            $orderAmount >= $minOrderAmount
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

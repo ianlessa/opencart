@@ -393,6 +393,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['general'] = $this->language->get('general');
         $this->data['credit_card'] = $this->language->get('credit_card');
         $this->data['boleto'] = $this->language->get('boleto');
+        $this->data['antifraud'] = $this->language->get('antifraud');
         $this->data['misc'] = $this->language->get('misc');
     }
 
@@ -471,6 +472,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             'general_test_mode'          => $this->config->get('payment_mundipagg_test_mode'),
             'general_log_enabled'        => $this->config->get('payment_mundipagg_log_enabled'),
             'general_payment_title'      => $this->config->get('payment_mundipagg_title'),
+            'antifraud_status'           => $this->config->get('payment_mundipagg_antifraud_status'),
+            'antifraud_minval'      => $this->config->get('payment_mundipagg_antifraud_minval'),
         );
 
         $this->data['settings'] = array_merge(
