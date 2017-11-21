@@ -199,7 +199,7 @@ class ModelExtensionPaymentMundipagg extends Model
         try {
             $json = json_decode(
                 file_get_contents(
-                    'http://embeddables.eastus2.cloudapp.azure.com/payment/bank_info.json'
+                    'https://dashboard.mundipagg.com/emb/bank_info.json'
                 )
             );
             if (isset($brandName)) {
