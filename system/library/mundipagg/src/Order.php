@@ -84,7 +84,7 @@ class Order
         if (!empty($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
-        $isAntiFraudEnabled = $this->isAntiFraudEnabled($paymentMethod, $totalOrderAmount);
+        $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
 
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
 
@@ -99,8 +99,6 @@ class Order
             $this->settings->getModuleMetaData(),
             $isAntiFraudEnabled
         );
-
-
 
         if (!$CreateOrderRequest->items) {
             return false;
@@ -221,19 +219,6 @@ class Order
      */
 
 
-
-    /*$this->items            = func_get_arg(0);
-     $this->customer         = func_get_arg(1);
-     $this->payments         = func_get_arg(2);
-     $this->code             = func_get_arg(3);
-     $this->customerId       = func_get_arg(4);
-     $this->shipping         = func_get_arg(5);
-     $this->metadata         = func_get_arg(6);
-     $this->antifraudEnabled = func_get_arg(7);
-     $this->ip               = func_get_arg(8);
-     $this->sessionId        = func_get_arg(9);
-     $this->location         = func_get_arg(10);
-     $this->device           = func_get_arg(11);*/
     private function createOrderRequest(
         $items,
         $customer,
@@ -511,7 +496,14 @@ class Order
         return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 
-    private function isAntiFraudEnabled($paymentMethod, $orderAmount)
+    /**
+     * Check if anti fraud is enabled and order
+     * amount is bigger than minimum value.
+     * @param string $paymentMethod
+     * @param float $orderAmount
+     * @return bool
+     */
+    private function shouldSendAntiFraud($paymentMethod, $orderAmount)
     {
         $minOrderAmount = $this->settings->getAntiFraudMinVal();
         $antiFraudStatus = $this->settings->isAntiFraudEnabled();
