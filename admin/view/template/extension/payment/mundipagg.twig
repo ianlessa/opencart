@@ -67,7 +67,6 @@
                                 <div class="col-sm-10">
                                     <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control" title="{{ general.mapping_number }}"/>
                                         <option value=''> -- {{ general.select }} -- </option>
-
                                         {% for custom_field in general_custom_fields %}
                                             {% if custom_field.custom_field_id == settings.general_mapping_number %}
                                                 {% set selected = "selected='selected'" %}
