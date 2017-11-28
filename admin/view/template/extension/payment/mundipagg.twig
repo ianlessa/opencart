@@ -67,11 +67,12 @@
                                 <div class="col-sm-10">
                                     <select name="payment_mundipagg_mapping_number" id="mapping-number" class="form-control" title="{{ general.mapping_number }}"/>
                                         <option value=''> -- {{ general.select }} -- </option>
+
                                         {% for custom_field in general_custom_fields %}
-                                            {% if custom_field.name == settings.general_mapping_number %}
+                                            {% if custom_field.custom_field_id == settings.general_mapping_number %}
                                                 {% set selected = "selected='selected'" %}
                                             {% else %}
-                                                {% if setting.general_mapping_number == '' and custom_field.name == general.mapping_number %}
+                                                {% if settings.general_mapping_number == '' and custom_field.name == general.mapping_number %}
                                                     {% set selected = "selected='selected'" %}
                                                 {% else %}
                                                     {% set selected = '' %}
@@ -91,7 +92,7 @@
                                             {% if custom_field.custom_field_id == settings.general_mapping_complement %}
                                                 {% set selected = "selected='selected'" %}
                                             {% else %}
-                                                {% if setting.general_mapping_complement == '' and custom_field.name == general.complement %}
+                                                {% if settings.general_mapping_complement == '' and custom_field.name == general.mapping_complement %}
                                                     {% set selected = "selected='selected'" %}
                                                 {% else %}
                                                     {% set selected = '' %}
