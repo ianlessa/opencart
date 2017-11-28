@@ -7,18 +7,21 @@ class MundipaggCatalogTest extends OpenCartTest
     public function setUp()
     {
         parent::setUp();
-        $this->loadModel('account/customer');
-        $customer_id = $this->model_account_customer->addCustomer([
-            'customer_group_id' => 1,
-            'firstname' => 'firstname',
-            'lastname' => 'lastname',
-            'email' => 'customer@mundipagg.com',
-            'telephone' => 'telephone',
-            'password' => 'password',
-            'custom_field' => array(),
-        ]);
-        $this->model_account_customer->editPassword('customer@mundipagg.com', 'password');
-        $this->login('customer@mundipagg.com', 'password');
+        if (!$loaded) {
+            static $loaded = true;
+            $this->loadModel('account/customer');
+            $customer_id = $this->model_account_customer->addCustomer([
+                'customer_group_id' => 1,
+                'firstname' => 'firstname',
+                'lastname' => 'lastname',
+                'email' => 'customer@mundipagg.com',
+                'telephone' => 'telephone',
+                'password' => 'password',
+                'custom_field' => array(),
+            ]);
+            $this->model_account_customer->editPassword('customer@mundipagg.com', 'password');
+            $this->login('customer@mundipagg.com', 'password');
+        }
     }
 
     public function testAddCart()
