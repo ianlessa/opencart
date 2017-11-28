@@ -91,7 +91,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function createChargeTable()
     {
         $this->db->query(
-            'CREATE TABLE IF NOT EXISTS `opencart`.`' . DB_PREFIX . 'mundipagg_charge` (
+            'CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . 'mundipagg_charge` (
                 `opencart_id` INT NOT NULL,
                 `charge_id` VARCHAR(30) NOT NULL,
                 `payment_method` VARCHAR(45) NOT NULL,
