@@ -257,7 +257,7 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => $product['price'],
+                'amount'      => number_format($product['price'], 2, '', ''),
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
