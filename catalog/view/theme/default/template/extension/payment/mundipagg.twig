@@ -140,8 +140,8 @@
 <script>
     function generate()
     {
-        window.open("/index.php?route=extension/payment/mundipagg/generateBoleto");
-        window.location = "/index.php?route=checkout/success";
+        window.open("{{ generate_boleto_url }}");
+        window.location = "{{ checkout_success_url }}";
     }
     
     var MundiPagg = {};

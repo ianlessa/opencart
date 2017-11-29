@@ -110,6 +110,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         if ($boleto->isEnabled()) {
             $this->data = array_merge($this->data, $boleto->getBoletoPageInfo());
         }
+        $this->data['generate_boleto_url'] =
+            $this->url->link('extension/payment/mundipagg/generateBoleto');
+        $this->data['checkout_success_url'] =
+            $this->url->link('checkout/success');
 
         return $this->load->view('extension/payment/mundipagg', $this->data);
     }
