@@ -257,7 +257,7 @@ class Order
         $items = array();
         foreach ($products as $product) {
             $items[] = array(
-                'amount'      => $product['price'],
+                'amount'      => number_format($product['price'], 2, '', ''),
                 'description' => $product['name'],
                 'quantity'    => $product['quantity']
             );
@@ -368,7 +368,7 @@ class Order
 
     private function getCreditCardPaymentDetails($token, $installments, $amount)
     {
-        $amountInCents = $amount * 100;
+        $amountInCents = number_format($amount, 2, '', '');
         return array(
             array(
                 'payment_method' => 'credit_card',
@@ -392,7 +392,7 @@ class Order
     {
         if ($cart->hasShipping()) {
             $shipping = array(
-                'amountInCents' => $cart->session->data['shipping_method']['cost'] * 100,
+                'amountInCents' => number_format($cart->session->data['shipping_method']['cost'], 2, '', ''),
                 'description' => $cart->session->data['shipping_method']['title'],
                 'recipientName' => $orderData['shipping_firstname'] . " " . $orderData['shipping_lastname'],
                 'recipientPhone' => $orderData['telephone'],
