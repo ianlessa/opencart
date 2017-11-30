@@ -28,6 +28,7 @@
 		                <li><a href="#tab-credit-card" data-toggle="tab" title="{{ credit_card.label }}">{{ credit_card.label }}</a></li>
                         <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
                         <li><a href="#tab-antifraud" data-toggle="tab" title="{{ antifraud.label }}">{{ antifraud.label }}</a></li>
+                        <li><a href="#tab-logs" data-toggle="tab" title="{{ logs.label }}">{{ logs.label }}</a></li>
                     </ul>
 
 		            <div class="tab-content">
@@ -522,6 +523,20 @@
                                 </div>
                             </div>
                         </div> <!-- tab-antifraud -->
+
+                        <div class="tab-pane" id="tab-logs">
+                            <div class="panel-heading">
+                                <h3>{{ logs.title }}</h3>
+                            </div>
+
+                            <div class="form-group">
+                                {% for file in logs_files %}
+                                    <div class="col-sm-10">
+                                        <a href="{{ file.url_download }}" target="_blank">{{ file.name }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div> <!-- tab-logs -->
 		            </div>
 	            </form>
 	        </div>

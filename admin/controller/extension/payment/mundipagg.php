@@ -485,6 +485,38 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->model('extension/payment/mundipagg');
         $this->data['creditCard'] = $this->model_extension_payment_mundipagg->getCreditCardInformation();
         $this->data['boletoInfo'] = $this->model_extension_payment_mundipagg->getBoletoInformation();
+        $this->data['logs_files'] = $this->getLogFiles();
+    }
+
+    private function getLogFiles()
+    {
+        $files = array();
+        foreach (glob(DIR_LOGS . '*.log') as $filename) {
+            $shortName = str_replace(array(DIR_LOGS, '.log'), '', $filename);
+            $files[] = array(
+                'name' => $shortName,
+                'size' => filesize($filename),
+                'url_download' => $this->url->link(
+                    'extension/payment/mundipagg/downloadLog',
+                    'user_token=' . $this->session->data['user_token'].
+                    '&name=' . $shortName,
+                    true
+                )
+            );
+        }
+        return $files;
+    }
+
+    public function downloadLog()
+    {
+        $filename = $this->request->get['name'];
+        $filename = str_replace(array('.', '/'), '', $filename) . '.log';
+        if (is_file(DIR_LOGS.$filename)) {
+            header('Content-Type: application/octet-stream');
+            header('Content-Transfer-Encoding: Binary');
+            header('Content-disposition: attachment; filename="' .$filename.'"');
+            readfile(DIR_LOGS.$filename);
+        }
     }
 
     /**
