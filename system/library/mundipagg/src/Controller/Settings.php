@@ -88,7 +88,7 @@ class Settings
     {
         return array(
             'module_name' => 'Opencart',
-            'module_version' =>  $this->getModuleVersion()
+            'module_version' => $this->getModuleVersion()
         );
     }
 

@@ -68,11 +68,11 @@ class RoboFile extends \Robo\Tasks
         }
 
         $this->taskPack('MundiPagg-V'.$version.'.ocmod.zip')
-            ->addFile('upload/admin',   'admin')
+            ->addFile('upload/admin', 'admin')
             ->addFile('upload/catalog', 'catalog')
-            ->addFile('upload/image',  'image')
-            ->addFile('upload/system',  'system')
-            ->addFile('upload/admin',   'admin')
+            ->addFile('upload/image', 'image')
+            ->addFile('upload/system', 'system')
+            ->addFile('upload/admin', 'admin')
             ->add('install.txt')
             ->add('install.xml')
             ->run();
