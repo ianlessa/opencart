@@ -35,7 +35,6 @@ class RoboFile extends \Robo\Tasks
      */
     private function getCurrentModuleVersion()
     {
-        
         $xml = file_get_contents('install.xml');
         preg_match('/<version>(?P<currentVersion>.*)<\/version>/', $xml, $matches);
         return $matches['currentVersion'];
