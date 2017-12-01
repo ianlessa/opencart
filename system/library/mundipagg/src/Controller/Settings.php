@@ -81,7 +81,7 @@ class Settings
 
     public function getModuleVersion()
     {
-        return 'V1.1.3';
+        return 'V1.2.0';
     }
 
     public function getModuleMetaData()

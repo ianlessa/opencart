@@ -28,6 +28,64 @@ class RoboFile extends \Robo\Tasks
         ];
     }
 
+    /**
+     * Get current module version
+     *
+     * @return string
+     */
+    private function getCurrentModuleVersion()
+    {
+        $xml = file_get_contents('install.xml');
+        preg_match('/<version>(?P<currentVersion>.*)<\/version>/', $xml, $matches);
+        return $matches['currentVersion'];
+    }
+
+    /**
+     * Bump current version
+     *
+     * @param string $version Number of new version
+     */
+    public function opencartBump($version)
+    {
+        $currentVersion = $this->getCurrentModuleVersion();
+
+        $this->taskReplaceInFile('install.xml')
+            ->from('<version>' . $currentVersion . '</version>')
+            ->to('<version>' . $version . '</version>')
+            ->run();
+
+        $this->taskReplaceInFile('system/library/mundipagg/src/Controller/Settings.php')
+            ->from("return 'V$currentVersion';")
+            ->to("return 'V$version';")
+            ->run();
+
+        $this->taskReplaceInFile('system/library/mundipagg/src/LogMessages.php')
+            ->from("Opencart V$currentVersion |")
+            ->to("Opencart V$version |")
+            ->run();
+    }
+
+    public function opencartPack($version = null)
+    {
+        array_map('unlink', glob('MundiPagg-V*.ocmod.zip'));
+
+        if ($version) {
+            $this->opencartBump($version);
+        } else {
+            $version = $this->getCurrentModuleVersion();
+        }
+
+        $this->taskPack('MundiPagg-V'.$version.'.ocmod.zip')
+            ->addFile('upload/admin', 'admin')
+            ->addFile('upload/catalog', 'catalog')
+            ->addFile('upload/image', 'image')
+            ->addFile('upload/system', 'system')
+            ->addFile('upload/admin', 'admin')
+            ->add('install.txt')
+            ->add('install.xml')
+            ->run();
+    }
+
     public function opencartSetup()
     {
         $this->downloadAndExtract();
