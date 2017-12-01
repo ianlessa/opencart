@@ -95,7 +95,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     array(
                         'name' => 'Cancel',
                         'url'  => $this->url->link(
-                            'extension/payment/mundipagg/updateCharge',
+                            'extension/payment/mundipagg/confirmUpdateCharge',
                             'user_token=' . $this->session->data['user_token'].
                                       '&order_id='.$order_id.
                                       '&charge=' . $row['charge_id'].
@@ -109,7 +109,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 array(
                     'name' => 'Capture',
                     'url'  => $this->url->link(
-                        'extension/payment/mundipagg/updateCharge',
+                        'extension/payment/mundipagg/confirmUpdateCharge',
                         'user_token=' . $this->session->data['user_token'].
                                   '&order_id='.$order_id.
                                   '&charge=' . $row['charge_id'].
@@ -220,6 +220,40 @@ class ControllerExtensionPaymentMundipagg extends Controller
         return true;
     }
 
+    public function confirmUpdateCharge()
+    {
+        $this->setLayoutComponents();
+
+        $theme = $this->config->get('config_theme');
+        $themeDirectory = $this->config->get('theme_' . $theme . '_directory');
+        $this->data['themeDirectory'] = '../catalog/view/theme/' . $themeDirectory;
+        $this->data['heading_title'] = 'Confirm value';
+
+        $this->data['cancel']   = 'javascript:history.go(-1);';
+        $chargeId   = $this->request->get['charge'];
+        $orderId = $this->request->get['order_id'];
+        $order = new Mundipagg\Order($this);
+        $charge = $order->getCharge(
+            $orderId,
+            $chargeId
+        );
+        $this->data['charge_amount'] = $charge->row['amount'] / 100;
+        $this->data['form_action'] =  $this->url->link(
+            'extension/payment/mundipagg/updateCharge',
+            'user_token=' . $this->session->data['user_token'] .
+            '&order_id=' . $orderId .
+            '&charge=' . $chargeId .
+            '&status=' . $this->request->get['status'],
+            true
+        );
+        $this->response->setOutput(
+            $this->load->view(
+                'extension/payment/mundipagg_confirmUpdateCharge',
+                $this->data
+            )
+        );
+    }
+
     public function updateCharge()
     {
         try {
@@ -239,7 +273,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             foreach ($charges->rows as $charge) {
                 if ($charge['charge_id'] == $charge_id) {
                     if ($charge['can_cancel']) {
-                        $charge = call_user_func_array(array($order, 'updateCharge'), array($charge_id, $status));
+                        $charge = call_user_func_array(array($order, 'updateCharge'), array($charge_id, $status, $this->request->post['charge_amount']));
                         $word = $status == 'cancel' ? 'canceled' : 'captured';
                         $this->session->data['success'] = "Charge $word with sucess!";
                     } else {

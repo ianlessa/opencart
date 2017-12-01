@@ -51,9 +51,9 @@ class Order
         }
     }
 
-    public function getCharge($opencart_id)
+    public function getCharge($opencart_id, $charge_id = null)
     {
-        return $this->modelOrder()->getCharge($opencart_id);
+        return $this->modelOrder()->getCharge($opencart_id, $charge_id);
     }
 
     public function setInterest($interest)
@@ -120,7 +120,7 @@ class Order
         return $order;
     }
 
-    public function updateCharge($chargeId, $action)
+    public function updateCharge($chargeId, $action, $amount = null)
     {
         try {
             $charges = $this->apiClient->getCharges();
@@ -129,7 +129,11 @@ class Order
                 ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_REQUEST, __METHOD__)
                 ->withRequest('Action: ' . $action . ',ChargeId: '.$chargeId);
 
-            $response = call_user_func_array(array($charges, $action.'Charge'), array($chargeId));
+            $data = array($chargeId);
+            if ($amount) {
+                $data[] = (object) array('amount' => (int) $amount);
+            }
+            $response = call_user_func_array(array($charges, $action.'Charge'), $data);
 
             \Mundipagg\Log::create()
                 ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_RESPONSE, __METHOD__)
