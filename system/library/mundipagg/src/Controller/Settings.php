@@ -79,9 +79,9 @@ class Settings
         return $this->getProdPublicKey();
     }
 
-    public static function getModuleVersion()
+    public function getModuleVersion()
     {
-        return 'V1.1.3';
+        return 'V1.2.0';
     }
 
     public function getModuleMetaData()
