@@ -45,8 +45,8 @@ class RoboFile extends \Robo\Tasks
             ->run();
 
         $this->taskReplaceInFile('system/library/mundipagg/src/Controller/Settings.php')
-            ->from("return '$currentVersion';")
-            ->to("return '$version';")
+            ->from("return 'V$currentVersion';")
+            ->to("return 'V$version';")
             ->run();
 
         $this->taskReplaceInFile('system/library/mundipagg/src/LogMessages.php')
@@ -57,7 +57,7 @@ class RoboFile extends \Robo\Tasks
 
     public function opencartPack($version = null)
     {
-        array_map('unlink', glob('*.ocmod.zip'));
+        array_map('unlink', glob('MundiPagg-V*.ocmod.zip'));
 
         if ($version) {
             $this->opencartBump($version);
