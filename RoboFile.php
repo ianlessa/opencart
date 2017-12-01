@@ -29,15 +29,26 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Get current module version
+     *
+     * @return string
+     */
+    private function getCurrentModuleVersion()
+    {
+        
+        $xml = file_get_contents('install.xml');
+        preg_match('/<version>(?P<currentVersion>.*)<\/version>/', $xml, $matches);
+        return $matches['currentVersion'];
+    }
+
+    /**
      * Bump current version
      *
      * @param string $version Number of new version
      */
     public function opencartBump($version)
     {
-        $xml = file_get_contents('install.xml');
-        preg_match('/<version>(?P<currentVersion>.*)<\/version>/', $xml, $matches);
-        $currentVersion = $matches['currentVersion'];
+        $currentVersion = $this->getCurrentModuleVersion();
 
         $this->taskReplaceInFile('install.xml')
             ->from('<version>' . $currentVersion . '</version>')
@@ -62,9 +73,7 @@ class RoboFile extends \Robo\Tasks
         if ($version) {
             $this->opencartBump($version);
         } else {
-            $xml = file_get_contents('install.xml');
-            preg_match('/<version>(?P<version>.*)<\/version>/', $xml, $matches);
-            $version = $matches['version'];
+            $version = $this->getCurrentModuleVersion();
         }
 
         $this->taskPack('MundiPagg-V'.$version.'.ocmod.zip')
