@@ -41,7 +41,23 @@ vendor/bin/robo opencart:setup
 ## Run tests
 First, up workplace.
 ```bash
-vendor/bin/phpunit
+composer test
+```
+# Generate package
+
+## Bump version
+
+```
+vendor/bin/robo opencart:bump <new_version>
+```
+
+## Packing
+
+Run the follow command replacing `version_of_package` by new version if you need
+bump version. If you don't need bump version, don't pass the version to command
+
+```
+vendor/bin/robo opencart:pack [version_of_package]
 ```
 
 # How can I contribute?

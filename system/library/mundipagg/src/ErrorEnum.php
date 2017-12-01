@@ -2,9 +2,6 @@
 
 class ErrorEnum
 {
-    const ERROR_HEADER =
-        ' Mundipagg Opencart V1.1.3 Extension | ';
-    
     const UNKNOWN_ORDER_STATUS =
         'Unknown order status received';
     

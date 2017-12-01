@@ -79,7 +79,7 @@ class Settings
         return $this->getProdPublicKey();
     }
 
-    public function getModuleVersion()
+    public static function getModuleVersion()
     {
         return 'V1.1.3';
     }
@@ -88,7 +88,7 @@ class Settings
     {
         return array(
             'module_name' => 'Opencart',
-            'module_version' => $this->getModuleVersion()
+            'module_version' => self::getModuleVersion()
         );
     }
 
