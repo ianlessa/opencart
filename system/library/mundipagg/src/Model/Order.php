@@ -19,6 +19,24 @@ class Order
         }
     }
 
+    public function getOrders($data, $fields)
+    {
+        $where = [];
+        if (isset($data['ids'])) {
+            $where[]= 'order_id IN(' . implode(',', $data['ids']) . ')';
+        }
+        if (isset($data['order_status_id'])) {
+            $where[]= 'order_status_id IN(' . implode(',', $data['order_status_id']) . ')';
+        }
+        if ($where) {
+            return $this->openCart->db->query(
+                'SELECT ' . implode(",\n         ", $fields) .
+                '  FROM `' . DB_PREFIX . "order`\n" .
+                ' WHERE ' . implode(' AND ', $where)
+            );
+        }
+    }
+
     public function getCharge($opencart_id, $charge_id = null)
     {
         $charge = $this->openCart->db->query(
