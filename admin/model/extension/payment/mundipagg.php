@@ -191,7 +191,6 @@ class ModelExtensionPaymentMundipagg extends Model
     /**
      * Get credit cards images from json
      *
-     * @param Strin $brandName Credit card brand name
      * @return Object
      */
     public function getCreditCardBrands()
@@ -215,7 +214,8 @@ class ModelExtensionPaymentMundipagg extends Model
                 ];
             }
             return $creditCardBrands;
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
+            // @todo log error message
         }
     }
 
@@ -308,12 +308,15 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     private function getPaymentInfo()
     {
-        $baseUrl = 'http://embeddables.eastus2.cloudapp.azure.com/payment/';
-
-        return json_decode(
-            file_get_contents(
-                $baseUrl . 'payment.json'
-            )
-        );
+        try {
+            return json_decode(
+                file_get_contents(
+                    'https://dashboard.mundipagg.com/emb/payment.json'
+                )
+            );
+        } catch(\Exception $e) {
+            // @todo log error message
+        }
     }
 }
+
