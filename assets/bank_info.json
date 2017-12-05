@@ -1,0 +1,46 @@
+{
+    "banks": {
+        "001": {
+            "name": "Banco do Brasil",
+            "image": "https://dashboard.mundipagg.com/emb/images/banks/brasil.jpg",
+            "enabled": 1
+        },
+        "237": {
+            "name": "Bradesco",
+            "image": "https://dashboard.mundipagg.com/emb/images/banks/bradesco.jpg",
+            "enabled": 0
+        },
+        "104": {
+            "name": "Caixa Econ\u00f4mica Federal",
+            "image": "https://dashboard.mundipagg.com/emb/images/banks/caixa.gif",
+            "enabled": 0
+        },
+        "341": {
+            "name": "Ita\u00fa",
+            "image": "https://dashboard.mundipagg.com/emb/images/banks/itau.jpg",
+            "enabled": 0
+        }
+    },
+    "brands": {
+        "Amex": {
+            "image": "https://dashboard.mundipagg.com/emb/images/brands/amex.jpg"
+        },
+        "Diners": {
+            "image": "https://dashboard.mundipagg.com/emb/images/brands/diners.jpg"
+        },
+        "Elo": {
+            "image": "https://dashboard.mundipagg.com/emb/images/brands/elo.jpg"
+        },
+        "Hipercard": {
+            "image": "https://dashboard.mundipagg.com/emb/images/brands/hipercard.jpg"
+        },
+        "Visa": {
+            "image": "https://dashboard.mundipagg.com/emb/images/brands/visa.jpg"
+        },
+        "Mastercard": {
+             "image": "https://dashboard.mundipagg.com/emb/images/brands/mastercard.jpg"
+        }
+
+    }
+}
+
