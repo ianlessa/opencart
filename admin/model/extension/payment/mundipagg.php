@@ -214,7 +214,7 @@ class ModelExtensionPaymentMundipagg extends Model
                 ];
             }
             return $creditCardBrands;
-        } catch (\Exception $exc) {
+        } catch (\Exception $e) {
             // @todo log error message
         }
     }
