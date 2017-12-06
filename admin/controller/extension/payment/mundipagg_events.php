@@ -17,6 +17,9 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
 {
     public function onOrderList(string $route, $data = array(), $template = null)
     {
+        $cancel = array();
+        $cancelCapture = array();
+
         $ids = array_map(function ($row) {
             return (int) $row['order_id'];
         }, $data['orders']);
