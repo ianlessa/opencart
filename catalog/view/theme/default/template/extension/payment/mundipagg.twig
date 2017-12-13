@@ -29,7 +29,7 @@
             {% if creditCardStatus %}
                 <div class="tab-pane active" id="creditCardTab">
                     {% if brandNames %}
-                        <form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form>
+                        <form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form id="mundi-credit-card-form">
                             <div class="row">
                                 <div class="col-sm-12">
                                     {% for brand in brandImages %}
@@ -40,12 +40,12 @@
 
 
                                     <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
-
                                         <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
                                         <div class="input-group input-group ">
-                                            <input name="card-number" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-input="number" >
+                                            <input name="card-number" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-input="number">
                                             <span class="input-group-addon" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                                         </div>
+                                        <span  id="credit-card-number-message"></span>
                                     </div>
 
                                     <div class="col-sm-4">
@@ -66,7 +66,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-2" id="expiration-date-field">
                                         <label class="row">{{ credit_card.valid_thru }}</label>
                                         <div class="row ">
                                             <select  name="card-exp-month" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-input="exp_month">
@@ -81,6 +81,7 @@
                                                     <option value="{{ year }}">{{ year }}</option>
                                                 {% endfor %}
                                             </select>
+                                            <span  id="expiration-date-message"></span>
                                         </div>
                                     </div>
 
@@ -88,20 +89,22 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-5">
+                                <div class="col-sm-5" id="holdername-field">
                                     <label for="cardName">{{ credit_card.holder_name }}</label>
                                     <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-input="holder_name">
+                                    <span  id="holder-name-message"></span>
                                 </div>                            
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" id="cvv-field">
                                     <label for="cardCVV">CVV</label>
                                     <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-input="cvv">
+                                    <span  id="cvv-message"></span>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <button type="submit" class="btn btn-primary float-to-right">Efetuar pagamento</button>
+                                    <button type="submit" class="btn btn-primary float-to-right" id="submit-payment-button">Efetuar pagamento</button>
                                 </div>
                             </div>
                         </form>
@@ -136,71 +139,11 @@
 </section>
 
 <script src="{{ themeDirectory }}/scripts/mundipagg/mundipagg-checkout.js" data-mundicheckout-app-id="{{ publicKey }}"></script>
+<script src="{{ themeDirectory }}/scripts/mundipagg/mundipagg-form-validation.js"></script>
 
 <script>
-    function generate()
-    {
+    function generate() {
         window.open("{{ generate_boleto_url }}");
         window.location = "{{ checkout_success_url }}";
     }
-    
-    var MundiPagg = {};
-    MundiPagg.Form = function() {
-        var cardBrand;
-        var installmentsSelector;
-
-        return {
-            addListener: function() {
-                this.cardBrand.addEventListener('DOMSubtreeModified', function() {
-                    this.hideAll();
-                    this.showSpecific(this.cardBrand.getAttribute('data-mundicheckout-brand'));
-                }.bind(this, true));
-            },
-
-            initializeVariables: function() {
-                this.cardBrand = document.querySelector('[data-mundicheckout-brand]');
-                this.installmentsSelector = document.querySelectorAll('[data-card-brand]');
-            },
-            
-            setup: function() {
-                this.initializeVariables();
-                this.hideAll();
-                this.addListener();
-            },
-
-            hideAll: function() {
-                this.installmentsSelector.forEach(function (element) {
-                    element.classList.add('hidden');
-                });
-            },
-
-            showSpecific: function(brand) {
-                var brandSelector = '[data-card-brand="' + brand + '"]';
-                var installments = document.querySelectorAll(brandSelector);
-
-                if (brand) {
-                    installments.forEach(function(element) {
-                        element.classList.remove('hidden');
-                    });
-                }
-                else {
-                    this.hideAll();
-                }
-            }
-        };
-    };
-    
-    (function () {
-        var mundiForm = MundiPagg.Form();
-        mundiForm.setup();
-        
-        MundiCheckout.init(
-            function (data) {
-                return true;
-            },
-            function(error) {
-            }
-        );
-      })();
 </script>
-
