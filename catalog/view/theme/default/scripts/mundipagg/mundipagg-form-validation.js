@@ -1,13 +1,8 @@
 var MundiPagg = {};
-MundiPagg.Form = function() {
-    return {
-        setup: function() {
-            this.initializeVariables();
-            this.hideAll();
-            this.addListeners();
-        },
 
-        validateForm: function() {
+MundiPagg.Validator = function() {
+    return {
+        validateForm: function () {
             var formData = $('#mundi-credit-card-form').serializeArray();
             var errors = [];
 
@@ -35,7 +30,7 @@ MundiPagg.Form = function() {
             return errors;
         },
 
-        validateExpiration: function(month, year) {
+        validateExpiration: function (month, year) {
             var date = new Date();
 
             var expDate = new Date(year, month - 1, 1);
@@ -48,7 +43,7 @@ MundiPagg.Form = function() {
             return undefined;
         },
 
-        validateHolderName: function(name) {
+        validateHolderName: function (name) {
             if (!/^[a-zA-Z ]+$/.test(name)) {
                 return 'Nome no cartão inválido';
             }
@@ -56,7 +51,7 @@ MundiPagg.Form = function() {
             return undefined;
         },
 
-        validateCVV: function(cvv) {
+        validateCVV: function (cvv) {
             if (cvv.length > 4 || cvv.length < 3 || !/^[0-9]+$/.test(cvv)) {
                 return 'CVV inválido';
             }
@@ -64,15 +59,19 @@ MundiPagg.Form = function() {
             return undefined;
         },
 
-        validateCardNumber: function(number) {
+        validateCardNumber: function (number) {
             if (!this.isValidCreditCardNumber(number)) {
                 return 'Cartão de crédito inválido';
+            }
+
+            if (!/^[0-9]+/.test(number)) {
+                return 'Por favor, digite somente números.';
             }
 
             return undefined;
         },
 
-        isValidCreditCardNumber: function(value) {
+        isValidCreditCardNumber: function (value) {
             // accept only digits, dashes or spaces
             if (/[^0-9-\s]+/.test(value)) {
                 return false;
@@ -94,6 +93,17 @@ MundiPagg.Form = function() {
             }
 
             return (nCheck % 10) == 0;
+        }
+    };
+};
+
+MundiPagg.Form = function() {
+    return {
+        setup: function(validator) {
+            this.initializeVariables();
+            this.hideAll();
+            this.addListeners();
+            this.validator = validator;
         },
 
         showErrorMessages: function(errors) {
@@ -131,7 +141,7 @@ MundiPagg.Form = function() {
             // listener to handle form validation
             this.submitForm.addEventListener('submit', function(event) {
                 this.clearErrorMessages();
-                var result = this.validateForm();
+                var result = this.validator.validateForm();
 
                 if (Object.keys(result).length > 0) {
                     this.showErrorMessages(result);
@@ -139,6 +149,25 @@ MundiPagg.Form = function() {
                     event.preventDefault();
                 }
             }.bind(this), false);
+
+            // add listener to clean up card number field
+            this.cardNumberField.addEventListener("keyup", function() {
+                this.cleanUpField(this.cardNumberField, /[^[0-9]/gi);
+            }.bind(this), false);
+
+            // add listener to clean up card number field
+            this.cardNameField.addEventListener("keyup", function() {
+                this.cleanUpField(this.cardNameField, /[^[a-zA-Z ]/gi);
+            }.bind(this), false);
+
+            // add listener to clean up cvv field
+            this.cardCVVField.addEventListener("keyup", function() {
+                this.cleanUpField(this.cardCVVField, /[^[0-9]/gi);
+            }.bind(this), false);
+        },
+
+        cleanUpField: function(field, regex) {
+            field.value = field.value.replace(regex, '');
         },
 
         initializeVariables: function() {
@@ -150,6 +179,11 @@ MundiPagg.Form = function() {
             this.expirationDateMessageField = $('#expiration-date-message').text('');
             this.holderNameMessageField = $('#holder-name-message').text('');
             this.cvvMessageField = $('#cvv-message').text('');
+            this.tokenErrorMessage = $('#token-error-message').text('');
+
+            this.cardNumberField = document.getElementById('cardNumber');
+            this.cardNameField = document.getElementById('cardName');
+            this.cardCVVField = document.getElementById('cardCVV');
         },
 
         hideAll: function() {
@@ -175,14 +209,17 @@ MundiPagg.Form = function() {
 };
 
 (function () {
+    var mundiValidator = MundiPagg.Validator();
     var mundiForm = MundiPagg.Form();
-    mundiForm.setup();
+
+    mundiForm.setup(mundiValidator);
 
     MundiCheckout.init(
-        function (data) {
+        function () {
             return true;
         },
-        function(data) {
+        function() {
+            $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
         }
     );
 })();
