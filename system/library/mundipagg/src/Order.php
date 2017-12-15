@@ -4,13 +4,14 @@ namespace Mundipagg;
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 use MundiAPILib\MundiAPIClient;
-use MundiAPILib\Models\CreateShippingRequest;
+use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateOrderRequest;
 use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
+use MundiAPILib\Models\CreateShippingRequest;
+
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
-use MundiAPILib\Exceptions\ErrorException;
 
 /**
  * @method \MundiAPILib\Controllers\OrdersController getOrders()
@@ -104,16 +105,16 @@ class Order
             return false;
         }
 
-        \Mundipagg\Log::create()
-            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
+        Log::create()
+            ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
             ->withOrderId($orderData['order_id'])
             ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
 
         $order = $this->getOrders()->createOrder($CreateOrderRequest);
         $this->createOrUpdateCharge($orderData, $order);
 
-        \Mundipagg\Log::create()
-            ->info(\Mundipagg\LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
+        Log::create()
+            ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
             ->withOrderId($orderData['order_id'])
             ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
 
@@ -125,8 +126,8 @@ class Order
         try {
             $charges = $this->apiClient->getCharges();
 
-            \Mundipagg\Log::create()
-                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_REQUEST, __METHOD__)
+            Log::create()
+                ->info(LogMessages::UPDATE_CHARGE_MUNDIPAGG_REQUEST, __METHOD__)
                 ->withRequest('Action: ' . $action . ',ChargeId: '.$chargeId);
 
             $data = array($chargeId);
@@ -135,22 +136,22 @@ class Order
             }
             $response = call_user_func_array(array($charges, $action.'Charge'), $data);
 
-            \Mundipagg\Log::create()
-                ->info(\Mundipagg\LogMessages::UPDATE_CHARGE_MUNDIPAGG_RESPONSE, __METHOD__)
+            Log::create()
+                ->info(LogMessages::UPDATE_CHARGE_MUNDIPAGG_RESPONSE, __METHOD__)
                 ->withResponse(json_encode($response, JSON_PRETTY_PRINT));
 
             return $response;
         } catch (ErrorException $e) {
-            \Mundipagg\Log::create()
+            Log::create()
                 ->error($e->getMessage(), __METHOD__)
                 ->withLineNumber(__LINE__);
             throw new \Exception($e->getMessage());
         } catch (\Exception $e) {
             $const = "UNABLE_TO_{$action}_MUNDI_CHARGE";
-            \Mundipagg\Log::create()
-            ->error(\Mundipagg\LogMessages::$const, __METHOD__)
+            Log::create()
+            ->error(LogMessages::$const, __METHOD__)
                 ->withLineNumber(__LINE__);
-                throw new \Exception(\Mundipagg\LogMessages::$const);
+                throw new \Exception(LogMessages::$const);
         }
     }
 
@@ -204,8 +205,8 @@ class Order
                 }
             }
         } catch (Exception $e) {
-            \Mundipagg\Log::create()
-            ->error(\Mundipagg\LogMessages::UNABLE_TO_SAVE_MUNDI_CHARGE, __METHOD__)
+            Log::create()
+            ->error(LogMessages::UNABLE_TO_SAVE_MUNDI_CHARGE, __METHOD__)
             ->withLineNumber(__LINE__);
         }
     }
@@ -275,30 +276,24 @@ class Order
      */
     private function createAddressRequest($orderData)
     {
-        return new CreateAddressRequest(
-            //Street
-            $orderData['payment_address_1'],
-            //Number
-            $orderData['payment_custom_field'][
-                $this->openCart->config->get('payment_mundipagg_mapping_number')
-            ],
-            //Zipcode
-            preg_replace('/\D/', '', $orderData['payment_postcode']),
-            //Neighborhood
-            $orderData['payment_address_2'],
-            //City
-            $orderData['payment_city'],
-            //State
-            $orderData['payment_zone_code'],
-            //Country
-            $orderData['shipping_iso_code_2'],
-            //Complement
-            $orderData['payment_custom_field'][
-                $this->openCart->config->get('payment_mundipagg_mapping_complement')
-            ],
-            //Metadata
-            null
-        );
+        $config = $this->openCart->config;
+
+        $createAddressRequest = new CreateAddressRequest();
+
+        $createAddressRequest->street = $orderData['payment_address_1'];
+        $createAddressRequest->number =
+            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_number')];
+        $createAddressRequest->zipCode =
+            preg_replace('/\D/', '', $orderData['payment_postcode']);
+        $createAddressRequest->neighborhood = $orderData['payment_address_2'];
+        $createAddressRequest->city = $orderData['payment_city'];
+        $createAddressRequest->state = $orderData['payment_zone_code'];
+        $createAddressRequest->country = $orderData['shipping_iso_code_2'];
+        $createAddressRequest->complement =
+            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
+        $createAddressRequest->metadata = null;
+
+        return $createAddressRequest;
     }
 
     /**
@@ -313,7 +308,7 @@ class Order
             'email'    => $orderData['email'],
             'phone'    => $orderData['telephone'],
             'document' => null,
-            'type'     => "",
+            'type'     => "individual",
             'address'   => $createAddressRequest,
             'metadata' => null
         );
