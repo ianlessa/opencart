@@ -87,6 +87,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
             $this->customer->getAddressId()
         );
 
+        \Unirest\Request::verifyPeer(false);
+
         $client = new MundiAPIClient(
             $storeCredentials['secret_key'],
             $storeCredentials['password']
@@ -109,6 +111,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
      */
     private function createMPCustomer($customerInfo, $oCCustomerId, $storeCredentials)
     {
+        \Unirest\Request::verifyPeer(false);
+
         $client = new MundiAPIClient(
             $storeCredentials['secret_key'],
             $storeCredentials['password']
@@ -149,6 +153,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
      */
     private function addAddressToMPCustomer($mPCustomerId, $addressRequest, $storeCredentials)
     {
+        \Unirest\Request::verifyPeer(false);
+
          $client = new MundiAPIClient(
              $storeCredentials['secret_key'],
              $storeCredentials['password']

@@ -97,6 +97,8 @@ class Customer
         if ($this->isMPCustomer()) {
             return true;
         }
+
+        \Unirest\Request::verifyPeer(false);
         
         $client = new MundiAPIClient(
             $this->getSecretKey(),

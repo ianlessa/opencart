@@ -42,6 +42,8 @@ class Order
         $this->openCart = $openCart;
         $this->orderInterest = 0;
 
+        \Unirest\Request::verifyPeer(false);
+
         $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
     }
 
