@@ -33,9 +33,9 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     {% for brand in brandImages %}
-                                        <img src="{{ brand }}" width="36" style="margin-left: 5px" /> 
+                                        <img src="{{ brand }}" width="36" style="margin-left: 5px" />
                                     {% endfor %}
-                                </div>           
+                                </div>
                                 <div class="col-sm-12">
 
 
@@ -45,7 +45,7 @@
                                             <input name="card-number" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-input="number">
                                             <span class="input-group-addon" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                                         </div>
-                                        <span  id="credit-card-number-message"></span>
+                                        <span  id="credit-card-number-message" class="text-danger"></span>
                                     </div>
 
                                     <div class="col-sm-4">
@@ -81,7 +81,7 @@
                                                     <option value="{{ year }}">{{ year }}</option>
                                                 {% endfor %}
                                             </select>
-                                            <span  id="expiration-date-message"></span>
+                                            <span  id="expiration-date-message" class="text-danger"></span>
                                         </div>
                                     </div>
 
@@ -92,18 +92,18 @@
                                 <div class="col-sm-5" id="holdername-field">
                                     <label for="cardName">{{ credit_card.holder_name }}</label>
                                     <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-input="holder_name">
-                                    <span  id="holder-name-message"></span>
-                                </div>                            
+                                    <span  id="holder-name-message" class="text-danger"></span>
+                                </div>
 
                                 <div class="col-sm-2" id="cvv-field">
                                     <label for="cardCVV">CVV</label>
                                     <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-input="cvv">
-                                    <span  id="cvv-message"></span>
+                                    <span  id="cvv-message" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <span  id="token-error-message"></span>
+                                <span  id="token-error-message" class="text-danger"></span>
                                 <div class="col-sm-12">
                                     <button type="submit" class="btn btn-primary float-to-right" id="submit-payment-button">Efetuar pagamento</button>
                                 </div>
