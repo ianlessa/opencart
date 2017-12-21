@@ -13,6 +13,7 @@ use MundiAPILib\Models\CreateShippingRequest;
 
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
+use Mundipagg\Model\SavedCreditcard;
 
 /**
  * @method \MundiAPILib\Controllers\OrdersController getOrders()
@@ -120,6 +121,8 @@ class Order
             $orderData['customer_id'],
             $order->customer->id
         );
+
+        $this->saveCreditCard($order);
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -544,5 +547,26 @@ class Order
             $opencartCustomerId,
             $mundipaggCustomerId
         );
+    }
+
+    /**
+     * Save credit card data when it's enabled
+     * @param GetOrderResponse $order
+     */
+    private function saveCreditCard($order)
+    {
+        $savedCreditCard = new SavedCreditcard($this->openCart);
+
+        if (!empty($order->charges)) {
+            foreach ($order->charges as $charge) {
+
+                $savedCreditCard->saveCreditcard(
+                    $order->customer->id,
+                    $charge->lastTransaction->card
+                );
+            }
+        }
+
+
     }
 }
