@@ -559,10 +559,10 @@ class Order
 
         if (!empty($order->charges)) {
             foreach ($order->charges as $charge) {
-
                 $savedCreditCard->saveCreditcard(
                     $order->customer->id,
-                    $charge->lastTransaction->card
+                    $charge->lastTransaction->card,
+                    $order->code
                 );
             }
         }

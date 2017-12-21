@@ -1,6 +1,8 @@
 <?php
 namespace Mundipagg\Model;
 
+use Mundipagg\Log;
+use Mundipagg\LogMessages;
 
 class SavedCreditcard
 {
@@ -11,7 +13,7 @@ class SavedCreditcard
         $this->openCart = $openCart;
     }
 
-    public function saveCreditcard($mundipaggCustomerId, $cardData)
+    public function saveCreditcard($mundipaggCustomerId, $cardData, $opencartOrderId)
     {
         $sql =
             "INSERT INTO".
@@ -36,6 +38,13 @@ class SavedCreditcard
             "'" . $cardData->expYear . "'" .
             ")"
         ;
-        $query = $this->openCart->db->query($sql);
+        try {
+            $this->openCart->db->query($sql);
+        } catch (\Exception $exc) {
+            Log::create()
+                ->error(LogMessages::CANNOT_SAVE_CREDIT_CARD_DATA, __METHOD__)
+                ->withOrderId($opencartOrderId);
+        }
+
     }
 }
