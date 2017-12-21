@@ -3,6 +3,7 @@ namespace Mundipagg;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
+use MundiAPILib\Models\GetOrderResponse;
 use MundiAPILib\MundiAPIClient;
 use MundiAPILib\Exceptions\ErrorException;
 use MundiAPILib\Models\CreateOrderRequest;
@@ -114,6 +115,11 @@ class Order
 
         $order = $this->getOrders()->createOrder($CreateOrderRequest);
         $this->createOrUpdateCharge($orderData, $order);
+
+        $this->createCustomerIfNotExists(
+            $orderData['customer_id'],
+            $order->customer->id
+        );
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -513,5 +519,30 @@ class Order
         }
 
         return false;
+    }
+
+    private function createCustomerIfNotExists($opencartCustomerId, $mundipaggCustomerId)
+    {
+        if (
+            !$this->mundipaggCustomerModel->exists($opencartCustomerId)
+        ) {
+            $this->saveCustomer(
+                $opencartCustomerId,
+                $mundipaggCustomerId
+            );
+        }
+    }
+
+    /**
+     * Save MundiPagg customer in Opencart DB
+     * @param GetOrderResponse $mundiPaggOrder
+     * @param array $opencartOrder
+     */
+    private function saveCustomer($opencartCustomerId, $mundipaggCustomerId)
+    {
+        $this->mundipaggCustomerModel->create(
+            $opencartCustomerId,
+            $mundipaggCustomerId
+        );
     }
 }
