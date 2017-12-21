@@ -14,6 +14,11 @@ class SavedCreditcard
         $this->openCart = $openCart;
     }
 
+    /**
+     * @param string $mundipaggCustomerId
+     * @param object $cardData
+     * @param int $opencartOrderId
+     */
     public function saveCreditcard($mundipaggCustomerId, $cardData, $opencartOrderId)
     {
         $sql =
@@ -49,6 +54,11 @@ class SavedCreditcard
         }
     }
 
+    /**
+     * Verify if credit card exists
+     * @param int $creditCardId
+     * @return bool
+     */
     public function creditCardExists($creditCardId)
     {
         $sql =
