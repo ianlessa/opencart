@@ -122,7 +122,7 @@ class Order
             $order->customer->id
         );
 
-        $this->saveCreditCard($order);
+        $this->saveCreditCardIfNotExists($order);
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -553,20 +553,25 @@ class Order
      * Save credit card data when it's enabled
      * @param GetOrderResponse $order
      */
-    private function saveCreditCard($order)
+    private function saveCreditCardIfNotExists($order)
     {
         $savedCreditCard = new SavedCreditcard($this->openCart);
 
         if (!empty($order->charges)) {
             foreach ($order->charges as $charge) {
-                $savedCreditCard->saveCreditcard(
-                    $order->customer->id,
-                    $charge->lastTransaction->card,
-                    $order->code
-                );
+
+                if (
+                    !$savedCreditCard->creditCardExists(
+                        $charge->lastTransaction->card->id
+                    )
+                ) {
+                    $savedCreditCard->saveCreditcard(
+                        $order->customer->id,
+                        $charge->lastTransaction->card,
+                        $order->code
+                    );
+                }
             }
         }
-
-
     }
 }
