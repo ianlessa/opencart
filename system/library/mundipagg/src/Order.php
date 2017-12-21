@@ -115,9 +115,10 @@ class Order
 
         $order = $this->getOrders()->createOrder($CreateOrderRequest);
         $this->createOrUpdateCharge($orderData, $order);
-        $this->saveCustomer(
-            $order->customer->id,
-            $orderData['customer_id']
+
+        $this->createCustomerIfNotExists(
+            $orderData['customer_id'],
+            $order->customer->id
         );
 
         Log::create()
@@ -520,6 +521,18 @@ class Order
         return false;
     }
 
+    private function createCustomerIfNotExists($opencartCustomerId, $mundipaggCustomerId)
+    {
+        if (
+            !$this->mundipaggCustomerModel->exists($opencartCustomerId)
+        ) {
+            $this->saveCustomer(
+                $opencartCustomerId,
+                $mundipaggCustomerId
+            );
+        }
+    }
+
     /**
      * Save MundiPagg customer in Opencart DB
      * @param GetOrderResponse $mundiPaggOrder
@@ -527,10 +540,9 @@ class Order
      */
     private function saveCustomer($opencartCustomerId, $mundipaggCustomerId)
     {
-        $this->mundipaggCustomerModel
-            ->create(
-                $opencartCustomerId,
-                $mundipaggCustomerId
-            );
+        $this->mundipaggCustomerModel->create(
+            $opencartCustomerId,
+            $mundipaggCustomerId
+        );
     }
 }

@@ -27,41 +27,59 @@ class ModelExtensionPaymentMundipaggCustomer extends Model
     }
     
     /**
+     * Verify if an $opencartCustomerId have a
+     * $mundipaggCustomerId
      * @return boolean
      */
-    public function exists($customerId)
+    public function exists($opencartCustomerId)
     {
-        $this->setCustomerId($customerId);
-        $sql = "SELECT mundipagg_customer_id FROM " . DB_PREFIX . "mundipagg_customer WHERE customer_id = '" . $this->getCustomerId() . "' ";
+        $sql =
+            "SELECT mundipagg_customer_id FROM " .
+            "`" . DB_PREFIX . "mundipagg_customer`" .
+            " WHERE customer_id = '" . $opencartCustomerId . "' ";
+
         $query = $this->db->query($sql);
+
         if ($query->num_rows) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
     
-    public function get($customerId)
+    public function get($opencartCustomerId)
     {
-        $this->setCustomerId($customerId);
-        $sql = "SELECT mundipagg_customer_id, customer_id FROM " . DB_PREFIX . "mundipagg_customer WHERE customer_id = '" . $this->getCustomerId() . "' ";
+        $sql =
+            "SELECT mundipagg_customer_id, customer_id FROM " .
+            "`" . DB_PREFIX . "mundipagg_customer` " .
+            " WHERE customer_id = '" . $opencartCustomerId . "' ";
+
         $query = $this->db->query($sql);
+
         if ($query->num_rows) {
             return $query->row;
-        } else {
-            return false;
         }
+
+        return false;
     }
     
-    public function create($customerId)
+    public function create($opencartCustomerId, $mundipaggCustomerId)
     {
-        $this->setCustomerId($customerId);
-        $sql = "SELECT mundipagg_customer_id, customer_id FROM " . DB_PREFIX . "mundipagg_customer WHERE customer_id = '" . $this->getCustomerId() . "' ";
+        $sql =
+            "INSERT INTO `" . DB_PREFIX . "mundipagg_customer` " .
+            "(customer_id, mundipagg_customer_id) " .
+            "values('" .
+                $opencartCustomerId .
+            "', '"
+                . $mundipaggCustomerId .
+            "')";
+
         $query = $this->db->query($sql);
+
         if ($query) {
             return $query;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
