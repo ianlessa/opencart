@@ -27,115 +27,11 @@
 
         <div class="mundipaggCheckoutTabsContent tab-content clearfix">
             {% if creditCardStatus %}
-                <div class="tab-pane active" id="creditCardTab">
-                    {% if brandNames %}
-                        <form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form id="mundi-credit-card-form">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    {% for brand in brandImages %}
-                                        <img src="{{ brand }}" width="36" style="margin-left: 5px" /> 
-                                    {% endfor %}
-                                </div>           
-                                <div class="col-sm-12">
-
-
-                                    <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
-                                        <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
-                                        <div class="input-group input-group ">
-                                            <input name="card-number" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-input="number">
-                                            <span class="input-group-addon" data-mundicheckout-brand data-mundicheckout-brand-image></span>
-                                        </div>
-                                        <span  id="credit-card-number-message"></span>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <label>{{ credit_card.installments }}</label>
-                                        <div>
-                                            <select name="payment-details" class="form-control installments" data-brand="{{ brand }}" required>
-                                                <option value="">Selecione</option>
-                                                {% for brand, installment in installments %}
-                                                    {% for details in installment %}
-                                                        {% if details.interest == 0 %}
-                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
-                                                        {% else %}
-                                                            <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-2" id="expiration-date-field">
-                                        <label class="row">{{ credit_card.valid_thru }}</label>
-                                        <div class="row ">
-                                            <select  name="card-exp-month" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-input="exp_month">
-                                                {% for month in 1..12 %}
-                                                    <!-- this makes every month two digits long -->
-                                                    <!--option value="{{ "%02d"|format(month) }}">{{ "%02d"|format(month) }}</option-->
-                                                    <option value="{{ month }}">{{ month }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <select name="card-exp-year" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-input="exp_year">
-                                                {% for year in 2017..2030 %}
-                                                    <option value="{{ year }}">{{ year }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <span  id="expiration-date-message"></span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-5" id="holdername-field">
-                                    <label for="cardName">{{ credit_card.holder_name }}</label>
-                                    <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-input="holder_name">
-                                    <span  id="holder-name-message"></span>
-                                </div>                            
-
-                                <div class="col-sm-2" id="cvv-field">
-                                    <label for="cardCVV">CVV</label>
-                                    <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-input="cvv">
-                                    <span  id="cvv-message"></span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <span  id="token-error-message"></span>
-                                <div class="col-sm-12">
-                                    <button type="submit" class="btn btn-primary float-to-right" id="submit-payment-button">Efetuar pagamento</button>
-                                </div>
-                            </div>
-                        </form>
-                    {% else %}
-                        <h3>{{ credit_card.no_brands_enabled }}</h3>
-                    {% endif %}
-                </div>
+                {{ creditcardTemplate }}
             {% endif %}
-        {% if boletoStatus %}
-            <div class="tab-pane alert alert-info" id="boletoTab">
-                <div class="row">
-                    <h3 class="col-sm-12">{{ boleto.title }}</h3>
-                    <div class="col-sm-10">
-                        <a href="javascript:;" target="_SELF" onclick="generate();" id="boletoLink">
-                            <i class="fa fa-file-text"></i>
-                            {{ boleto.click_to_generate }}
-                        </a>
-                    </div>
-                    <div class="col-sm-2">
-                        <img src="image/catalog/mundipagg/boleto.png" title="Boleto" alt="Boleto" width="75">
-                    </div>
-                    <div class="col-sm-12">
-                        <br>
-                        <blockquote>
-                            <h8>{{ boleto.instructions }}</h8>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
+            {% if boletoStatus %}
+                {{ boletoTemplate }}
+            {% endif %}
     </div>
 </section>
 

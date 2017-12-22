@@ -32,7 +32,7 @@ catalog/model/extension/payment/* catalog/model/extension/payment/
 catalog/model/extension/total/* catalog/model/extension/total/
 
 # view
-catalog/view/theme/default/template/extension/payment/mundipagg.twig catalog/view/theme/default/template/extension/payment/mundipagg.twig
+catalog/view/theme/default/template/extension/payment/* catalog/view/theme/default/template/extension/payment/
 
 # scripts
 catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/
