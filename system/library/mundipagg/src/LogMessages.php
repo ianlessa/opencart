@@ -18,6 +18,8 @@ class LogMessages
     const UNABLE_TO_CANCEL_MUNDI_CHARGE = 'Unable to cancel charge';
     const UNKNOWN_WEBHOOK_TYPE = 'Unknown webhook type received';
     const UNABLE_TO_UPDATE_ORDER_AMOUNT = 'Unable to update the order amount';
+    const CANNOT_SAVE_CREDIT_CARD_DATA = 'Cannot save credit card data';
+    const CANNOT_GET_CREDIT_CARD_DATA = 'Cannot get credit card data';
 
     /** Debug Messages */
     const ORDER_NOT_FOUND_IN_ORDER_TABLE = 'Mundipagg order id not found in mundipagg_order table';
