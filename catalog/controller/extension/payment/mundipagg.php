@@ -115,7 +115,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
-        return $this->load->view('extension/payment/mundipagg', $this->data);
+
+        $this->data['creditcardTemplate'] = $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
+
+        return $this->load->view('extension/payment/mundipagg', $this->data);;
     }
 
     /**
