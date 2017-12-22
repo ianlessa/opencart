@@ -6,8 +6,8 @@ MundiPagg.Validator = function() {
             var errors = [];
 
             var creditCardNumber = this.validateCardNumber($("#cardNumber").val());
-            var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpMonth").val());
-            var holderName = this.validateHolderName($("#cardCVV").val());
+            var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpYear").val());
+            var holderName = this.validateHolderName($("#cardName").val());
             var cvv = this.validateCVV($("#cardCVV").val());
 
             if (creditCardNumber !== undefined) {
