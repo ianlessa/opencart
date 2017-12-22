@@ -115,6 +115,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
+        $this->data['savedCreditCardBrand'] = 'Visa';
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg', $this->data);
@@ -122,10 +123,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function loadPaymentTemplates()
     {
-        $this->data['savedCreditcardTemplate'] = $this->load->view('extension/payment/mundipagg_saved_creditcard', $this->data);
-        $this->data['newCreditcardTemplate'] = $this->load->view('extension/payment/mundipagg_new_creditcard', $this->data);
-        $this->data['creditcardTemplate'] = $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
-        $this->data['boletoTemplate'] = $this->load->view('extension/payment/mundipagg_boleto', $this->data);
+        $this->data['savedCreditcardTemplate'] =
+            $this->load->view('extension/payment/mundipagg_saved_creditcard', $this->data);
+        $this->data['newCreditcardTemplate'] =
+            $this->load->view('extension/payment/mundipagg_new_creditcard', $this->data);
+        $this->data['creditcardTemplate'] =
+            $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
+        $this->data['boletoTemplate'] =
+            $this->load->view('extension/payment/mundipagg_boleto', $this->data);
     }
 
 

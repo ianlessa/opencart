@@ -13,7 +13,7 @@
         <div class="col-sm-4">
             <label>{{ credit_card.installments }}</label>
             <div>
-                <select name="payment-details" class="form-control installments" data-brand="{{ brand }}" required>
+                <select name="payment-details" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}" required>
                     <option value="">Selecione</option>
                     {% for brand, installment in installments %}
                         {% for details in installment %}
