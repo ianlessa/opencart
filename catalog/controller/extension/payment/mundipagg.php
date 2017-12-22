@@ -115,7 +115,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
-
         $this->data['creditcardTemplate'] = $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
         $this->data['boletoTemplate'] = $this->load->view('extension/payment/mundipagg_boleto', $this->data);
 
