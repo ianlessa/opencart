@@ -117,8 +117,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
 
         $this->data['creditcardTemplate'] = $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
+        $this->data['boletoTemplate'] = $this->load->view('extension/payment/mundipagg_boleto', $this->data);
 
-        return $this->load->view('extension/payment/mundipagg', $this->data);;
+        return $this->load->view('extension/payment/mundipagg', $this->data);
     }
 
     /**

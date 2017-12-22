@@ -3,9 +3,6 @@
     <link href="{{ customizedFile }}" type="text/css" rel="stylesheet" />
 {% endif %}
 <section id="mundipaggCheckout">
-
-
-
     {% if not creditCardStatus and not boletoStatus %}
         <h3> {{ misc.no_payment_methods_enabled }} </h3>
     {% endif %}
@@ -32,28 +29,9 @@
             {% if creditCardStatus %}
                 {{ creditcardTemplate }}
             {% endif %}
-        {% if boletoStatus %}
-            <div class="tab-pane alert alert-info" id="boletoTab">
-                <div class="row">
-                    <h3 class="col-sm-12">{{ boleto.title }}</h3>
-                    <div class="col-sm-10">
-                        <a href="javascript:;" target="_SELF" onclick="generate();" id="boletoLink">
-                            <i class="fa fa-file-text"></i>
-                            {{ boleto.click_to_generate }}
-                        </a>
-                    </div>
-                    <div class="col-sm-2">
-                        <img src="image/catalog/mundipagg/boleto.png" title="Boleto" alt="Boleto" width="75">
-                    </div>
-                    <div class="col-sm-12">
-                        <br>
-                        <blockquote>
-                            <h8>{{ boleto.instructions }}</h8>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
+            {% if boletoStatus %}
+                {{ boletoTemplate }}
+            {% endif %}
     </div>
 </section>
 
