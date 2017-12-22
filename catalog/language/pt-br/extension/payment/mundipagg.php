@@ -16,7 +16,8 @@ $_['credit_card'] = [
       'brand' => 'Brand',
       'holder_name' => 'Holder name',
       'cvv' => 'CVV',
-      'no_brands_enabled' => 'No brands enabled'
+      'no_brands_enabled' => 'No brands enabled',
+      'new_credit_card' => 'New credit card'
 ];
 
 $_['order'] = [

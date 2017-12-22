@@ -1,35 +1,45 @@
-<script>
-    this.cardBrand = "Visa";
-</script>
-<div class="row">
-    <div class="col-sm-12 savedCreditcard">
-        <div class="col-sm-10 col-md-6 col-lg-2 clear-left-padding">
-            <label>Cartão de crédito</label>
-            <div>
-                <select name="mundipaggSavedCreditCard" class="form-control">
-                    <option value="">Visa xxxx-5469 </option>
-                    <option>Novo cartão</option>
-                </select>
+{% if savedCreditCardBrand != false %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-10 col-md-6 col-lg-2 clear-left-padding">
+                <label>{{ credit_card.payment_method_name }}</label>
+                <div>
+                    <select
+                            name="mundipaggSavedCreditCard"
+                            class="form-control"
+                            onchange="hideElements(); showSpecific(this.value); switchNewSaved(this.value)"
+                    >
+                        <option value="{{ savedCreditCardBrand | lower }}">{{ savedCreditCardBrand }} xxxx-5469 </option>
+                        <option value="new">{{ credit_card.new_credit_card }}</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-4">
-            <label>{{ credit_card.installments }}</label>
-            <div>
-                <select name="savedCreditcardInstallments" id="savedCreditcardInstallments" class="form-control"required>
-                    <option value="">Selecione</option>
-                    {% for brand, installment in installments %}
-                        {% if savedCreditCardBrand == brand %}
+            <div class="col-sm-4 savedCreditcard">
+                <label>{{ credit_card.installments }}</label>
+                <div>
+                    <select
+                            name="savedCreditcardInstallments"
+                            id="savedCreditcardInstallments"
+                            class="form-control installments"
+                    >
+                        <option value="">Selecione</option>
+                        {% for brand, installment in installments %}
                             {% for details in installment %}
                                 {% if details.interest == 0 %}
-                                    <option value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
+                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
                                 {% else %}
-                                    <option value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
+                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
                                 {% endif %}
                             {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <style>
+        .newCreditcard {
+            display: none;
+        }
+    </style>
+{% endif %}

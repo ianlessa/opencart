@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-12  newCreditcard">
+    <div class="col-sm-12 newCreditcard">
         <br>
         <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
             <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
@@ -28,17 +28,17 @@
             </div>
         </div>
 
-        <div class="col-sm-2" id="expiration-date-field">
+        <div class="col-sm-2" id="expiration-date-field ">
             <label class="row">{{ credit_card.valid_thru }}</label>
             <div class="row ">
-                <select  name="card-exp-month" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-input="exp_month">
+                <select  name="card-exp-month" id="cardExpMonth" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-input="exp_month">
                     {% for month in 1..12 %}
                         <!-- this makes every month two digits long -->
                         <!--option value="{{ "%02d"|format(month) }}">{{ "%02d"|format(month) }}</option-->
                         <option value="{{ month }}">{{ month }}</option>
                     {% endfor %}
                 </select>
-                <select name="card-exp-year" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-input="exp_year">
+                <select name="card-exp-year" id="cardExpYear" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-input="exp_year">
                     {% for year in 2017..2030 %}
                         <option value="{{ year }}">{{ year }}</option>
                     {% endfor %}
@@ -50,15 +50,15 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-5" id="holdername-field">
+    <div class="col-sm-5 newCreditcard" id="holdername-field">
         <label for="cardName">{{ credit_card.holder_name }}</label>
         <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-input="holder_name">
         <span  id="holder-name-message" class="text-danger"></span>
     </div>
 
-    <div class="col-sm-2" id="cvv-field">
+    <div class="col-sm-2 newCreditcard" id="cvv-field">
         <label for="cardCVV">CVV</label>
         <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-input="cvv">
-        <span  id="cvv-message" class="text-danger"></span>
+        <span id="cvv-message" class="text-danger"></span>
     </div>
 </div>

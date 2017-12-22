@@ -20,7 +20,8 @@ $_['credit_card'] = [
     'installments' => 'Installments',
     'holder_name' => 'Holder name',
     'without_interest' => 'without interest',
-    'interest' => 'interest: '
+    'interest' => 'interest: ',
+    'new_credit_card' => 'Novo cartão'
 ];
 
 $_['order'] = [
