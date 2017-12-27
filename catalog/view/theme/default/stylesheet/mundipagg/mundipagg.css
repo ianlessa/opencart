@@ -97,3 +97,12 @@ font-size:1.3em;
 .hidden {
     display: none;
 }
+
+.mundipaggBrandBox {
+ margin: 0 0 15px 0;
+}
+
+.mundipaggBrandBox img{
+    width: 36px;
+    margin-right: 5px;
+}
