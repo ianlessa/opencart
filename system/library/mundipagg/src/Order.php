@@ -247,20 +247,18 @@ class Order
         $location = null,
         $device = null
     ) {
-        return new CreateOrderRequest(
-            $items,
-            $customer,
-            $payments,
-            $code,
-            $customerId,
-            $shipping,
-            $metadata,
-            $isAntiFraudEnabled,
-            $ip,
-            $sessionId,
-            $location,
-            $device
-        );
+        $createOrderRequest = new CreateOrderRequest();
+
+        $createOrderRequest->items = $items;
+        $createOrderRequest->customer = $customer;
+        $createOrderRequest->payments = $payments;
+        $createOrderRequest->code = $code;
+        $createOrderRequest->customerId = $customerId;
+        $createOrderRequest->shipping = $shipping;
+        $createOrderRequest->metadata = $metadata;
+        $createOrderRequest->antifraudEnabled = $isAntiFraudEnabled;
+
+        return $createOrderRequest;
     }
 
     /**
