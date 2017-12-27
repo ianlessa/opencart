@@ -507,7 +507,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             'general_log_enabled'        => $this->config->get('payment_mundipagg_log_enabled'),
             'general_payment_title'      => $this->config->get('payment_mundipagg_title'),
             'antifraud_status'           => $this->config->get('payment_mundipagg_antifraud_status'),
-            'antifraud_minval'      => $this->config->get('payment_mundipagg_antifraud_minval'),
+            'antifraud_minval'           => $this->config->get('payment_mundipagg_antifraud_minval'),
         );
 
         $this->data['settings'] = array_merge(
