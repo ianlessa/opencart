@@ -6,10 +6,12 @@
                 <div>
                     <select
                             name="mundipaggSavedCreditCard"
+                            id="mundipaggSavedCreditCard"
                             class="form-control"
                             onchange="hideElements(); showSpecific(this.value); switchNewSaved(this.value)"
+                            brand="{{ savedCreditCardBrand }}"
                     >
-                        <option value="{{ savedCreditCardBrand | lower }}">{{ savedCreditCardBrand }} xxxx-5469 </option>
+                        <option value="{{ savedCreditCardBrand | lower }}">{{ savedCreditCardBrand }} xxxx-XXXX </option>
                         <option value="new">{{ credit_card.new_credit_card }}</option>
                     </select>
                 </div>

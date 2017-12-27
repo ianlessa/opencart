@@ -115,6 +115,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
+
+
+        //@todo
         $this->data['savedCreditCardBrand'] = 'Visa';
         $this->loadPaymentTemplates();
 

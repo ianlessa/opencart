@@ -208,12 +208,17 @@ function hideElements() {
 };
 
 function showSpecific(brand) {
-    var brandSelector = '[data-card-brand="' + brand + '"]';
-    var installments = document.querySelectorAll(brandSelector);
 
-    installments.forEach(function(element) {
-        element.classList.remove('hidden');
-    });
+    if (brand != "") {
+        brand = brand.toLowerCase();
+        var brandSelector = '[data-card-brand="' + brand + '"]';
+        var installments = document.querySelectorAll(brandSelector);
+
+        installments.forEach(function(element) {
+            console.log(1);
+            element.classList.remove('hidden');
+        });
+    }
 }
 
 (function () {
@@ -240,5 +245,8 @@ function switchNewSaved(value) {
         $(".newCreditcard").hide();
         $(".savedCreditcard").show();
     }
-
 }
+
+$("#savedCreditcardInstallments").ready(function () {
+    showSpecific($("#mundipaggSavedCreditCard").attr("brand"));
+});
