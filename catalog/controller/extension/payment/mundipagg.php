@@ -12,6 +12,7 @@ use Mundipagg\LogMessages;
 use Mundipagg\Controller\Boleto;
 use Mundipagg\Controller\CreditCard;
 use Mundipagg\Controller\Settings;
+use Mundipagg\Controller\SavedCreditCard;
 
 class ControllerExtensionPaymentMundipagg extends Controller
 {
@@ -98,6 +99,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $boleto = new Boleto($this);
         $creditCard = new CreditCard($this);
         $settings = new Settings($this);
+        $savedCreditcard = new SavedCreditCard($this);
 
         $this->data['publicKey'] = $settings->getPublicKey();
 
@@ -115,10 +117,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
-
-
         //@todo
-        $this->data['savedCreditCardBrand'] = 'Visa';
+        $this->data['savedCreditcards'] =
+            $savedCreditcard
+                ->getSavedCreditcardList($this->customer->getId());
+
+
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg', $this->data);

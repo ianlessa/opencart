@@ -208,14 +208,12 @@ function hideElements() {
 };
 
 function showSpecific(brand) {
-
     if (brand != "") {
         brand = brand.toLowerCase();
         var brandSelector = '[data-card-brand="' + brand + '"]';
         var installments = document.querySelectorAll(brandSelector);
 
         installments.forEach(function(element) {
-            console.log(1);
             element.classList.remove('hidden');
         });
     }
@@ -248,5 +246,5 @@ function switchNewSaved(value) {
 }
 
 $("#savedCreditcardInstallments").ready(function () {
-    showSpecific($("#mundipaggSavedCreditCard").attr("brand"));
+    showSpecific($("#mundipaggSavedCreditCard").val());
 });

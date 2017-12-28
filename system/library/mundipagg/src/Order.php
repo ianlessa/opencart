@@ -13,7 +13,7 @@ use MundiAPILib\Models\CreateShippingRequest;
 
 use Mundipagg\Controller\Settings;
 use Mundipagg\Controller\Boleto;
-use Mundipagg\Model\SavedCreditcard;
+use Mundipagg\Model\Creditcard;
 
 /**
  * @method \MundiAPILib\Controllers\OrdersController getOrders()
@@ -553,7 +553,7 @@ class Order
      */
     private function saveCreditCardIfNotExists($order)
     {
-        $savedCreditCard = new SavedCreditcard($this->openCart);
+        $savedCreditCard = new Creditcard($this->openCart);
 
         if (!empty($order->charges)) {
             foreach ($order->charges as $charge) {
