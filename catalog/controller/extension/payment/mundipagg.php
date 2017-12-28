@@ -117,11 +117,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['checkout_success_url'] =
             $this->url->link('checkout/success');
 
-        //@todo
-        $this->data['savedCreditcards'] =
-            $savedCreditcard
-                ->getSavedCreditcardList($this->customer->getId());
-
+        //@todo get from config
+        $isSavedCreditcardEnabled = false;
+        if ($isSavedCreditcardEnabled) {
+            $this->data['savedCreditcards'] =
+                $savedCreditcard
+                    ->getSavedCreditcardList($this->customer->getId());
+        }
 
         $this->loadPaymentTemplates();
 
@@ -342,7 +344,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-        if ($this->request->post['mundipaggSavedCreditCard']) {
+        if (isset($this->request->post['mundipaggSavedCreditCard'])) {
             $cardId = $this->request->post['mundipaggSavedCreditCard'];
             $cardToken = null;
         } else{

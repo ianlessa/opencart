@@ -122,7 +122,9 @@ class Order
             $order->customer->id
         );
 
-        $this->saveCreditCardIfNotExists($order);
+        if ($cardId) {
+            $this->saveCreditCardIfNotExists($order);
+        }
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
@@ -385,18 +387,29 @@ class Order
     private function getCreditCardPaymentDetails($token, $installments, $amount, $cardId = null)
     {
         $amountInCents = number_format($amount, 2, '', '');
-        return array(
-            array(
+        $paymentDeatails = [
+            [
                 'payment_method' => 'credit_card',
                 'amount' => $amountInCents,
-                'credit_card' => array(
+                'credit_card' => [
                     'installments' => $installments,
-                    'capture' => $this->isCapture(),
-                    'card_token' => $token,
-                    'card_id' => $this->getMundipaggCardId($cardId)
-                )
-            )
-        );
+                    'capture' => $this->isCapture()
+                ]
+            ]
+        ];
+
+        if ($token) {
+            $paymentDeatails[0]['credit_card']['card_token'] = $token;
+        }
+
+        $mundiPaggCreditcardId = $this->getMundipaggCardId($cardId);
+
+        if ($mundiPaggCreditcardId) {
+            $paymentDeatails[0]['credit_card']['card_id'] = $mundiPaggCreditcardId;
+        }
+
+        return $paymentDeatails;
+
     }
 
      /**
@@ -590,9 +603,13 @@ class Order
      */
     private function getMundipaggCardId($cardId)
     {
-        $savedCreditcard = new Creditcard($this->openCart);
-        $mundiPaggCreditcardId = $savedCreditcard->getCreditcardById($cardId);
+        if($cardId && $cardId != "") {
+            $savedCreditcard = new Creditcard($this->openCart);
+            $mundiPaggCreditcardId = $savedCreditcard->getCreditcardById($cardId);
 
-        return $mundiPaggCreditcardId['mundipagg_creditcard_id'];
+            return $mundiPaggCreditcardId['mundipagg_creditcard_id'];
+        }
+
+        return false;
     }
 }
