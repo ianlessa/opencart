@@ -93,7 +93,6 @@ class Order
 
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
 
-
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
             $createCustomerRequest,

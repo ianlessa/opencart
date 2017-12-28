@@ -131,11 +131,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private function loadPaymentTemplates()
     {
         $this->data['savedCreditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_saved_creditcard', $this->data);
+            $this->load->view('extension/payment/mundipagg_saved_credit_card', $this->data);
         $this->data['newCreditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_new_creditcard', $this->data);
+            $this->load->view('extension/payment/mundipagg_new_credit_card', $this->data);
         $this->data['creditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_creditcard', $this->data);
+            $this->load->view('extension/payment/mundipagg_credit_card', $this->data);
         $this->data['boletoTemplate'] =
             $this->load->view('extension/payment/mundipagg_boleto', $this->data);
     }
@@ -336,6 +336,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $cardToken = $this->request->post['munditoken'];
         $paymentDetails = explode('|', $this->request->post['payment-details']);
+        $savedCreditcard = $this->requet->post['mundipaggSavedCreditCad'];
 
         try {
             $response = $this->createCreditCardOrder(

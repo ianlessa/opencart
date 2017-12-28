@@ -1,0 +1,15 @@
+<div class="tab-pane active" id="creditCardTab">
+    {% if brandNames %}
+        <div class="row">
+            <div class="col-sm-12 mundipaggBrandBox">
+                {% for brand in brandImages %}
+                    <img src="{{ brand }}" />
+                {% endfor %}
+            </div>
+        </div>
+        {{ savedCreditcardTemplate }}
+        {{ newCreditcardTemplate  }}
+    {% else %}
+        <h3>{{ credit_card.no_brands_enabled }}</h3>
+    {% endif %}
+</div>
