@@ -79,6 +79,7 @@ class Order
      * @param string $cardToken
      * @param int $cardId
      * @return object
+     * @throws \Exception
      */
     public function create($orderData, $cart, $paymentMethod, $cardToken = null, $cardId = null)
     {
@@ -122,7 +123,7 @@ class Order
             $order->customer->id
         );
 
-        if ($cardId) {
+        if (!empty($orderData['saveCreditcard'])) {
             $this->saveCreditCardIfNotExists($order);
         }
 

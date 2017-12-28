@@ -118,7 +118,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->url->link('checkout/success');
 
         //@todo get from config
-        $isSavedCreditcardEnabled = false;
+        $isSavedCreditcardEnabled = true;
+
         if ($isSavedCreditcardEnabled) {
             $this->data['savedCreditcards'] =
                 $savedCreditcard
@@ -349,6 +350,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $cardToken = null;
         } else{
             $cardToken = $this->request->post['munditoken'];
+            //@todo get from frontend
+            $orderData['saveCreditcard'] = false;
             $cardId = null;
         }
 

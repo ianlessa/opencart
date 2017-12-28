@@ -43,7 +43,7 @@ class CreditCardSettings
             'credit_card_payment_title' => $this->getPaymentTitle(),
             'credit_card_invoice_name' => $this->getInvoiceName(),
             'credit_card_operation' => $this->getOperation(),
-            'credit_card_is_saved_enabled' => $this->getIsSavedCreditcardEnabled()
+            'credit_card_is_saved_enabled' => $this->isSavedCreditcardEnabled()
         );
     }
 
@@ -55,7 +55,7 @@ class CreditCardSettings
         return $query->rows;
     }
 
-    public function getIsSavedCreditcardEnabled() {
+    public function isSavedCreditcardEnabled() {
         //return $this->openCart->config->get('payment_mundipagg_credit_card_operation');
         return false;
     }
