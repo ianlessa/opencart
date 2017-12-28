@@ -190,7 +190,7 @@ class Order
                     $data = array(
                         'opencart_id'     => $mundipaggOrder->code,
                         'charge_id'       => $charge->id,
-                        'payment_method'  => $charge->payment_method,
+                        'payment_method'  => $charge->paymentMethod,
                         'status'          => $charge->status,
                         'amount'          => $charge->amount,
                     );

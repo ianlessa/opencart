@@ -351,7 +351,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         } else{
             $cardToken = $this->request->post['munditoken'];
             //@todo get from frontend
-            $orderData['saveCreditcard'] = false;
+            $orderData['saveCreditcard'] = true;
             $cardId = null;
         }
 
