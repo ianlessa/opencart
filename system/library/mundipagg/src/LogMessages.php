@@ -11,7 +11,8 @@ class LogMessages
     const INVALID_CREDIT_CARD_REQUEST = 'Invalid credit card request';
     const MALFORMED_REQUEST = 'Malformed request';
     const ORDER_ID_NOT_FOUND = 'Order id not found';
-    const API_REQUEST_FAIL = 'Mundipagg api request failed';
+    const API_REQUEST_FAIL = 'MundiPagg api request failed';
+    const UNKNOWN_API_RESPONSE = 'Unknown MundiPagg api response';
     const UNABLE_TO_CREATE_ORDER = 'Unable to create Order in Mundipagg';
     const UNABLE_TO_CREATE_MUNDI_ORDER = 'Unable to create order in mundipagg_order';
     const UNABLE_TO_SAVE_MUNDI_CHARGE = 'Unable to save charge in table mundipagg_charge';

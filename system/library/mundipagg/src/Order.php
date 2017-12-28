@@ -77,9 +77,10 @@ class Order
      * @param array $cart
      * @param string $paymentMethod
      * @param string $cardToken
+     * @param int $cardId
      * @return object
      */
-    public function create($orderData, $cart, $paymentMethod, $cardToken = null)
+    public function create($orderData, $cart, $paymentMethod, $cardToken = null, $cardId = null)
     {
         $items = $this->prepareItems($cart->getProducts());
         $createAddressRequest = $this->createAddressRequest($orderData);
@@ -91,7 +92,7 @@ class Order
         }
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
 
-        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount);
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
 
         $CreateOrderRequest = $this->createOrderRequest(
             $items,
@@ -296,7 +297,7 @@ class Order
         $createAddressRequest->neighborhood = $orderData['payment_address_2'];
         $createAddressRequest->city = $orderData['payment_city'];
         $createAddressRequest->state = $orderData['payment_zone_code'];
-        $createAddressRequest->country = $orderData['shipping_iso_code_2'];
+        $createAddressRequest->country = $orderData['payment_iso_code_2'];
         $createAddressRequest->complement =
             $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
         $createAddressRequest->metadata = null;
@@ -329,7 +330,7 @@ class Order
      * @throws \Exception Unsupported payment type
      * @return array
      */
-    private function preparePayments($paymentType, $cardToken, $orderAmount)
+    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = null)
     {
         switch ($paymentType) {
             case 'boleto':
@@ -338,7 +339,8 @@ class Order
                 return $this->getCreditCardPaymentDetails(
                     $cardToken,
                     $this->orderInstallments,
-                    $orderAmount
+                    $orderAmount,
+                    $cardId
                 );
             default:
                 /** TODO: log it */
@@ -373,7 +375,14 @@ class Order
         return $this->openCart->config->get('payment_mundipagg_credit_card_operation') != 'Auth';
     }
 
-    private function getCreditCardPaymentDetails($token, $installments, $amount)
+    /**
+     * @param string $token
+     * @param int $installments
+     * @param float $amount
+     * @param int $cardId
+     * @return array
+     */
+    private function getCreditCardPaymentDetails($token, $installments, $amount, $cardId = null)
     {
         $amountInCents = number_format($amount, 2, '', '');
         return array(
@@ -383,7 +392,8 @@ class Order
                 'credit_card' => array(
                     'installments' => $installments,
                     'capture' => $this->isCapture(),
-                    'card_token' => $token
+                    'card_token' => $token,
+                    'card_id' => $this->getMundipaggCardId($cardId)
                 )
             )
         );
@@ -570,5 +580,19 @@ class Order
                 }
             }
         }
+    }
+
+    /**
+     * Get MundiPagg crtedit card id by primary key
+     * from cards table(opencart).
+     * @param int $id
+     * @return string
+     */
+    private function getMundipaggCardId($cardId)
+    {
+        $savedCreditcard = new Creditcard($this->openCart);
+        $mundiPaggCreditcardId = $savedCreditcard->getCreditcardById($cardId);
+
+        return $mundiPaggCreditcardId['mundipagg_creditcard_id'];
     }
 }

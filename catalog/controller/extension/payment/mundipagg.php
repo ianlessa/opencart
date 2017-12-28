@@ -156,18 +156,25 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         if (isset($this->session->data['order_id'])) {
             $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
                     $response = $this->getOrder()->create($orderData, $this->cart, 'boleto');
 
                     if (isset($response->charges[0]->lastTransaction->success)) {
                         $this->success($response);
+                    } else{
+                        Log::create()
+                            ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
+                            ->withOrderId($this->session->data['order_id']);
+                        $this->response->redirect($this->url->link('checkout/failure', '', true));
                     }
-
-                    $this->response->redirect($this->url->link('checkout/failure', '', true));
                 }
             }
         }
+
+        Log::create()
+            ->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
         $this->response->redirect($this->url->link('checkout/cart'));
     }
 
@@ -274,7 +281,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @param $cardToken
      * @return mixed
      */
-    private function createCreditCardOrder($interest, $installments, $orderData, $cardToken)
+    private function createCreditCardOrder($interest, $installments, $orderData, $cardToken, $cardId)
     {
         $this->load();
         
@@ -286,7 +293,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $orderData['amountWithInterest'] =
             $this->setInterestToOrder($orderData, $interest);
         
-        return $order->create($orderData, $this->cart, 'creditCard', $cardToken);
+        return $order->create($orderData, $this->cart, 'creditCard', $cardToken, $cardId);
     }
     
     private function getOrder()
@@ -334,17 +341,26 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $cardToken = $this->request->post['munditoken'];
+
+        if ($this->request->post['mundipaggSavedCreditCard']) {
+            $cardId = $this->request->post['mundipaggSavedCreditCard'];
+            $cardToken = null;
+        } else{
+            $cardToken = $this->request->post['munditoken'];
+            $cardId = null;
+        }
+
         $paymentDetails = explode('|', $this->request->post['payment-details']);
-        $savedCreditcard = $this->requet->post['mundipaggSavedCreditCad'];
 
         try {
             $response = $this->createCreditCardOrder(
                 (double)$paymentDetails[1],
                 $paymentDetails[0],
                 $orderData,
-                $cardToken
+                $cardToken,
+                $cardId
             );
+
         } catch (Exception $e) {
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
