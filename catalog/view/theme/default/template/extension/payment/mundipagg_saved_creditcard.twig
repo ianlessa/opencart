@@ -8,13 +8,13 @@
                             name="mundipaggSavedCreditCard"
                             id="mundipaggSavedCreditCard"
                             class="form-control"
-                            onchange="hideElements(); showSpecific(this.value); switchNewSaved(this.value)"
+                            onchange="hideElements(); changeInstallments(); switchNewSaved(this.value)"
                     >
                         {% for creditcard in savedCreditcards %}
                             {%  if loop.first %}
-                                <option selected="selected" value="{{ creditcard.brand }}">{{ creditcard.brand }} xxxx-{{ creditcard.last_four_digits }}</option>
+                                <option selected="selected" value="{{ creditcard.id }}" brand="{{ creditcard.brand }}">{{ creditcard.brand }} xxxx-{{ creditcard.last_four_digits }}</option>
                             {% else %}
-                                <option value="{{ creditcard.brand }}">{{ creditcard.brand }} xxxx-{{ creditcard.last_four_digits }}</option>
+                                <option value="{{ creditcard.id }}" brand="{{ creditcard.brand }}">{{ creditcard.brand }} xxxx-{{ creditcard.last_four_digits }}</option>
                             {%  endif %}
                         {% endfor %}
                         <option value="new">{{ credit_card.new_credit_card }}</option>
