@@ -49,7 +49,7 @@
         $.get("{{ generate_boleto_url }}"
         ).done(function( data ) {
             if (data != undefined) {
-                window.open(data);
+                window.open(data, "_blank");
                 window.location = "{{ checkout_success_url }}";
             }
         }).fail(function () {
