@@ -4,9 +4,9 @@ $_['boleto'] = [
       'title' => 'Pagamento via boleto',
       'click_to_generate' => 'Clique aqui para gerar seu boleto.',
       'pending_order_status' => 'Pedido pendente - Aguardando pagamento do boleto.',
-      'instructions' => "Após clicar em 'clique aqui para gerar seu boleto.'"
-                        . "você será redirecionado para uma nova janela, onde "
-                        . "você poderá fazer o donwload ou a impressão de seu boleto."
+      'instructions' => "Após clicar em 'Clique aqui para gerar seu boleto' "
+            . "você será redirecionado para uma nova janela "
+            . "e poderá fazer o donwload ou a impressão de seu boleto."
 ];
 
 $_['credit_card'] = [
