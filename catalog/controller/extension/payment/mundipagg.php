@@ -104,6 +104,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['publicKey'] = $settings->getPublicKey();
 
         $this->getDirectories();
+        $this->loadUrls();
 
         if ($creditCard->isEnabled()) {
             $this->data = array_merge($this->data, $creditCard->getCreditCardPageInfo());
@@ -112,10 +113,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         if ($boleto->isEnabled()) {
             $this->data = array_merge($this->data, $boleto->getBoletoPageInfo());
         }
-        $this->data['generate_boleto_url'] =
-            $this->url->link('extension/payment/mundipagg/generateBoleto');
-        $this->data['checkout_success_url'] =
-            $this->url->link('checkout/success');
+
 
         //@todo get from config
         $isSavedCreditcardEnabled = false;
@@ -129,6 +127,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg', $this->data);
+    }
+
+    private function loadUrls()
+    {
+        $this->data['generate_boleto_url'] =
+            $this->url->link('extension/payment/mundipagg/generateBoleto');
+        $this->data['checkout_success_url'] =
+            $this->url->link('checkout/success');
+        $this->data['payment_failure_url'] =
+            $this->url->link('checkout/failure');
     }
 
     private function loadPaymentTemplates()
@@ -145,8 +153,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
 
     /**
-     * Generate boletos page
-     *
+     * Generate boleto
      * @return void
      */
     public function generateBoleto()
@@ -166,7 +173,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     $response = $this->getOrder()->create($orderData, $cart, 'boleto');
 
                     if (isset($response->charges[0]->lastTransaction->success)) {
-                        $this->success($response);
+                        $this->saveBoletoInfoInOrderHistory($response);
+                        $this->printBoletoUrl($response);
+                        return;
+
                     } else{
                         Log::create()
                             ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
@@ -188,12 +198,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
     }
 
     /**
-     * Save payment and redirect user to boleto url
-     *
+     * Save payment info and print boleto url
      * @param string $response Api's response
      * @return void
      */
-    private function success($response)
+    private function saveBoletoInfoInOrderHistory($response)
     {
         $orderComment =
                 $this->language->get('boleto')['pending_order_status'] . " <br>" .
@@ -203,7 +212,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $this->language->get('boleto')['click_to_generate'] .
                 "</a>";
         $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 1, $orderComment, true);
-        $this->response->redirect($response->charges[0]->lastTransaction->url);
+    }
+
+    private function printBoletoUrl($response)
+    {
+        echo $response->charges[0]->lastTransaction->url;
     }
 
     /**
