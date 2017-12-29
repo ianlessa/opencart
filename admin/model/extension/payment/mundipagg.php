@@ -325,16 +325,15 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         $this->db->query(
             'CREATE TABLE IF NOT EXISTS `mundipagg_creditcard` (
-                `id` VARCHAR(30) NOT NULL,
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `mundipagg_creditcard_id` VARCHAR(30) ,
                 `mundipagg_customer_id` VARCHAR(30) NOT NULL,
                 `first_six_digits` INT(6) NOT NULL,
                 `last_four_digits` INT(4) NOT NULL,
                 `brand` VARCHAR(15) NOT NULL,
                 `holder_name` VARCHAR(50) NOT NULL,
                 `exp_month` INT(2) NOT NULL,
-                `exp_year` YEAR NOT NULL,
-                
-                PRIMARY KEY (`id`)
+                `exp_year` YEAR NOT NULL
                 );'
         );
     }
@@ -342,7 +341,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function dropCreditCardTable()
     {
         $this->db->query(
-            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_creditcard CASCADE`;'
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_creditcard`;'
         );
     }
 

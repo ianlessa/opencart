@@ -4,7 +4,7 @@ namespace Mundipagg\Model;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
 
-class SavedCreditcard
+class Creditcard
 {
     private $openCart;
     private $tableName = "mundipagg_creditcard";
@@ -25,7 +25,7 @@ class SavedCreditcard
             "INSERT INTO".
             "`" . DB_PREFIX . $this->tableName . "` " .
             "(
-                id,
+                mundipagg_creditcard_id,
                 mundipagg_customer_id,
                 first_six_digits,
                 last_four_digits,
@@ -59,12 +59,12 @@ class SavedCreditcard
      * @param int $creditCardId
      * @return bool
      */
-    public function creditCardExists($creditCardId)
+    public function creditCardExists($mundipaggCreditcardId)
     {
         $sql =
-            "SELECT id FROM " .
+            "SELECT mundipagg_creditcard_id FROM " .
             "`" . DB_PREFIX . $this->tableName . "` " .
-            "WHERE id = '" . $creditCardId . "'"
+            "WHERE mundipagg_creditcard_id = '" . $mundipaggCreditcardId . "'"
         ;
 
         try {
@@ -79,5 +79,71 @@ class SavedCreditcard
             Log::create()
                 ->error(LogMessages::CANNOT_SAVE_CREDIT_CARD_DATA, __METHOD__);
         }
+    }
+
+    /**
+     * Get saved credit card
+     * @param int $id Table primary key
+     * @return bool
+     */
+    public function getCreditcardById($id)
+    {
+        $sql =
+            "SELECT " .
+            "id, " .
+            "mundipagg_creditcard_id, " .
+            "mundipagg_customer_id, " .
+            "first_six_digits, " .
+            "last_four_digits, " .
+            "brand, " .
+            "holder_name, " .
+            "exp_month, " .
+            "exp_year " .
+            "FROM " .
+            "`" . DB_PREFIX . $this->tableName . "` " .
+            "WHERE id = '" . $id . "'"
+        ;
+
+        try {
+            $query = $this->openCart->db->query($sql);
+
+            if ($query->num_rows === 1) {
+                return $query->row;
+            }
+            return false;
+
+        } catch (\Exception $exc) {
+            Log::create()
+                ->error(LogMessages::CANNOT_GET_CREDIT_CARD_DATA, __METHOD__);
+        }
+    }
+
+    /**
+     * Return an array with all user credit cards
+     * @param string $customerId MundiPagg customer id
+     * @return array
+     */
+    public function getCreditcardsByCustomerId($customerId)
+    {
+        $sql = "
+            SELECT " .
+            "id, " .
+            "mundipagg_creditcard_id," .
+            "mundipagg_customer_id, " .
+            "first_six_digits, " .
+            "last_four_digits, " .
+            "brand, " .
+            "holder_name, " .
+            "exp_month, " .
+            "exp_year " .
+            "FROM " .
+            "`". DB_PREFIX . "mundipagg_creditcard` " .
+            "WHERE mundipagg_customer_id = '" . $customerId . "'" .
+            " ORDER BY brand, last_four_digits, id
+        ";
+
+        $query =  $this->openCart->db->query($sql);
+
+        return $query->rows;
     }
 }
