@@ -106,14 +106,14 @@ class Order
             $isAntiFraudEnabled
         );
 
-        if (!$CreateOrderRequest->items) {
-            return false;
-        }
-
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
             ->withOrderId($orderData['order_id'])
             ->withRequest(json_encode($CreateOrderRequest, JSON_PRETTY_PRINT));
+
+        if (!$CreateOrderRequest->items) {
+            return false;
+        }
 
         $order = $this->getOrders()->createOrder($CreateOrderRequest);
         $this->createOrUpdateCharge($orderData, $order);
