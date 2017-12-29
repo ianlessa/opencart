@@ -4,7 +4,7 @@ namespace Mundipagg;
 
 class LogMessages
 {
-    const LOG_HEADER = 'Mundipagg Opencart V1.2.4 |';
+    const LOG_HEADER = 'Mundipagg Opencart V1.2.5 |';
     
     /** Error messages */
     const UNKNOWN_ORDER_STATUS = 'Unknown order status received';
