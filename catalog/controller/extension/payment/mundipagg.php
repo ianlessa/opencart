@@ -118,7 +118,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->url->link('checkout/success');
 
         //@todo get from config
-        $isSavedCreditcardEnabled = true;
+        $isSavedCreditcardEnabled = false;
 
         if ($isSavedCreditcardEnabled) {
             $this->data['savedCreditcards'] =
@@ -162,11 +162,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
-                    $response = $this->getOrder()->create($orderData, $this->cart, 'boleto');
+                    $cart = $this->cart;
+                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
 
                     if (isset($response->charges[0]->lastTransaction->success)) {
                         $this->success($response);
                     } else{
+                        Log::create()
+                            ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
+                            ->withOrderId($this->session->data['order_id'])
+                            ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
+
                         Log::create()
                             ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
                             ->withOrderId($this->session->data['order_id']);
@@ -351,7 +357,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         } else{
             $cardToken = $this->request->post['munditoken'];
             //@todo get from frontend
-            $orderData['saveCreditcard'] = true;
+            $orderData['saveCreditcard'] = false;
             $cardId = null;
         }
 
