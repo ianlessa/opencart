@@ -41,3 +41,12 @@ $_['misc'] = [
     'no_payment_methods_enabled' => 'No payment methods enabled',
     'continue' => 'Continue'
 ];
+
+$_['saved_creditcard'] = [
+    'title' => 'Cartões salvos',
+    'my_creditcards' => 'Meus cartões',
+    'your_saved_creditcards' => 'Seus cartões salvos',
+    'brand' => 'Bandeira',
+    'last_four_digits' => 'Últimos quatro dígitos',
+    'delete' => 'Excluir'
+];

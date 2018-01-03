@@ -433,6 +433,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             );
 
             $this->mundipaggOrderUpdateModel->
+            $this->mundipaggOrderUpdateModel->
             insertInterestInOrderTotals(
                 $orderData['order_id'],
                 $interestAmount

@@ -51,10 +51,18 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     private function installEvents()
     {
+        //Add button to order list in admin
         $this->model_setting_event->addEvent(
             'payment_mundipagg',
             'admin/view/sale/order_list/before',
             'extension/payment/mundipagg_events/onOrderList'
+        );
+
+        //Add saved credit card list
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_saved_creditcards',
+            'catalog/view/account/account/after',
+            'extension/payment/mundipagg_events/showSavedCreditcards'
         );
     }
 
@@ -67,6 +75,7 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         $this->load->model('setting/event');
         $this->model_setting_event->deleteEvent('payment_mundipagg');
+        $this->model_setting_event->deleteEvent('payment_mundipagg_saved_creditcards');
     }
 
     /**

@@ -50,3 +50,13 @@ $_['misc'] = [
 $_['error_message'] = [
     'unknown_order_status' => 'Ops! Something went wrong. Try again in a few minutes or contact the store administration'
 ];
+
+$_['saved_creditcard'] = [
+    'title' => 'My cards',
+    'my_creditcards' => 'My cards',
+    'account' => 'Account',
+    'your_saved_creditcards' => 'Your saved credit cards.',
+    'brand' => 'Brand',
+    'last_four_digits' => 'Last four digits',
+    'delete' => 'Delete'
+];
