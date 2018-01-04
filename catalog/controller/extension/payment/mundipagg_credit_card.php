@@ -15,7 +15,6 @@ class ControllerExtensionPaymentMundipaggCreditCard extends Controller
     {
         $data = array();
 
-
         return $this->load->view('extension/payment/mundipagg', $data);
     }
 }
