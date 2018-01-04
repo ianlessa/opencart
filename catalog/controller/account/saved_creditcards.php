@@ -1,5 +1,10 @@
 <?php
 
+require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
+
+use Mundipagg\Model\Creditcard;
+use Mundipagg\Model\Customer;
+
 class ControllerAccountSavedCreditcards extends Controller {
 
     private $languageMundiPagg;
@@ -16,8 +21,9 @@ class ControllerAccountSavedCreditcards extends Controller {
 
         $data['text'] = $this->languageMundiPagg;
         $data['breadcrumbs'] = $this->setBreadcrumbs($data);
-        $this->document->setTitle($data['text']['title']);
+        $data['creditcards'] = $this->getCreditcards();
 
+        $this->document->setTitle($data['text']['title']);
         $this->response->setOutput($this->load->view('account/saved_creditcards', $data));
     }
 
@@ -35,12 +41,12 @@ class ControllerAccountSavedCreditcards extends Controller {
     {
         $breadcrumbs[] = [
             'text' => $this->languageMundiPagg['account'],
-            'href' => $this->url->link('common/home')
+            'href' => $this->url->link('account/account')
         ];
 
         $breadcrumbs[] = [
             'text' => $this->languageMundiPagg['title'],
-            'href' => $this->url->link('account/account', '', true)
+            'href' => $this->url->link('account/saved_creditcards', '', true)
         ];
         return $breadcrumbs;
     }
@@ -57,4 +63,19 @@ class ControllerAccountSavedCreditcards extends Controller {
         return $data;
     }
 
+
+    private function getCreditcards()
+    {
+        $savedCreditcard = new Creditcard($this);
+        $mundiPaggCustomer = new Customer($this);
+
+        $customerId = $this->customer->getId();
+        $mundiPaggCustomerId = $mundiPaggCustomer->getByOpencartId($customerId);
+
+        return
+            $savedCreditcard->
+            getCreditcardsByCustomerId(
+                $mundiPaggCustomerId['mundipagg_customer_id']
+            );
+    }
 }

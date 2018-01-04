@@ -31,10 +31,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for breadcrumb in breadcrumbs %}
+                    {% for creditcard in creditcards %}
                         <tr>
-                            <td class="text-center">Visa</td>
-                            <td class="text-center">5459</td>
+                            <td class="text-center">{{ creditcard.brand }}</td>
+                            <td class="text-center">{{ creditcard.last_four_digits }}</td>
                             <td class="text-center"><button class="btn btn-danger">Excluir</button></td>
                         </tr>
                     {% endfor %}
