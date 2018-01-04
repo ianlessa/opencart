@@ -255,15 +255,14 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
 
     public function showSavedCreditcards(string $route, $data = array(), $template = null)
     {
-
         $template = new Template($this->registry->get('config')->get('template_engine'));
         $this->load->language('extension/payment/mundipagg');
 
         $templateData['text'] = $this->language->get('saved_creditcard');
 
-        $templateData['my_creditcards_url'] = $this->url->link('mundipagg/saved_creditcards', '', true);
+        $templateData['my_creditcards_url'] = $this->url->link('account/saved_creditcards', '', true);
 
-        $view  = $this->load->view('extension/payment/mundipagg_saved_credit_card_list', $templateData);
+        $view  = $this->load->view('extension/payment/mundipagg_saved_credit_card_account_content', $templateData);
 
         $data['content_bottom'] .= $view;
 
