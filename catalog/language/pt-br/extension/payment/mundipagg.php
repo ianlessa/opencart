@@ -17,7 +17,8 @@ $_['credit_card'] = [
       'holder_name' => 'Holder name',
       'cvv' => 'CVV',
       'no_brands_enabled' => 'No brands enabled',
-      'new_credit_card' => 'New credit card'
+      'new_credit_card' => 'New credit card',
+      'save_creditcard_message' => 'Salvar este cartão para compras futuras'
 ];
 
 $_['order'] = [

@@ -21,7 +21,8 @@ $_['credit_card'] = [
     'holder_name' => 'Holder name',
     'without_interest' => 'without interest',
     'interest' => 'interest: ',
-    'new_credit_card' => 'Novo cartão'
+    'new_credit_card' => 'Novo cartão',
+    'save_creditcard_message' => 'Save this card to future orders'
 ];
 
 $_['order'] = [
