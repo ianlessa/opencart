@@ -34,13 +34,12 @@
 }
 
 #boletoTab.tab-pane{
-    background-color:#314350;
-    color:#fff;
+    background-color: #F7F7F7;
+    border: 0;
 }
 
 #boletoTab.tab-pane h3{
     margin:0 0 1.5em 0;
-    color:#fff;
 }
 
 #boletoTab.tab-pane{
@@ -49,29 +48,22 @@
 }
 
 #boletoTab.tab-pane blockquote {
-    background: rgba(99,144,71,.11);
     border-left: 0.3em solid #97cd76;
-    color: #ddd;
     font-size: 0.8em;
     margin: 0 0 0 20px
 }
 
 #boletoTab.tab-pane #boletoLink>i {
-font-size:1.3em;
+    font-size:1.3em;
 }
 
 #boletoTab.tab-pane #boletoLink {
-    border: 0.02em solid #31708f;
-    color:#23a1d1;
-    border-radius: 0;
-    padding: 0.7em 0.7em;
-    float:left;
+
 
 }
 
 #boletoTab.tab-pane #boletoLink:hover, #boletoTab.tab-pane #boletoLink:active {
-    color:#49A5FF;
-    border: 0.02em solid #49A5FF;
+
 }
 
 /**
@@ -80,6 +72,15 @@ font-size:1.3em;
 
 #creditCardTab{
     background-color:#F7F7F7;
+}
+
+#creditCardTab .mundipaggBrandBox {
+ margin: 0 0 15px 0;
+}
+
+#creditCardTab .mundipaggBrandBox img{
+    width: 36px;
+    margin-right: 5px;
 }
 
 .input-group-addon {
@@ -97,3 +98,4 @@ font-size:1.3em;
 .hidden {
     display: none;
 }
+

@@ -22,6 +22,7 @@ catalog/controller/extension/payment/mundipagg.php catalog/controller/extension/
 catalog/controller/extension/payment/mundipagg_credit_card.php catalog/controller/extension/payment/mundipagg_credit_card.php
 catalog/controller/extension/payment/mundipagg_events.php catalog/controller/extension/payment/mundipagg_events.php
 catalog/controller/extension/payment/mundipagg_webhook.php catalog/controller/extension/payment/mundipagg_webhook.php
+catalog/controller/account/* catalog/controller/account/
 
 # language
 catalog/language/en-gb/extension/payment/mundipagg.php catalog/language/en-gb/extension/payment/mundipagg.php
@@ -33,6 +34,7 @@ catalog/model/extension/total/* catalog/model/extension/total/
 
 # view
 catalog/view/theme/default/template/extension/payment/* catalog/view/theme/default/template/extension/payment/
+catalog/view/theme/default/template/extension/account/* catalog/view/theme/default/template/account/
 
 # scripts
 catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/

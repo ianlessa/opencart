@@ -4,9 +4,9 @@ $_['boleto'] = [
       'title' => 'Pagamento via boleto',
       'click_to_generate' => 'Clique aqui para gerar seu boleto.',
       'pending_order_status' => 'Pedido pendente - Aguardando pagamento do boleto.',
-      'instructions' => "Após clicar em 'clique aqui para gerar seu boleto.'"
-                        . "você será redirecionado para uma nova janela, onde "
-                        . "você poderá fazer o donwload ou a impressão de seu boleto."
+      'instructions' => "Após clicar em 'Clique aqui para gerar seu boleto' "
+            . "você será redirecionado para uma nova janela "
+            . "e poderá fazer o donwload ou a impressão de seu boleto."
 ];
 
 $_['credit_card'] = [
@@ -16,7 +16,8 @@ $_['credit_card'] = [
       'brand' => 'Brand',
       'holder_name' => 'Holder name',
       'cvv' => 'CVV',
-      'no_brands_enabled' => 'No brands enabled'
+      'no_brands_enabled' => 'No brands enabled',
+      'new_credit_card' => 'New credit card'
 ];
 
 $_['order'] = [
@@ -39,4 +40,13 @@ $_['order_history_update'] = [
 $_['misc'] = [
     'no_payment_methods_enabled' => 'No payment methods enabled',
     'continue' => 'Continue'
+];
+
+$_['saved_creditcard'] = [
+    'title' => 'Cartões salvos',
+    'my_creditcards' => 'Meus cartões',
+    'your_saved_creditcards' => 'Meus cartões salvos',
+    'brand' => 'Bandeira',
+    'last_four_digits' => 'Últimos quatro dígitos',
+    'delete' => 'Excluir'
 ];

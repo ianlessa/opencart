@@ -4,14 +4,15 @@ namespace Mundipagg;
 
 class LogMessages
 {
-    const LOG_HEADER = 'Mundipagg Opencart V1.2.4 |';
+    const LOG_HEADER = 'Mundipagg Opencart V1.2.7 |';
     
     /** Error messages */
     const UNKNOWN_ORDER_STATUS = 'Unknown order status received';
     const INVALID_CREDIT_CARD_REQUEST = 'Invalid credit card request';
     const MALFORMED_REQUEST = 'Malformed request';
     const ORDER_ID_NOT_FOUND = 'Order id not found';
-    const API_REQUEST_FAIL = 'Mundipagg api request failed';
+    const API_REQUEST_FAIL = 'MundiPagg api request failed';
+    const UNKNOWN_API_RESPONSE = 'Unknown MundiPagg api response';
     const UNABLE_TO_CREATE_ORDER = 'Unable to create Order in Mundipagg';
     const UNABLE_TO_CREATE_MUNDI_ORDER = 'Unable to create order in mundipagg_order';
     const UNABLE_TO_SAVE_MUNDI_CHARGE = 'Unable to save charge in table mundipagg_charge';
@@ -20,6 +21,7 @@ class LogMessages
     const UNABLE_TO_UPDATE_ORDER_AMOUNT = 'Unable to update the order amount';
     const CANNOT_SAVE_CREDIT_CARD_DATA = 'Cannot save credit card data';
     const CANNOT_GET_CREDIT_CARD_DATA = 'Cannot get credit card data';
+    const CANNOT_GET_CUSTOMER_DATA = 'Cannot get customer data';
 
     /** Debug Messages */
     const ORDER_NOT_FOUND_IN_ORDER_TABLE = 'Mundipagg order id not found in mundipagg_order table';

@@ -3,13 +3,12 @@ var MundiPagg = {};
 MundiPagg.Validator = function() {
     return {
         validateForm: function () {
-            var formData = $('#mundi-credit-card-form').serializeArray();
             var errors = [];
 
-            var creditCardNumber = this.validateCardNumber(formData[0]['value']);
-            var expiration = this.validateExpiration(formData[2]['value'], formData[3]['value']);
-            var holderName = this.validateHolderName(formData[4]['value']);
-            var cvv = this.validateCVV(formData[5]['value']);
+            var creditCardNumber = this.validateCardNumber($("#cardNumber").val());
+            var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpYear").val());
+            var holderName = this.validateHolderName($("#cardName").val());
+            var cvv = this.validateCVV($("#cardCVV").val());
 
             if (creditCardNumber !== undefined) {
                 errors['credit-card-number'] = creditCardNumber;
@@ -172,7 +171,6 @@ MundiPagg.Form = function() {
 
         initializeVariables: function() {
             this.cardBrand = document.querySelector('[data-mundicheckout-brand]');
-            this.installmentsSelector = document.querySelectorAll('[data-card-brand]');
             this.submitForm = $('[data-mundicheckout-form]')[0];
 
             this.creditCardNumberMessageField = $('#credit-card-number-message').text('');
@@ -187,26 +185,39 @@ MundiPagg.Form = function() {
         },
 
         hideAll: function() {
-            this.installmentsSelector.forEach(function (element) {
-                element.classList.add('hidden');
-            });
+            hideElements();
         },
 
         showSpecific: function(brand) {
-            var brandSelector = '[data-card-brand="' + brand + '"]';
-            var installments = document.querySelectorAll(brandSelector);
-
             if (brand) {
-                installments.forEach(function(element) {
-                    element.classList.remove('hidden');
-                });
-            }
-            else {
+                showSpecific(brand);
+            } else {
                 this.hideAll();
             }
         }
     };
 };
+
+function hideElements() {
+    $(".installments").each(function () {
+        $(this).val("");
+        $(this).children().each(function() {
+            $(this).addClass("hidden");
+        });
+    })
+};
+
+function showSpecific(brand) {
+    if (brand != "" && brand != undefined) {
+        brand = brand.toLowerCase();
+        var brandSelector = '[data-card-brand="' + brand + '"]';
+        var installments = document.querySelectorAll(brandSelector);
+
+        installments.forEach(function(element) {
+            element.classList.remove('hidden');
+        });
+    }
+}
 
 (function () {
     var mundiValidator = MundiPagg.Validator();
@@ -223,3 +234,23 @@ MundiPagg.Form = function() {
         }
     );
 })();
+
+function switchNewSaved(value) {
+    if(value == "new") {
+        $(".newCreditcard").show();
+        $(".savedCreditcard").hide();
+    } else {
+        $(".newCreditcard").hide();
+        $(".savedCreditcard").show();
+    }
+}
+
+function changeInstallments() {
+    showSpecific(
+        $( "#mundipaggSavedCreditCard option:selected" ).attr("brand")
+    );
+}
+
+$("#savedCreditcardInstallments").ready(function () {
+    changeInstallments();
+});
