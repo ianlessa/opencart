@@ -2,6 +2,7 @@
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
+use Mundipagg\Controller\CreditCardSettings;
 use Mundipagg\Model\Creditcard;
 use Mundipagg\Model\Customer;
 
@@ -14,6 +15,12 @@ class ControllerAccountSavedCreditcards extends Controller {
             $this->session->data['redirect'] = $this->url->link('account/account', '', true);
 
             $this->response->redirect($this->url->link('account/login', '', true));
+        } else {
+            $creditCardSettings = new CreditCardSettings($this);
+            if ($creditCardSettings->isSavedCreditcardEnabled() !== 'true') {
+                $this->response->redirect($this->url->link('account/account', '', true));
+                return;
+            }
         }
 
         $this->loadLanguage();
