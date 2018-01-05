@@ -56,6 +56,6 @@ class CreditCardSettings
     }
 
     public function isSavedCreditcardEnabled() {
-        return $this->openCart->config->get('payment_mundipagg_credit_card_is_saved_enabled');
+        return $this->openCart->config->get('payment_mundipagg_credit_card_is_saved_enabled') === 'true';
     }
 }

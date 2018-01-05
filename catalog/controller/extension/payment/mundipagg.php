@@ -119,7 +119,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $isSavedCreditcardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
         $this->data['isSavedCreditcardEnabled'] = $isSavedCreditcardEnabled;
 
-        if ($isSavedCreditcardEnabled === 'true') {
+        if ($isSavedCreditcardEnabled) {
             $this->data['savedCreditcards'] =
                 $savedCreditcard
                     ->getSavedCreditcardList($this->customer->getId());
@@ -370,7 +370,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $cardToken = null;
         } else{
             $cardToken = $this->request->post['munditoken'];
-            $saveCreditCard = $this->request->post['cardSaveCreditcard'] ?? false;
+            $saveCreditCard = false;
+            if (isset($this->request->post['cardSaveCreditcard'])) {
+                $saveCreditCard = $this->request->post['cardSaveCreditcard'];
+            }
             $orderData['saveCreditcard'] = $saveCreditCard === 'on' ? true : false;
             $cardId = null;
         }

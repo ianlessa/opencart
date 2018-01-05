@@ -17,7 +17,7 @@ class ControllerAccountSavedCreditcards extends Controller {
             $this->response->redirect($this->url->link('account/login', '', true));
         } else {
             $creditCardSettings = new CreditCardSettings($this);
-            if ($creditCardSettings->isSavedCreditcardEnabled() !== 'true') {
+            if (!$creditCardSettings->isSavedCreditcardEnabled()) {
                 $this->response->redirect($this->url->link('account/account', '', true));
                 return;
             }

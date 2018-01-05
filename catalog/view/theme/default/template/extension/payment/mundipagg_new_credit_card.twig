@@ -67,7 +67,7 @@
     <div class="row newCreditcard">
         <span  id="token-error-message" class="text-danger"></span>
         <br>
-        {%  if isSavedCreditcardEnabled == 'true' %}
+        {%  if isSavedCreditcardEnabled %}
             <div class="col-sm-12">
                 <input type="checkbox" class="float-to-left" name="cardSaveCreditcard" />
                 {{ credit_card.save_creditcard_message }}

@@ -257,7 +257,7 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
     public function showSavedCreditcards(string $route, $data = array(), $template = null)
     {
         $creditCardSettings = new CreditCardSettings($this);
-        if ($creditCardSettings->isSavedCreditcardEnabled() !== 'true') {
+        if (!$creditCardSettings->isSavedCreditcardEnabled()) {
             return;
         }
         $template = new Template($this->registry->get('config')->get('template_engine'));
