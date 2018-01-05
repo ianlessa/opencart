@@ -332,6 +332,75 @@
 			                    </div>
 			                </div>
 
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="save_credit_card">
+                                    {{ credit_card.configure_is_saved_enabled }}
+                                </label>
+                                <div class="col-sm-10">
+                                    {% if not settings.credit_card_is_saved_enabled %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="true"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="false"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% elseif settings.credit_card_is_saved_enabled == "true" %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="true"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="false"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% else %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="true"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_is_saved_enabled"
+                                                    id="save_credit_card"
+                                                    value="false"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <div class="panel-heading">
                                 <h3>{{ credit_card.manage_section }}</h3>
                             </div>
