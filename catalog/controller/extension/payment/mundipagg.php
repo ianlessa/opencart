@@ -6,6 +6,7 @@
  */
 require_once DIR_SYSTEM.'library/mundipagg/vendor/autoload.php';
 
+use Mundipagg\Controller\CreditCardSettings;
 use Mundipagg\Order;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
@@ -100,6 +101,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $creditCard = new CreditCard($this);
         $settings = new Settings($this);
         $savedCreditcard = new SavedCreditCard($this);
+        $creditCardSettings = new CreditCardSettings($this);
 
         $this->data['publicKey'] = $settings->getPublicKey();
 
@@ -114,9 +116,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->data = array_merge($this->data, $boleto->getBoletoPageInfo());
         }
 
-
-        //@todo get from config
-        $isSavedCreditcardEnabled = true;
+        $isSavedCreditcardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
+        $this->data['isSavedCreditcardEnabled'] = $isSavedCreditcardEnabled;
 
         if ($isSavedCreditcardEnabled) {
             $this->data['savedCreditcards'] =
@@ -369,8 +370,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $cardToken = null;
         } else{
             $cardToken = $this->request->post['munditoken'];
-            //@todo get from frontend
-            $orderData['saveCreditcard'] = true;
+            $saveCreditCard = false;
+            if (isset($this->request->post['cardSaveCreditcard'])) {
+                $saveCreditCard = $this->request->post['cardSaveCreditcard'];
+            }
+            $orderData['saveCreditcard'] = $saveCreditCard === 'on' ? true : false;
             $cardId = null;
         }
 

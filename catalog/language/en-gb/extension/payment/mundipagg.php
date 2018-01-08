@@ -18,10 +18,10 @@ $_['credit_card'] = [
     'cvv' => 'CVV',
     'no_brands_enabled' => 'No brands enabled',
     'installments' => 'Installments',
-    'holder_name' => 'Holder name',
     'without_interest' => 'without interest',
     'interest' => 'interest: ',
-    'new_credit_card' => 'Novo cartão'
+    'new_credit_card' => 'New Card',
+    'save_creditcard_message' => 'Save this card to future orders'
 ];
 
 $_['order'] = [

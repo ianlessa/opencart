@@ -10,14 +10,18 @@ $_['boleto'] = [
 ];
 
 $_['credit_card'] = [
-      'payment_method_name' => 'Credit card',
-      'credit_card_number' => 'Credit card number',
-      'valid_thru' => 'Valid Thru',
-      'brand' => 'Brand',
-      'holder_name' => 'Holder name',
-      'cvv' => 'CVV',
-      'no_brands_enabled' => 'No brands enabled',
-      'new_credit_card' => 'New credit card'
+    'payment_method_name' => 'Cartão de crédito',
+    'credit_card_number' => 'Número do cartão',
+    'valid_thru' => 'Válido até',
+    'brand' => 'Bandeira',
+    'holder_name' => 'Nome impresso no cartão',
+    'cvv' => 'CVV',
+    'no_brands_enabled' => 'Nenhuma bandeira habilitada',
+    'installments' => 'Parcelas',
+    'without_interest' => 'sem juros',
+    'interest' => 'juros: ',
+    'new_credit_card' => 'Novo cartão',
+    'save_creditcard_message' => 'Salvar este cartão para compras futuras',
 ];
 
 $_['order'] = [
