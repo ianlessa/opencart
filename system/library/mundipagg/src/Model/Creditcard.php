@@ -146,4 +146,15 @@ class Creditcard
 
         return $query->rows;
     }
+
+    public function deleteCreditcard($cardId)
+    {
+        $sql = "DELETE FROM " . DB_PREFIX . $this->tableName . " WHERE id = $cardId";
+        try {
+            $this->openCart->db->query($sql);
+        } catch (\Exception $exc) {
+            Log::create()
+                ->error(LogMessages::CANNOT_DELETE_CREDIT_CARD_DATA, __METHOD__);
+        }
+    }
 }

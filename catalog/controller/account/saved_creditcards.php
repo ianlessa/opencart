@@ -10,10 +10,10 @@ class ControllerAccountSavedCreditcards extends Controller {
 
     private $languageMundiPagg;
 
-    public function index() {
+    public function index()
+    {
         if (!$this->customer->isLogged()) {
             $this->session->data['redirect'] = $this->url->link('account/account', '', true);
-
             $this->response->redirect($this->url->link('account/login', '', true));
         } else {
             $creditCardSettings = new CreditCardSettings($this);
@@ -29,9 +29,40 @@ class ControllerAccountSavedCreditcards extends Controller {
         $data['text'] = $this->languageMundiPagg;
         $data['breadcrumbs'] = $this->setBreadcrumbs($data);
         $data['creditcards'] = $this->getCreditcards();
+        $data['deleteUrl'] = $this->url->link('account/saved_creditcards/delete', '', true);
 
         $this->document->setTitle($data['text']['title']);
         $this->response->setOutput($this->load->view('account/saved_creditcards', $data));
+    }
+
+    public function delete()
+    {
+        if (!$this->customer->isLogged()) {
+            $this->session->data['redirect'] = $this->url->link('account/account', '', true);
+            $this->response->redirect($this->url->link('account/login', '', true));
+        } else {
+            $creditCardSettings = new CreditCardSettings($this);
+            if (!$creditCardSettings->isSavedCreditcardEnabled()) {
+                $this->response->redirect($this->url->link('account/account', '', true));
+                return;
+            }
+        }
+
+        $cardId = isset($this->request->post['cardId']) ? $this->request->post['cardId'] : null;
+        if ($cardId) {
+            //get all customer's cards
+            $savedCreditCards = $this->getCreditcards();
+
+            foreach($savedCreditCards as $creditCard) {
+                if(intval($creditCard['id']) == intval($cardId)) {
+                    //do deletion
+                    $savedCreditcard = new Creditcard($this);
+                    $savedCreditcard->deleteCreditcard($creditCard['id']);
+                    echo "do_delete";
+                    break;
+                }
+            }
+        }
     }
 
     private function loadLanguage()

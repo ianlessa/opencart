@@ -20,6 +20,7 @@ class LogMessages
     const UNKNOWN_WEBHOOK_TYPE = 'Unknown webhook type received';
     const UNABLE_TO_UPDATE_ORDER_AMOUNT = 'Unable to update the order amount';
     const CANNOT_SAVE_CREDIT_CARD_DATA = 'Cannot save credit card data';
+    const CANNOT_DELETE_CREDIT_CARD_DATA = 'Cannot delete credit card data';
     const CANNOT_GET_CREDIT_CARD_DATA = 'Cannot get credit card data';
     const CANNOT_GET_CUSTOMER_DATA = 'Cannot get customer data';
 
