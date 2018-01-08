@@ -270,10 +270,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $order = new Mundipagg\Order($this);
             $charges = $order->getCharge($order_id);
             $charge_id = $this->request->get['charge'];
+            $chargeAmount = floatval(str_replace(',','.',$this->request->post['charge_amount']));
+            $chargeAmount *= 100;
             foreach ($charges->rows as $charge) {
                 if ($charge['charge_id'] == $charge_id) {
                     if ($charge['can_cancel']) {
-                        $charge = call_user_func_array(array($order, 'updateCharge'), array($charge_id, $status, $this->request->post['charge_amount']));
+                        $charge = $order->updateCharge($charge_id, $status, $chargeAmount);
                         $word = $status == 'cancel' ? 'canceled' : 'captured';
                         $this->session->data['success'] = "Charge $word with sucess!";
                     } else {
