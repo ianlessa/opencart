@@ -264,6 +264,7 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $this->load->language('extension/payment/mundipagg');
 
         $templateData['text'] = $this->language->get('saved_creditcard');
+        $templateData['isAccountIndex'] = $route === 'account/account';
         $templateData['my_creditcards_url'] = $this->url->link('account/saved_creditcards', '', true);
 
         $view  = $this->load->view('extension/payment/mundipagg_saved_credit_card_account_content', $templateData);
