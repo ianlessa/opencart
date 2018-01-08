@@ -43,7 +43,6 @@ class ControllerAccountSavedCreditcards extends Controller {
         } else {
             $creditCardSettings = new CreditCardSettings($this);
             if (!$creditCardSettings->isSavedCreditcardEnabled()) {
-                $this->response->redirect($this->url->link('account/account', '', true));
                 return;
             }
         }
@@ -53,12 +52,11 @@ class ControllerAccountSavedCreditcards extends Controller {
             //get all customer's cards
             $savedCreditCards = $this->getCreditcards();
 
-            foreach($savedCreditCards as $creditCard) {
-                if(intval($creditCard['id']) == intval($cardId)) {
+            foreach ($savedCreditCards as $creditCard) {
+                if (intval($creditCard['id']) == intval($cardId)) {
                     //do deletion
                     $savedCreditcard = new Creditcard($this);
                     $savedCreditcard->deleteCreditcard($creditCard['id']);
-                    echo "do_delete";
                     break;
                 }
             }
