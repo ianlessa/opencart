@@ -61,7 +61,7 @@ class ModelExtensionPaymentMundipagg extends Model
         //Add saved credit card list
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
-            'catalog/view/account/account/after',
+            'catalog/view/account/*/after',
             'extension/payment/mundipagg_events/showSavedCreditcards'
         );
     }
