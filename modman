@@ -4,6 +4,7 @@ admin/view/image/mundipagg/ admin/view/image/mundipagg/
 
 # model
 admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
+admin/model/sale/mundipagg/* admin/model/sale/mundipagg
 
 # view
 admin/view/template/extension/payment/* admin/view/template/extension/payment/
