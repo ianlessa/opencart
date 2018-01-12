@@ -290,6 +290,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $this->session->data['error_warning'] = "Fail on $word charge";
             } else {
                 $order->createOrUpdateCharge($order_info, $charge);
+                $this->load->model('sale/mundipagg/order');
+                $this->model_sale_mundipagg_order->addOrderHistory(
+                    $order_id,
+                    $order->translateStatusFromMP($charge),
+                    "Charge $word. Amount: " . $this->request->post['charge_amount']
+                );
             }
         } catch (\Exception $e) {
             $this->session->data['error_warning'] = $e->getMessage();

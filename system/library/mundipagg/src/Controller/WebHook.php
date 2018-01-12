@@ -108,7 +108,7 @@ class WebHook
     {
         $this->openCart->load->language('extension/payment/mundipagg');
         $language = $this->openCart->load->language('extension/payment/mundipagg');
-
+        $language = $language['order_history_update'];
         $amount = null;
 
         switch ($this->action) {
@@ -168,7 +168,8 @@ class WebHook
     {
         $this->openCart->load->language('extension/payment/mundipagg');
         $language = $this->openCart->load->language('extension/payment/mundipagg');
-        $mPOrderId = $this->data['code'];
+        $language = $language['order_history_update'];
+        $mPOrderId = $this->data['order']['id'];
 
         switch ($this->action) {
             case WebHookEnum::ACTION_PAID:
