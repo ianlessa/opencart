@@ -293,14 +293,22 @@ class Order
 
         $createAddressRequest = new CreateAddressRequest();
 
-        $createAddressRequest->street = $orderData['payment_address_1'];
-        $createAddressRequest->number = $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_number')];
-        $createAddressRequest->zipCode = preg_replace('/\D/', '', $orderData['payment_postcode']);
-        $createAddressRequest->neighborhood = $orderData['payment_address_2'];
-        $createAddressRequest->city = $orderData['payment_city'];
-        $createAddressRequest->state = $orderData['payment_zone_code'];
-        $createAddressRequest->country = $orderData['payment_iso_code_2'];
-        $createAddressRequest->complement = $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
+        $createAddressRequest->street =
+            $orderData['payment_address_1'];
+        $createAddressRequest->number =
+            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_number')];
+        $createAddressRequest->zipCode =
+            preg_replace('/\D/', '', $orderData['payment_postcode']);
+        $createAddressRequest->neighborhood =
+            $orderData['payment_address_2'];
+        $createAddressRequest->city =
+            $orderData['payment_city'];
+        $createAddressRequest->state =
+            $orderData['payment_zone_code'];
+        $createAddressRequest->country =
+            $orderData['payment_iso_code_2'];
+        $createAddressRequest->complement =
+            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
         $createAddressRequest->metadata = null;
 
         return $createAddressRequest;
