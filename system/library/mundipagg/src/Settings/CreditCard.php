@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Controller;
+namespace Mundipagg\Settings;
 
 class CreditCard
 {
@@ -11,21 +11,17 @@ class CreditCard
         $this->openCart = $openCart;
     }
 
-    public function isEnabled()
-    {
-        if ($this->openCart->config->get('payment_mundipagg_credit_card_status') === '0') {
-            return false;
-        }
-
-        return true;
-    }
-
     public function getStatus()
     {
         return $this->openCart->config->get('payment_mundipagg_credit_card_status');
     }
 
-    public function getPaymentTile()
+    public function isEnabled()
+    {
+        return $this->getStatus() === '1';
+    }
+
+    public function getPaymentTitle()
     {
         return $this->openCart->config->get('payment_mundipagg_credit_card_payment_title');
     }
@@ -33,6 +29,34 @@ class CreditCard
     public function getInvoiceName()
     {
         return $this->openCart->config->get('payment_mundipagg_credit_card_invoice_name');
+    }
+
+    public function getOperation()
+    {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_operation');
+    }
+
+    public function getAllSettings()
+    {
+        return array(
+            'credit_card_status' => $this->getStatus(),
+            'credit_card_payment_title' => $this->getPaymentTitle(),
+            'credit_card_invoice_name' => $this->getInvoiceName(),
+            'credit_card_operation' => $this->getOperation(),
+            'credit_card_is_saved_enabled' => $this->isSavedCreditcardEnabled()
+        );
+    }
+
+    public function getPaymentInformation()
+    {
+        $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments`";
+        $query = $this->openCart->db->query($sql);
+
+        return $query->rows;
+    }
+
+    public function isSavedCreditcardEnabled() {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_is_saved_enabled') === 'true';
     }
 
     public function getOperationType()

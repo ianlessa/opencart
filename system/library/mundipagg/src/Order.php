@@ -11,8 +11,9 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use MundiAPILib\Models\CreateShippingRequest;
 
-use Mundipagg\Controller\Settings;
-use Mundipagg\Controller\Boleto;
+use Mundipagg\Settings\Boleto as BoletoSettings;
+use Mundipagg\Settings\General as GeneralSettings;
+
 use Mundipagg\Model\Creditcard;
 
 /**
@@ -39,14 +40,14 @@ class Order
      */
     public function __construct($openCart)
     {
-        $this->settings = new Settings($openCart);
+        $this->generalSettings = new GeneralSettings($openCart);
 
         $this->openCart = $openCart;
         $this->orderInterest = 0;
 
         \Unirest\Request::verifyPeer(false);
 
-        $this->apiClient = new MundiAPIClient($this->settings->getSecretKey(), $this->settings->getPassword());
+        $this->apiClient = new MundiAPIClient($this->generalSettings->getSecretKey(), $this->generalSettings->getPassword());
     }
 
     public function __call(string $name, array $arguments)
@@ -102,7 +103,7 @@ class Order
             $orderData['order_id'],
             $this->getMundipaggCustomerId($orderData['customer_id']),
             $createShippingRequest,
-            $this->settings->getModuleMetaData(),
+            $this->generalSettings->getModuleMetaData(),
             $isAntiFraudEnabled
         );
 
@@ -293,16 +294,13 @@ class Order
         $createAddressRequest = new CreateAddressRequest();
 
         $createAddressRequest->street = $orderData['payment_address_1'];
-        $createAddressRequest->number =
-            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_number')];
-        $createAddressRequest->zipCode =
-            preg_replace('/\D/', '', $orderData['payment_postcode']);
+        $createAddressRequest->number = $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_number')];
+        $createAddressRequest->zipCode = preg_replace('/\D/', '', $orderData['payment_postcode']);
         $createAddressRequest->neighborhood = $orderData['payment_address_2'];
         $createAddressRequest->city = $orderData['payment_city'];
         $createAddressRequest->state = $orderData['payment_zone_code'];
         $createAddressRequest->country = $orderData['payment_iso_code_2'];
-        $createAddressRequest->complement =
-            $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
+        $createAddressRequest->complement = $orderData['payment_custom_field'][$config->get('payment_mundipagg_mapping_complement')];
         $createAddressRequest->metadata = null;
 
         return $createAddressRequest;
@@ -353,15 +351,15 @@ class Order
 
     private function getBoletoPaymentDetails()
     {
-        $boleto = new Boleto($this->openCart);
+        $boletoSettings = new BoletoSettings($this->openCart);
 
         return array(
             array(
                 'payment_method' => 'boleto',
                 'boleto' => array(
-                    'bank'         => $boleto->getBank(),
-                    'instructions' => $boleto->getInstructions(),
-                    'due_at'       => $boleto->getDueDate()
+                    'bank'         => $boletoSettings->getBank(),
+                    'instructions' => $boletoSettings->getInstructions(),
+                    'due_at'       => $boletoSettings->getDueDate()
                 )
             )
         );
@@ -532,8 +530,8 @@ class Order
      */
     private function shouldSendAntiFraud($paymentMethod, $orderAmount)
     {
-        $minOrderAmount = $this->settings->getAntiFraudMinVal();
-        $antiFraudStatus = $this->settings->isAntiFraudEnabled();
+        $minOrderAmount = $this->generalSettings->getAntiFraudMinVal();
+        $antiFraudStatus = $this->generalSettings->isAntiFraudEnabled();
 
         if ($antiFraudStatus &&
             $paymentMethod === 'creditCard' &&

@@ -6,7 +6,8 @@ use MundiAPILib\MundiAPIClient;
 use MundiAPILib\Models\CreateCustomerRequest;
 use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\UpdateCustomerRequest;
-use Mundipagg\Controller\CreditCardSettings;
+
+use Mundipagg\Settings\CreditCard as CreditCardSettings;
 
 /**
  * ControllerExtensionPaymentMundipaggEvents deal with module events

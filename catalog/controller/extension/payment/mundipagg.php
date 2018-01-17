@@ -6,14 +6,15 @@
  */
 require_once DIR_SYSTEM.'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\CreditCardSettings;
 use Mundipagg\Order;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
-use Mundipagg\Controller\Boleto;
-use Mundipagg\Controller\CreditCard;
-use Mundipagg\Controller\Settings;
+
 use Mundipagg\Controller\SavedCreditCard;
+
+use Mundipagg\Settings\Boleto as BoletoSettings;
+use Mundipagg\Settings\CreditCard as CreditCardSettings;
+use Mundipagg\Settings\General as GeneralSettings;
 
 class ControllerExtensionPaymentMundipagg extends Controller
 {
@@ -97,29 +98,29 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     public function index()
     {
-        $boleto = new Boleto($this);
-        $creditCard = new CreditCard($this);
-        $settings = new Settings($this);
-        $savedCreditcard = new SavedCreditCard($this);
+        $boletoSettings = new BoletoSettings($this);
+        $generalSettings = new GeneralSettings($this);
         $creditCardSettings = new CreditCardSettings($this);
 
-        $this->data['publicKey'] = $settings->getPublicKey();
+        $savedCreditcard = new SavedCreditCard($this);
+
+        $this->data['publicKey'] = $generalSettings->getPublicKey();
 
         $this->getDirectories();
         $this->loadUrls();
 
-        if ($creditCard->isEnabled()) {
-            $this->data = array_merge($this->data, $creditCard->getCreditCardPageInfo());
+        if ($creditCardSettings->isEnabled()) {
+            $this->data = array_merge($this->data, $creditCardSettings->getCreditCardPageInfo());
         }
 
-        if ($boleto->isEnabled()) {
-            $this->data = array_merge($this->data, $boleto->getBoletoPageInfo());
+        if ($boletoSettings->isEnabled()) {
+            $this->data = array_merge($this->data, $boletoSettings->getBoletoPageInfo());
         }
 
-        $isSavedCreditcardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
-        $this->data['isSavedCreditcardEnabled'] = $isSavedCreditcardEnabled;
+        $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
+        $this->data['isSavedCreditcardEnabled'] = $isSavedCreditCardEnabled;
 
-        if ($isSavedCreditcardEnabled) {
+        if ($isSavedCreditCardEnabled) {
             $this->data['savedCreditcards'] =
                 $savedCreditcard
                     ->getSavedCreditcardList($this->customer->getId());
@@ -132,24 +133,25 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function loadUrls()
     {
-        $this->data['generate_boleto_url'] =
-            $this->url->link('extension/payment/mundipagg/generateBoleto');
-        $this->data['checkout_success_url'] =
-            $this->url->link('checkout/success');
-        $this->data['payment_failure_url'] =
-            $this->url->link('checkout/failure');
+        $generateUrl = 'extension/payment/mundipagg/generateBoleto';
+
+        $this->data['generate_boleto_url'] = $this->url->link($generateUrl);
+        $this->data['checkout_success_url'] = $this->url->link('checkout/success');
+        $this->data['payment_failure_url'] = $this->url->link('checkout/failure');
     }
 
     private function loadPaymentTemplates()
     {
+        $viewPath = 'extension/payment/mundipagg_';
+
         $this->data['savedCreditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_saved_credit_card', $this->data);
+            $this->load->view($viewPath . 'saved_credit_card', $this->data);
         $this->data['newCreditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_new_credit_card', $this->data);
+            $this->load->view($viewPath . 'new_credit_card', $this->data);
         $this->data['creditcardTemplate'] =
-            $this->load->view('extension/payment/mundipagg_credit_card', $this->data);
+            $this->load->view($viewPath . 'credit_card', $this->data);
         $this->data['boletoTemplate'] =
-            $this->load->view('extension/payment/mundipagg_boleto', $this->data);
+            $this->load->view($viewPath . 'boleto', $this->data);
     }
 
 
@@ -193,8 +195,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             }
         }
 
-        Log::create()
-            ->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
+        Log::create()->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
         $this->response->redirect($this->url->link('checkout/cart'));
     }
 
@@ -321,13 +322,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
     
     private function getOrder()
     {
-        if (!is_object($this->Order)) {
-            $this->Order = new Order($this);
-            $this->Order->setCustomerModel(
-                $this->model_extension_payment_mundipagg_customer
-            );
+        if (!is_object($this->order)) {
+            $this->order = new Order($this);
+            $this->order->setCustomerModel($this->model_extension_payment_mundipagg_customer);
         }
-        return $this->Order;
+
+        return $this->order;
     }
 
     /**
