@@ -2,7 +2,8 @@
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\CreditCardSettings;
+use Mundipagg\Settings\CreditCard as CreditCardSettings;
+
 use Mundipagg\Model\Creditcard;
 use Mundipagg\Model\Customer;
 

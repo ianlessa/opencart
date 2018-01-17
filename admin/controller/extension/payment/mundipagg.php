@@ -2,9 +2,9 @@
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\Settings;
-use Mundipagg\Controller\CreditCardSettings;
-use Mundipagg\Controller\BoletoSettings;
+use Mundipagg\Settings\CreditCard as CreditCardSettings;
+use Mundipagg\Settings\Boleto as BoletoSettings;
+
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
 
@@ -499,7 +499,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     private function getSavedSettings()
     {
-        $mundiPaggSettings = new Settings($this);
         $creditCardSettings = new CreditCardSettings($this);
         $boletoSettings = new BoletoSettings($this);
 

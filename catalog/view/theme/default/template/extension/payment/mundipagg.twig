@@ -40,14 +40,9 @@
 
 <script>
     function generate() {
-
-        $("#generateBoletoBtn")
-            .addClass("disabled").
-            attr("disabled", "disabled").
-            text("Aguarde...");
-
-        $.get("{{ generate_boleto_url }}"
-        ).done(function( data ) {
+        $("#generateBoletoBtn").addClass("disabled").attr("disabled", "disabled").text("Aguarde...");
+        $.get("{{ generate_boleto_url }}").done(function(data) {
+            console.log(data);
             if (data != undefined) {
                 window.open(data, "_blank");
                 window.location = "{{ checkout_success_url }}";
