@@ -133,8 +133,14 @@ MundiPagg.Form = function() {
         addListeners: function() {
             // listener to show/hide installments
             this.cardBrand.addEventListener('DOMSubtreeModified', function(event) {
+                var brandUrl = this.cardBrand.getElementsByTagName('img')[0];
+
                 this.hideAll();
-                this.showSpecific(this.cardBrand.getAttribute('data-mundicheckout-brand'));
+
+                if (brandUrl) {
+                    brandUrl = brandUrl.getAttribute('src').split('/').pop().split('.')[0].toLowerCase();
+                    this.showSpecific(brandUrl);
+                }
             }.bind(this), false);
 
             // listener to handle form validation
@@ -226,7 +232,7 @@ function showSpecific(brand) {
     mundiForm.setup(mundiValidator);
 
     MundiCheckout.init(
-        function () {
+        function() {
             return true;
         },
         function() {
