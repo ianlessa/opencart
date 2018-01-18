@@ -101,6 +101,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $boletoSettings = new BoletoSettings($this);
         $generalSettings = new GeneralSettings($this);
         $creditCardSettings = new CreditCardSettings($this);
+//        $twoCreditCardSettings = new TwoCreditCardSettings($this);
 
         $savedCreditcard = new SavedCreditCard($this);
 
@@ -152,6 +153,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->load->view($viewPath . 'credit_card', $this->data);
         $this->data['boletoTemplate'] =
             $this->load->view($viewPath . 'boleto', $this->data);
+        $this->data['twoCreditCardTemplate'] =
+            $this->load->view($viewPath . 'two_credit_cards', $this->data);
     }
 
 
@@ -359,25 +362,36 @@ class ControllerExtensionPaymentMundipagg extends Controller
             Log::create()
                 ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
                 ->withOrderId($this->session->data['order_id']);
-
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
+        if (isset($this->request->post['munditoken-1'])) {
+            $this->processTwoCreditCards();
+        } else {
+            $this->processSingleCreditCard();
+        }
+    }
+
+    private function processSingleCreditCard()
+    {
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
+        // payment with saved credit card
         if (isset($this->request->post['mundipaggSavedCreditCard'])) {
             $cardId = $this->request->post['mundipaggSavedCreditCard'];
             $cardToken = null;
-        } else{
-            $cardToken = $this->request->post['munditoken'];
+        } else {
+            $cardToken = $this->request->post['munditoken-0'];
             $saveCreditCard = false;
             if (isset($this->request->post['cardSaveCreditcard'])) {
                 $saveCreditCard = $this->request->post['cardSaveCreditcard'];
             }
+
             $orderData['saveCreditcard'] = $saveCreditCard === 'on' ? true : false;
             $cardId = null;
         }
 
+//        $paymentDetails = explode('|', $this->request->post['payment-details']);
         $paymentDetails = explode('|', $this->request->post['payment-details']);
 
         try {
@@ -388,7 +402,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $cardToken,
                 $cardId
             );
-
         } catch (Exception $e) {
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
@@ -401,15 +414,21 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $orderStatus = $this->getOrder()->translateStatusFromMP($response);
         if (!$orderStatus) {
             Log::create()
-            ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
-            ->withResponseStatus($response->status)
-            ->withOrderId($this->session->data['order_id']);
+                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->withResponseStatus($response->status)
+                ->withOrderId($this->session->data['order_id']);
 
             $this->response->redirect($this->url->link('checkout/failure'));
         }
+
         $this->getOrder()->updateOrderStatus($orderStatus);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    private function processTwoCreditCards()
+    {
+
     }
 
     /**

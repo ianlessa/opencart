@@ -6,6 +6,8 @@
     {% if not creditCardStatus and not boletoStatus %}
         <h3> {{ misc.no_payment_methods_enabled }} </h3>
     {% endif %}
+
+    {# Here comes tab info #}
     <ul  class="nav nav-justified">
         {% if creditCardStatus %}
             <li class="active mundipaggCheckoutTabs">
@@ -23,15 +25,26 @@
                 </a>
             </li>
         {% endif %}
+        {#{% if twoCreditCardStatus %}#}
+            {#<li class="mundipaggCheckoutTabs">#}
+                {#<a href="#twoCreditCardTab" data-toggle="tab">#}
+                    {#<i class="fa fa-file-text"></i>#}
+                    {#<p>{{ twoCreditCard.payment_method_name }}</p>#}
+                {#</a>#}
+            {#</li>#}
+        {#{% endif %}#}
     </ul>
 
-        <div class="mundipaggCheckoutTabsContent tab-content clearfix">
-            {% if creditCardStatus %}
-                {{ creditcardTemplate }}
-            {% endif %}
-            {% if boletoStatus %}
-                {{ boletoTemplate }}
-            {% endif %}
+    <div class="mundipaggCheckoutTabsContent tab-content clearfix">
+        {% if creditCardStatus %}
+            {{ creditcardTemplate }}
+        {% endif %}
+        {% if boletoStatus %}
+            {{ boletoTemplate }}
+        {% endif %}
+        {#{% if twoCrediCardStatus %}#}
+            {#{{ twoCreditCardTemplate }}#}
+        {#{% endif %}#}
     </div>
 </section>
 

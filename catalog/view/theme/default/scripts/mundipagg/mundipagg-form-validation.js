@@ -211,7 +211,7 @@ function hideElements() {
             $(this).addClass("hidden");
         });
     })
-};
+}
 
 function showSpecific(brand) {
     if (brand != "" && brand != undefined) {
@@ -231,11 +231,17 @@ function showSpecific(brand) {
 
     mundiForm.setup(mundiValidator);
 
+    console.log('starting');
+
     MundiCheckout.init(
-        function() {
+        function(data) {
+            console.log('success');
+            console.log(data);
             return true;
         },
-        function() {
+        function(error) {
+            console.log('error');
+            console.log(error);
             $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
         }
     );
