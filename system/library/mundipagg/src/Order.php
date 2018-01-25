@@ -410,10 +410,10 @@ class Order
             case 'boleto':
                 return $this->getBoletoPaymentDetails();
             case 'creditCard':
-                $cardIdValue = isEmpty($cardId) ? null : $cardId[0];
+                $cardIdValue = empty($cardId) ? null : $cardId[0];
 
                 return $this->getCreditCardPaymentDetails(
-                    $cardToken[0],
+                    $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
                     $cardIdValue
