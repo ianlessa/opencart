@@ -98,10 +98,21 @@ class CreditCard
     public function getCreditCardPageInfo()
     {
         $info = array();
+
         $info = array_merge($info, $this->getCards());
         $info = array_merge($info, array('creditCardStatus' => $this->getStatus()));
         $info = array_merge($info, array('creditCardText' => $this->getCreditCardLanguage()));
         $info = array_merge($info, array('installments' => $this->getInstallments()));
+
+        return $info;
+    }
+
+    public function getTwoCreditCardsPageInfo()
+    {
+        $info = array();
+
+        $info = array_merge($info, $this->getCards());
+        $info = array_merge($info, array('twoCreditCardStatus' => $this->isTwoCreditCardsEnabled()));
 
         return $info;
     }

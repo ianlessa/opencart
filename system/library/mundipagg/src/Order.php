@@ -85,15 +85,17 @@ class Order
     public function create($orderData, $cart, $paymentMethod, $cardToken = null, $cardId = null)
     {
         $items = $this->prepareItems($cart->getProducts());
+
         $createAddressRequest = $this->createAddressRequest($orderData);
         $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
         $totalOrderAmount = $orderData['total'];
+
         if (!empty($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
-        $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
 
+        $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
 
         $CreateOrderRequest = $this->createOrderRequest(
@@ -117,6 +119,69 @@ class Order
         }
 
         $order = $this->getOrders()->createOrder($CreateOrderRequest);
+        $this->createOrUpdateCharge($orderData, $order);
+
+        $this->createCustomerIfNotExists(
+            $orderData['customer_id'],
+            $order->customer->id
+        );
+
+        if (!empty($orderData['saveCreditcard'])) {
+            $this->saveCreditCardIfNotExists($order);
+        }
+
+        Log::create()
+            ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_RESPONSE, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withResponse(json_encode($order, JSON_PRETTY_PRINT));
+
+        return $order;
+    }
+
+    public function createOrderForTwoCreditCards(
+        $orderData,
+        $cart,
+        $paymentMethod,
+        $amounts,
+        $tokens,
+        $cardIds
+    ) {
+        $items = $this->prepareItems($cart->getProducts());
+
+        $createAddressRequest = $this->createAddressRequest($orderData);
+        $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
+        $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
+
+        $totalOrderAmount = $orderData['total'];
+
+        if (!empty($orderData['amountWithInterest'])) {
+            $totalOrderAmount = $orderData['amountWithInterest'];
+        }
+
+        $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
+        $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds);
+
+        $createOrderRequest = $this->createOrderRequest(
+            $items,
+            $createCustomerRequest,
+            $payments,
+            $orderData['order_id'],
+            $this->getMundipaggCustomerId($orderData['customer_id']),
+            $createShippingRequest,
+            $this->generalSettings->getModuleMetaData(),
+            $isAntiFraudEnabled
+        );
+
+        Log::create()
+            ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
+            ->withOrderId($orderData['order_id'])
+            ->withRequest(json_encode($createOrderRequest, JSON_PRETTY_PRINT));
+
+        if (!$createOrderRequest->items) {
+            return false;
+        }
+
+        $order = $this->getOrders()->createOrder($createOrderRequest);
         $this->createOrUpdateCharge($orderData, $order);
 
         $this->createCustomerIfNotExists(
@@ -339,13 +404,22 @@ class Order
      * @throws \Exception Unsupported payment type
      * @return array
      */
-    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = null)
+    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = [])
     {
         switch ($paymentType) {
             case 'boleto':
                 return $this->getBoletoPaymentDetails();
             case 'creditCard':
+                $cardIdValue = isEmpty($cardId) ? null : $cardId[0];
+
                 return $this->getCreditCardPaymentDetails(
+                    $cardToken[0],
+                    $this->orderInstallments,
+                    $orderAmount,
+                    $cardIdValue
+                );
+            case 'twoCreditCards':
+                return $this->getTwoCreditCardsPaymentDetails(
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
@@ -416,7 +490,62 @@ class Order
         }
 
         return $paymentDeatails;
+    }
 
+    /**
+     * @param array $token
+     * @param array $installments
+     * @param array $amount
+     * @param array $cardId
+     *
+     * @return array
+     */
+    private function getTwoCreditCardsPaymentDetails($token, $installments, $amount, $cardId)
+    {
+        $paymentDetails = [];
+
+        // first card
+        $paymentDetails[] = $this->getSingleCardPaymentDetails(
+            $token[0],
+            $amount[0],
+            $installments[0],
+            $cardId[0]
+        );
+
+        // second card
+        $paymentDetails[] = $this->getSingleCardPaymentDetails(
+            $token[1],
+            $amount[1],
+            $installments[1],
+            $cardId[1]
+        );
+
+        return $paymentDetails;
+    }
+
+    private function getSingleCardPaymentDetails($token, $amount, $installments, $cardId = null)
+    {
+        $amountInCents = number_format($amount, 2, '', '');
+        $paymentDetails = [
+            'payment_method' => 'credit_card',
+            'amount' => $amountInCents,
+            'credit_card' => [
+                'installments' => $installments,
+                'capture' => $this->isCapture()
+            ]
+        ];
+
+        if ($token) {
+            $paymentDetails['credit_card']['card_token'] = $token;
+        }
+
+        $mundiPaggCreditCardId = $this->getMundipaggCardId($cardId);
+
+        if ($mundiPaggCreditCardId) {
+            $paymentDetails['credit_card']['card_id'] = $mundiPaggCreditCardId;
+        }
+
+        return $paymentDetails;
     }
 
      /**

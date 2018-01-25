@@ -11,6 +11,7 @@ use Mundipagg\Log;
 use Mundipagg\LogMessages;
 
 use Mundipagg\Controller\SavedCreditCard;
+use Mundipagg\Controller\TwoCreditCards;
 
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
@@ -101,8 +102,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $boletoSettings = new BoletoSettings($this);
         $generalSettings = new GeneralSettings($this);
         $creditCardSettings = new CreditCardSettings($this);
-//        $twoCreditCardSettings = new TwoCreditCardSettings($this);
-
         $savedCreditcard = new SavedCreditCard($this);
 
         $this->data['publicKey'] = $generalSettings->getPublicKey();
@@ -114,6 +113,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->data = array_merge($this->data, $creditCardSettings->getCreditCardPageInfo());
         }
 
+        // check if payment with two credit cards is enabled
+        if ($creditCardSettings->isTwoCreditCardsEnabled()) {
+            $this->data = array_merge($this->data, $creditCardSettings->getTwoCreditCardsPageInfo());
+        }
+
         if ($boletoSettings->isEnabled()) {
             $this->data = array_merge($this->data, $boletoSettings->getBoletoPageInfo());
         }
@@ -123,8 +127,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         if ($isSavedCreditCardEnabled) {
             $this->data['savedCreditcards'] =
-                $savedCreditcard
-                    ->getSavedCreditcardList($this->customer->getId());
+                $savedCreditcard->getSavedCreditcardList($this->customer->getId());
         }
 
         $this->loadPaymentTemplates();
@@ -145,18 +148,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $viewPath = 'extension/payment/mundipagg_';
 
-        $this->data['savedCreditcardTemplate'] =
-            $this->load->view($viewPath . 'saved_credit_card', $this->data);
-        $this->data['newCreditcardTemplate'] =
-            $this->load->view($viewPath . 'new_credit_card', $this->data);
-        $this->data['creditcardTemplate'] =
-            $this->load->view($viewPath . 'credit_card', $this->data);
-        $this->data['boletoTemplate'] =
-            $this->load->view($viewPath . 'boleto', $this->data);
-        $this->data['twoCreditCardTemplate'] =
-            $this->load->view($viewPath . 'two_credit_cards', $this->data);
+        $this->data['savedCreditcardTemplate'] = $this->load->view($viewPath . 'saved_credit_card', $this->data);
+        $this->data['newCreditcardTemplate'] = $this->load->view($viewPath . 'new_credit_card', $this->data);
+        $this->data['creditcardTemplate'] = $this->load->view($viewPath . 'credit_card', $this->data);
+        $this->data['boletoTemplate'] = $this->load->view($viewPath . 'boleto', $this->data);
+        $this->data['twoCreditCardsTemplate'] = $this->load->view($viewPath . 'two_credit_cards', $this->data);
     }
-
 
     /**
      * Generate boleto
@@ -365,8 +362,24 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
+        // we only have munditoken-1 when in two credit cards payment
         if (isset($this->request->post['munditoken-1'])) {
-            $this->processTwoCreditCards();
+            // @todo validate credit cards
+            $twoCreditCards = new TwoCreditCards($this, $this->request->post, $this->cart);
+            $response = $twoCreditCards->processPayment();
+
+            $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+            if (!$orderStatus) {
+                Log::create()
+                    ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                    ->withResponseStatus($response->status)
+                    ->withOrderId($this->session->data['order_id']);
+                $this->response->redirect($this->url->link('checkout/failure'));
+            }
+
+            $this->getOrder()->updateOrderStatus($orderStatus);
+            $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/success', '', true));
         } else {
             $this->processSingleCreditCard();
         }
@@ -387,12 +400,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $saveCreditCard = $this->request->post['cardSaveCreditcard'];
             }
 
-            $orderData['saveCreditcard'] = $saveCreditCard === 'on' ? true : false;
+            $orderData['saveCreditcard'] = $saveCreditCard === 'on';
             $cardId = null;
         }
 
-//        $paymentDetails = explode('|', $this->request->post['payment-details']);
-        $paymentDetails = explode('|', $this->request->post['payment-details']);
+        $paymentDetails = explode('|', $this->request->post['payment-details-0']);
 
         try {
             $response = $this->createCreditCardOrder(
@@ -426,11 +438,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
-    private function processTwoCreditCards()
-    {
-
-    }
-
     /**
      * Update order data in database
      * @param array $orderData
@@ -450,16 +457,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 );
 
             $this->mundipaggOrderUpdateModel->
-            updateOrderAmountInOrderTotals(
-                $orderData['order_id'],
-                $amountWithInterest
-            );
+                updateOrderAmountInOrderTotals(
+                    $orderData['order_id'],
+                    $amountWithInterest
+                );
 
             $this->mundipaggOrderUpdateModel->
-            insertInterestInOrderTotals(
-                $orderData['order_id'],
-                $interestAmount
-            );
+                insertInterestInOrderTotals(
+                    $orderData['order_id'],
+                    $interestAmount
+                );
 
             return $amountWithInterest;
         }

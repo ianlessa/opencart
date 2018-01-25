@@ -3,7 +3,7 @@
     <link href="{{ customizedFile }}" type="text/css" rel="stylesheet" />
 {% endif %}
 <section id="mundipaggCheckout">
-    {% if not creditCardStatus and not boletoStatus %}
+    {% if not creditCardStatus and not boletoStatus and not twoCreditCardsStatus %}
         <h3> {{ misc.no_payment_methods_enabled }} </h3>
     {% endif %}
 
@@ -25,14 +25,14 @@
                 </a>
             </li>
         {% endif %}
-        {#{% if twoCreditCardStatus %}#}
-            {#<li class="mundipaggCheckoutTabs">#}
-                {#<a href="#twoCreditCardTab" data-toggle="tab">#}
-                    {#<i class="fa fa-file-text"></i>#}
-                    {#<p>{{ twoCreditCard.payment_method_name }}</p>#}
-                {#</a>#}
-            {#</li>#}
-        {#{% endif %}#}
+        {% if twoCreditCardStatus %}
+            <li class="mundipaggCheckoutTabs">
+                <a href="#twoCreditCardsTab" data-toggle="tab">
+                    <i class="fa fa-file-text"></i>
+                    <p>Colocar nome aqui{{ twoCreditCard.payment_method_name }}</p>
+                </a>
+            </li>
+        {% endif %}
     </ul>
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
@@ -42,9 +42,9 @@
         {% if boletoStatus %}
             {{ boletoTemplate }}
         {% endif %}
-        {#{% if twoCrediCardStatus %}#}
-            {#{{ twoCreditCardTemplate }}#}
-        {#{% endif %}#}
+        {% if twoCreditCardStatus %}
+            {{ twoCreditCardsTemplate }}
+        {% endif %}
     </div>
 </section>
 

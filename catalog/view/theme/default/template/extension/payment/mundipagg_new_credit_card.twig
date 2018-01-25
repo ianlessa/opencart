@@ -1,11 +1,11 @@
-<form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form id="mundi-credit-card-form">
+<form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form>
     <div class="row">
         <div class="col-sm-12 newCreditcard">
             <br>
             <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
                 <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
                 <div class="input-group input-group ">
-                    <input name="card-number" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-0">
+                    <input name="card-number-0" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-0">
                     <span class="input-group-addon" data-mundicheckout-element="brand-0" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
                 <span  id="credit-card-number-message" class="text-danger"></span>
@@ -14,7 +14,7 @@
             <div class="col-sm-4">
                 <label>{{ credit_card.installments }}</label>
                 <div>
-                    <select name="single-card-payment-details" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}" required>
+                    <select name="payment-details-0" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}" required>
                         <option value="">Selecione</option>
                         {% for brand, installment in installments %}
                             {% for details in installment %}
