@@ -12,6 +12,7 @@ use Mundipagg\LogMessages;
 
 use Mundipagg\Controller\SavedCreditCard;
 use Mundipagg\Controller\TwoCreditCards;
+use Mundipagg\Controller\Api;
 
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
@@ -364,22 +365,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         // we only have munditoken-1 when in two credit cards payment
         if (isset($this->request->post['munditoken-1'])) {
-            // @todo validate credit cards
-            $twoCreditCards = new TwoCreditCards($this, $this->request->post, $this->cart);
-            $response = $twoCreditCards->processPayment();
-
-            $orderStatus = $this->getOrder()->translateStatusFromMP($response);
-            if (!$orderStatus) {
-                Log::create()
-                    ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
-                    ->withResponseStatus($response->status)
-                    ->withOrderId($this->session->data['order_id']);
-                $this->response->redirect($this->url->link('checkout/failure'));
-            }
-
-            $this->getOrder()->updateOrderStatus($orderStatus);
-            $this->saveMPOrderId($response->id, $this->session->data['order_id']);
-            $this->response->redirect($this->url->link('checkout/success', '', true));
+            $this->processTwoCreditCards();
         } else {
             $this->processSingleCreditCard();
         }
@@ -438,6 +424,63 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
+    private function processTwoCreditCards()
+    {
+        if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
+            Log::create()
+                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        try {
+            $twoCreditCards = new TwoCreditCards($this, $this->request->post, $this->cart);
+            $response = $twoCreditCards->processPayment();
+        } catch (\Exception $e) {
+            Log::create()
+                ->error(LogMessages::CANNOT_CREATE_TWO_CREDIT_CARDS_ORDER, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+        if (!$orderStatus) {
+            Log::create()
+                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->withResponseStatus($response->status)
+                ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $this->getOrder()->updateOrderStatus($orderStatus);
+        $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+        $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    private function isValidTwoCreditCardsRequest($requestData)
+    {
+        $a = 1;
+        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-0']);
+        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-1']);
+
+        if (count($paymentDetailsFirstCard) !== 2 || count($paymentDetailsSecondCard) !== 2) {
+            return false;
+        }
+
+        if (!isset($requestData['total-0'], $requestData['total-1'])) {
+            return false;
+        }
+
+        if (!isset($requestData['munditoken-0'], $requestData['munditoken-1'])) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Update order data in database
      * @param array $orderData
@@ -476,5 +519,34 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private function setInterestToAmount($amount, $interest)
     {
         return round($amount + ($amount * ($interest * 0.01)), 2);
+    }
+
+    public function api()
+    {
+        $postData = $this->request->post;
+        $getData = $this->request->get;
+        $action = array_pop(explode('/', $getData['route']));
+
+        $data = [
+            'post' => $postData,
+            'get' => $getData
+        ];
+
+        $verb = strtolower($_SERVER['REQUEST_METHOD']);
+
+        $api = new Api($data, $verb);
+        $result = $api->{$action}();
+
+        $this->sendResponse($result);
+    }
+
+    private function sendResponse($result)
+    {
+        $responseStatus = $result['status_code'];
+        $responseData = $result['payload'];
+
+        http_response_code($responseStatus);
+
+        return $responseData;
     }
 }

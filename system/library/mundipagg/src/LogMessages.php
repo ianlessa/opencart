@@ -23,6 +23,7 @@ class LogMessages
     const CANNOT_DELETE_CREDIT_CARD_DATA = 'Cannot delete credit card data';
     const CANNOT_GET_CREDIT_CARD_DATA = 'Cannot get credit card data';
     const CANNOT_GET_CUSTOMER_DATA = 'Cannot get customer data';
+    const CANNOT_CREATE_TWO_CREDIT_CARDS_ORDER = 'Cannot create two credit cards order';
 
     /** Debug Messages */
     const ORDER_NOT_FOUND_IN_ORDER_TABLE = 'Mundipagg order id not found in mundipagg_order table';
