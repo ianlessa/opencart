@@ -4,6 +4,8 @@ namespace Mundipagg\Controller;
 
 use Mundipagg\Order;
 use Mundipagg\Model\Order as OrderModel;
+use Mundipagg\Settings\CreditCard;
+use Mundipagg\Model\Creditcard as CreditCardModel;
 
 class TwoCreditCards
 {
@@ -41,13 +43,16 @@ class TwoCreditCards
         $this->setDetails();
         $this->saveOrderDetails();
 
-        return $this->createOrder();
+        $order = $this->createOrder();
+        $this->saveCreditCards($order);
+
+        return $order;
     }
 
     private function createOrder()
     {
         try {
-            $result = $this->order->createOrderForTwoCreditCards(
+            $order = $this->order->createOrderForTwoCreditCards(
                 $this->orderDetails,
                 $this->cart,
                 'twoCreditCards',
@@ -60,10 +65,16 @@ class TwoCreditCards
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
                 ->withOrderId($this->openCart->session->data['order_id'])
                 ->withException($e);
-            $this->openCart->response->redirect($this->openCart->url->link('checkout/failure'));
+
+            $this
+                ->openCart
+                ->response
+                ->redirect(
+                    $this->openCart->url->link('checkout/failure')
+                );
         }
 
-        return $result;
+        return $order;
     }
 
     private function saveOrderDetails()
@@ -90,6 +101,7 @@ class TwoCreditCards
         $this->setInterest();
         $this->setToken();
         $this->setInstallments();
+        $this->setSaveCreditCard();
 
         $this->orderDetails['amountWithInterest'] = $this->getAmountWithInterest();
     }
@@ -122,7 +134,42 @@ class TwoCreditCards
 
     private function setSaveCreditCard()
     {
-        $this->saveCreditCards[] = $this->details['save-credit-card-0'];
-        $this->saveCreditCards[] = $this->details['save-credit-card-1'];
+//        $this->saveCreditCards[] = $this->details['save-credit-card-0'];
+        $this->saveCreditCards[] = true;
+//        $this->saveCreditCards[] = $this->details['save-credit-card-1'];
+        $this->saveCreditCards[] = true;
+    }
+
+    private function saveCreditCards($orderResponse)
+    {
+        $chargeFirstCard = $orderResponse->charges[0];
+        $chargeSecondCard = $orderResponse->charges[1];
+
+        if ($this->saveCreditCards[0]) {
+            $this->saveCard(
+                $orderResponse->customer->id,
+                $chargeFirstCard->lastTransaction->card,
+                $orderResponse->code,
+                $chargeFirstCard->lastTransaction->card->id
+            );
+        }
+
+        if ($this->saveCreditCards[1]) {
+            $this->saveCard(
+                $orderResponse->customer->id,
+                $chargeSecondCard->lastTransaction->card,
+                $orderResponse->code,
+                $chargeSecondCard->lastTransaction->card->id
+            );
+        }
+    }
+
+    private function saveCard($customerId, $card, $code, $cardId)
+    {
+        $creditCard = new CreditCardModel($this->openCart);
+
+        if (!$creditCard->creditCardExists($cardId)) {
+            $creditCard->saveCreditcard($customerId, $card, $code);
+        }
     }
 }

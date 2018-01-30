@@ -521,11 +521,18 @@ class ControllerExtensionPaymentMundipagg extends Controller
         return round($amount + ($amount * ($interest * 0.01)), 2);
     }
 
+    // index.php?route=extension/payment/mundipagg/api/installments&brand=visa&total=
+
+    /**
+     * The API responds to
+     */
     public function api()
     {
         $postData = $this->request->post;
         $getData = $this->request->get;
-        $action = array_pop(explode('/', $getData['route']));
+
+        $action = explode('/', $getData['route']);
+        $action = array_pop($action);
 
         $data = [
             'post' => $postData,
@@ -534,7 +541,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $verb = strtolower($_SERVER['REQUEST_METHOD']);
 
-        $api = new Api($data, $verb);
+        $api = new Api($data, $verb, $this);
         $result = $api->{$action}();
 
         $this->sendResponse($result);
@@ -547,6 +554,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         http_response_code($responseStatus);
 
-        return $responseData;
+        echo json_encode($responseData);
     }
 }

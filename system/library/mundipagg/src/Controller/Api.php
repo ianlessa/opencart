@@ -8,6 +8,7 @@ use Mundipagg\Enum\WebHookEnum;
 use Mundipagg\Log;
 use Mundipagg\LogMessages;
 use Mundipagg\Model\WebHook as WebHookModel;
+use Mundipagg\Model\Installments;
 use Mundipagg\Enum\OrderstatusEnum;
 
 
@@ -15,14 +16,24 @@ class Api
 {
     private $data;
     private $verb;
+    private $model;
 
-    public function __construct($data, $verb)
+    public function __construct($data, $verb, $openCart)
     {
         $this->data = $data;
         $this->verb = $verb;
+        $this->model = new Installments($openCart->db);
     }
 
-    // I'm changing $name to $endpoint, if something weird happen, it could be here
+    /**
+     * I've made it this way so we can have all the combinations of
+     * $verb with $endpoint, things like getInstallments and postInstallments
+     * can then exist.
+     *
+     * @param $endpoint
+     * @param $arguments
+     * @return array
+     */
     public function __call($endpoint, $arguments)
     {
         $method = $this->verb . ucfirst($endpoint);
@@ -33,7 +44,7 @@ class Api
 
         return [
             'status_code' => 404,
-            'payload' => json_encode(['error' => 'endpoint not found'])
+            'payload' => ['error' => 'endpoint not found']
         ];
     }
 
@@ -43,22 +54,26 @@ class Api
         $total = $arguments['total'];
 
         if (!isset($brand, $total)) {
-            return $this->sendNotFoundRequest('missing parameters');
+            return $this->notFoundResponse('missing parameters');
         }
 
-        return $this->getInstallmentsFor($brand, $total);
+        $installments = $this->model->getInstallmentsFor($brand, $total);
+
+        if (!$installments) {
+            return $this->notFoundResponse('wrong request');
+        }
+
+        return [
+            'status_code' => 200,
+            'payload' => $installments
+        ];
     }
 
-    private function getInstallmentsFor($brand, $total)
-    {
-
-    }
-
-    private function sendNotFoundRequest($message)
+    private function notFoundResponse($message)
     {
         return [
             'status_code' => 404,
-            'payload' => json_encode(['error' => $message])
+            'payload' => ['error' => $message]
         ];
     }
 }

@@ -189,6 +189,7 @@ class Order
             $order->customer->id
         );
 
+        // for one credit card
         if (!empty($orderData['saveCreditcard'])) {
             $this->saveCreditCardIfNotExists($order);
         }
@@ -715,7 +716,6 @@ class Order
 
         if (!empty($order->charges)) {
             foreach ($order->charges as $charge) {
-
                 if (
                     !$savedCreditCard->creditCardExists(
                         $charge->lastTransaction->card->id
