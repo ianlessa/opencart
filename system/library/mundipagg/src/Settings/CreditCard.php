@@ -43,8 +43,14 @@ class CreditCard
             'credit_card_payment_title' => $this->getPaymentTitle(),
             'credit_card_invoice_name' => $this->getInvoiceName(),
             'credit_card_operation' => $this->getOperation(),
-            'credit_card_is_saved_enabled' => $this->isSavedCreditcardEnabled()
+            'credit_card_is_saved_enabled' => $this->isSavedCreditcardEnabled(),
+            'credit_card_two_credit_cards_enabled' => $this->isTwoCreditCardsEnabled()
         );
+    }
+
+    public function isTwoCreditCardsEnabled()
+    {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_two_credit_cards_enabled') === 'true';
     }
 
     public function getPaymentInformation()
@@ -92,10 +98,21 @@ class CreditCard
     public function getCreditCardPageInfo()
     {
         $info = array();
+
         $info = array_merge($info, $this->getCards());
         $info = array_merge($info, array('creditCardStatus' => $this->getStatus()));
         $info = array_merge($info, array('creditCardText' => $this->getCreditCardLanguage()));
         $info = array_merge($info, array('installments' => $this->getInstallments()));
+
+        return $info;
+    }
+
+    public function getTwoCreditCardsPageInfo()
+    {
+        $info = array();
+
+        $info = array_merge($info, $this->getCards());
+        $info = array_merge($info, array('twoCreditCardStatus' => $this->isTwoCreditCardsEnabled()));
 
         return $info;
     }

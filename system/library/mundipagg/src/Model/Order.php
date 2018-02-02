@@ -1,6 +1,8 @@
 <?php
 namespace Mundipagg\Model;
 
+use Mundipagg\Log;
+
 class Order
 {
     private $openCart;
@@ -92,5 +94,69 @@ class Order
                         SET order_status_id = " . $order_status_id . "
                         WHERE order_id = ". $order_id
         );
+    }
+
+    public function updateAmount($amount, $orderId)
+    {
+        $sql = "UPDATE `" . DB_PREFIX . "order` " .
+            "set `total` = '" . $amount . "' " .
+            "WHERE `order_id` = '" . $orderId . "'";
+
+        try {
+            $this->openCart->db->query($sql);
+        } catch (\Exception $e) {
+            Log::create()
+                ->error(LogMessages::UNABLE_TO_UPDATE_ORDER_AMOUNT, __METHOD__)
+                ->withOrderId($orderId)
+                ->withLineNumber(__LINE__)
+                ->withQuery($sql);
+        }
+    }
+
+    public function updateAmountInOrderTotals($orderId, $orderAmount)
+    {
+        $sql = "UPDATE `" . DB_PREFIX . "order_total` " .
+            "set `value` = '" . $orderAmount . "' " .
+            "WHERE `order_id` = '" . $orderId . "' " .
+            "AND code = 'total' ";
+
+        try {
+            $this->openCart->db->query($sql);
+        } catch (\Exception $e) {
+            Log::create()
+                ->error(LogMessages::UNABLE_TO_UPDATE_ORDER_AMOUNT, __METHOD__)
+                ->withOrderId($orderId)
+                ->withLineNumber(__LINE__)
+                ->withQuery($sql);
+        }
+    }
+
+    public function insertInterestInOrderTotals($orderId, $interestAmount)
+    {
+        $sql = "INSERT INTO `" . DB_PREFIX . "order_total` " .
+            "(" .
+            "`order_id`," .
+            " `code`," .
+            "`title`," .
+            "`value`," .
+            "`sort_order`" .
+            ")".
+            " VALUES (" .
+            "'" . $orderId . "'," .
+            "'mundipagg_interest'," .
+            "'Juros'," .
+            "'" . $interestAmount . "'," .
+            "'3'" .
+            ")";
+
+        try {
+            $this->openCart->db->query($sql);
+        } catch (\Exception $e) {
+            Log::create()
+                ->error(LogMessages::UNABLE_TO_UPDATE_ORDER_AMOUNT, __METHOD__)
+                ->withOrderId($orderId)
+                ->withLineNumber(__LINE__)
+                ->withQuery($sql);
+        }
     }
 }

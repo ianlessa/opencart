@@ -401,6 +401,75 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="save_credit_card">
+                                    {{ credit_card.configure_enable_two_credit_cards }}
+                                </label>
+                                <div class="col-sm-10">
+                                    {% if not settings.credit_card_two_credit_cards_enabled %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="true"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="false"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% elseif settings.credit_card_two_credit_cards_enabled %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="true"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="false"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% else %}
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="true"
+                                            >
+                                            {{ misc.yes }}
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input
+                                                    type="radio"
+                                                    name="payment_mundipagg_credit_card_two_credit_cards_enabled"
+                                                    id="two_credit_cards"
+                                                    value="false"
+                                                    checked="checked"
+                                            >
+                                            {{ misc.no }}
+                                        </label>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <div class="panel-heading">
                                 <h3>{{ credit_card.manage_section }}</h3>
                             </div>
@@ -418,7 +487,7 @@
                                     {{ credit_card.installments_without_interest }}
                                 </label>
                                 <label class="col-sm-2 text-center">
-                                    {{ credit_card.intial_interest }}
+                                    {{ credit_card.initial_interest }}
                                 </label>
                                 <label class="col-sm-2 text-center">
                                     {{ credit_card.incremental_interest }}
