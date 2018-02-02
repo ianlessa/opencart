@@ -1,4 +1,5 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/6b6afaf79c86cdf5487e/maintainability)](https://codeclimate.com/github/mundipagg/opencart/maintainability) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d08ac419d81479696812fc4baa56c7d)](https://www.codacy.com/app/mundipagg/opencart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mundipagg/opencart&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/mundipagg/opencart.svg?branch=master)](https://travis-ci.org/mundipagg/opencart)
 
 # Opencart/Mundipagg Integration module
