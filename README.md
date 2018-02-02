@@ -1,3 +1,4 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/6b6afaf79c86cdf5487e/maintainability)](https://codeclimate.com/github/mundipagg/opencart/maintainability) 
 [![Build Status](https://travis-ci.org/mundipagg/opencart.svg?branch=master)](https://travis-ci.org/mundipagg/opencart)
 
 # Opencart/Mundipagg Integration module
