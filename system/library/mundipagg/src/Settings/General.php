@@ -81,7 +81,7 @@ class General
 
     public function getModuleVersion()
     {
-        return 'V1.2.7';
+        return '1.2.7';
     }
 
     public function getModuleMetaData()

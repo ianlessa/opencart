@@ -6,14 +6,12 @@
  */
 require_once DIR_SYSTEM.'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Order;
-use Mundipagg\Log;
-use Mundipagg\LogMessages;
-
+use Mundipagg\Controller\Api;
 use Mundipagg\Controller\SavedCreditCard;
 use Mundipagg\Controller\TwoCreditCards;
-use Mundipagg\Controller\Api;
-
+use Mundipagg\Log;
+use Mundipagg\LogMessages;
+use Mundipagg\Order;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\General as GeneralSettings;
@@ -58,13 +56,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->model('checkout/order');
         $this->load->model('setting/setting');
         $this->load->model('extension/payment/mundipagg_customer');
+        $this->load->model('extension/payment/mundipagg');
         $this->load->model('extension/payment/mundipagg_credit_card');
         $this->load->model('extension/payment/mundipagg_orderdata_update');
         $this->load->language('extension/payment/mundipagg');
 
         $this->data['misc'] = $this->language->get('misc');
         $this->setting = $this->model_setting_setting;
-        $this->mundipaggModel = $this->model_mundipagg;
+        $this->mundipaggModel = $this->model_extension_payment_mundipagg;
         $this->creditCardModel = $this->model_extension_payment_mundipagg_credit_card;
         $this->mundipaggOrderUpdateModel = $this->model_extension_payment_mundipagg_orderdata_update;
     }
@@ -419,7 +418,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $this->getOrder()->updateOrderStatus($orderStatus);
+        $novaOrderMundial = $this->getOrder();
+        $novaOrderMundial->updateOrderStatus($orderStatus);
+
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
@@ -462,7 +463,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        $a = 1;
         $paymentDetailsFirstCard = explode('|', $requestData['payment-details-0']);
         $paymentDetailsSecondCard = explode('|', $requestData['payment-details-1']);
 
