@@ -2,7 +2,7 @@
 
 require_once DIR_SYSTEM."library/mundipagg/vendor/autoload.php";
 
-use Mundipagg\Controller\Settings;
+use Mundipagg\Settings\General as GeneralSettings;
 
 class ModelExtensionPaymentMundipagg extends Model
 {
@@ -13,7 +13,7 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     public function getMethod()
     {
-        $settings = new Settings($this);
+        $settings = new GeneralSettings($this);
 
         $method_data = array(
                 'code'       => $settings->getCode(),

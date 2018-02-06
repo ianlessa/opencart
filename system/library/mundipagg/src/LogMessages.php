@@ -4,7 +4,7 @@ namespace Mundipagg;
 
 class LogMessages
 {
-    const LOG_HEADER = 'Mundipagg Opencart V1.2.7 |';
+    const LOG_HEADER = 'Mundipagg Opencart 1.2.8 |';
     
     /** Error messages */
     const UNKNOWN_ORDER_STATUS = 'Unknown order status received';
@@ -20,8 +20,10 @@ class LogMessages
     const UNKNOWN_WEBHOOK_TYPE = 'Unknown webhook type received';
     const UNABLE_TO_UPDATE_ORDER_AMOUNT = 'Unable to update the order amount';
     const CANNOT_SAVE_CREDIT_CARD_DATA = 'Cannot save credit card data';
+    const CANNOT_DELETE_CREDIT_CARD_DATA = 'Cannot delete credit card data';
     const CANNOT_GET_CREDIT_CARD_DATA = 'Cannot get credit card data';
     const CANNOT_GET_CUSTOMER_DATA = 'Cannot get customer data';
+    const CANNOT_CREATE_TWO_CREDIT_CARDS_ORDER = 'Cannot create two credit cards order';
 
     /** Debug Messages */
     const ORDER_NOT_FOUND_IN_ORDER_TABLE = 'Mundipagg order id not found in mundipagg_order table';

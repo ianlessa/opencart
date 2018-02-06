@@ -1,8 +1,8 @@
 <?php
 
-namespace Mundipagg\Controller;
+namespace Mundipagg\Settings;
 
-class Settings
+class General
 {
     private $openCart;
 
@@ -81,7 +81,7 @@ class Settings
 
     public function getModuleVersion()
     {
-        return '1.2.8';
+        return '1.2.7';
     }
 
     public function getModuleMetaData()

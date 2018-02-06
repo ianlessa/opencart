@@ -24,11 +24,11 @@ class WebHook
     {
         $sql = 'SELECT `opencart_id` from `' .
             DB_PREFIX . 'mundipagg_order`' .
-            'WHERE `mundipagg_id` = `' . $mundiPaggOrderId . '`';
+            'WHERE `mundipagg_id` = "' . $mundiPaggOrderId . '"';
 
 
         $result = $this->openCart->db->query($sql);
-        return $result->row;
+        return end($result->row);
     }
 
     public function setOrderStatus($orderId, $statusId)
@@ -76,6 +76,11 @@ class WebHook
 
     public function getOpenCartOrderIdFromMundiPaggOrderId($mPOrderId)
     {
-        return 1;
+        $sql = 'SELECT `opencart_id` from `' .
+            DB_PREFIX . 'mundipagg_order`' .
+            'WHERE `mundipagg_id` = "' . $mPOrderId . '"';
+
+        $result = $this->openCart->db->query($sql);
+        return end($result->row);
     }
 }

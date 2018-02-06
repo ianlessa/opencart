@@ -35,7 +35,12 @@
                         <tr>
                             <td class="text-center">{{ creditcard.brand }}</td>
                             <td class="text-center">{{ creditcard.last_four_digits }}</td>
-                            <td class="text-center"><button class="btn btn-danger">Excluir</button></td>
+                            <td class="text-center">
+                                <button class="btn btn-danger"
+                                        onclick="deleteCardConfirmPrompt(this,{{ creditcard.id }})">
+                                    {{ text.delete_card_button }}
+                                </button>
+                            </td>
                         </tr>
                     {% endfor %}
 
@@ -50,4 +55,25 @@
         {{ column_right }}
     </div>
 </div>
+<script>
+    var deleteCard = function(caller,cardId){
+       caller.innerHTML = '{{ text.delete_card_wait_message }}';
+       $.ajax({
+           url:'{{ deleteUrl }}',
+           context: document.body,
+           method: 'POST',
+           data: {
+               cardId: cardId
+           }
+       }).done(function(){
+            location.reload();
+       });
+    };
+
+    var deleteCardConfirmPrompt = function(caller,cardId){
+        if (confirm("{{ text.saved_card_confirm_delete }}") === true) {
+            deleteCard(caller,cardId);
+        }
+    };
+</script>
 {{ footer }}

@@ -18,10 +18,10 @@ $_['credit_card'] = [
     'cvv' => 'CVV',
     'no_brands_enabled' => 'No brands enabled',
     'installments' => 'Installments',
-    'holder_name' => 'Holder name',
     'without_interest' => 'without interest',
     'interest' => 'interest: ',
-    'new_credit_card' => 'Novo cartão'
+    'new_credit_card' => 'New Card',
+    'save_creditcard_message' => 'Save this card to future orders'
 ];
 
 $_['order'] = [
@@ -56,6 +56,9 @@ $_['saved_creditcard'] = [
     'my_creditcards' => 'My cards',
     'account' => 'Account',
     'your_saved_creditcards' => 'My saved credit cards.',
+    'saved_card_confirm_delete' => 'This card will be removed. Do you want to continue?',
+    'delete_card_wait_message' => 'Wait...',
+    'delete_card_button' => 'Delete',
     'brand' => 'Brand',
     'last_four_digits' => 'Last four digits',
     'delete' => 'Delete'

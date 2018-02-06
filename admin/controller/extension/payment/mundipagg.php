@@ -2,9 +2,9 @@
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-use Mundipagg\Controller\Settings;
-use Mundipagg\Controller\CreditCardSettings;
-use Mundipagg\Controller\BoletoSettings;
+use Mundipagg\Settings\CreditCard as CreditCardSettings;
+use Mundipagg\Settings\Boleto as BoletoSettings;
+
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
 
@@ -270,10 +270,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $order = new Mundipagg\Order($this);
             $charges = $order->getCharge($order_id);
             $charge_id = $this->request->get['charge'];
+            $chargeAmount = floatval(str_replace(',','.',$this->request->post['charge_amount']));
+            $chargeAmount *= 100;
             foreach ($charges->rows as $charge) {
                 if ($charge['charge_id'] == $charge_id) {
                     if ($charge['can_cancel']) {
-                        $charge = call_user_func_array(array($order, 'updateCharge'), array($charge_id, $status, $this->request->post['charge_amount']));
+                        $charge = $order->updateCharge($charge_id, $status, $chargeAmount);
                         $word = $status == 'cancel' ? 'canceled' : 'captured';
                         $this->session->data['success'] = "Charge $word with sucess!";
                     } else {
@@ -288,6 +290,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $this->session->data['error_warning'] = "Fail on $word charge";
             } else {
                 $order->createOrUpdateCharge($order_info, $charge);
+                $this->load->model('extension/payment/mundipagg_order');
+                $this->model_extension_payment_mundipagg_order->addOrderHistory(
+                    $order_id,
+                    $order->translateStatusFromMP($charge),
+                    "Charge $word. Amount: " . $this->request->post['charge_amount']
+                );
             }
         } catch (\Exception $e) {
             $this->session->data['error_warning'] = $e->getMessage();
@@ -491,7 +499,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     private function getSavedSettings()
     {
-        $mundiPaggSettings = new Settings($this);
         $creditCardSettings = new CreditCardSettings($this);
         $boletoSettings = new BoletoSettings($this);
 

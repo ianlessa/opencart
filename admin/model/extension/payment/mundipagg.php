@@ -61,7 +61,7 @@ class ModelExtensionPaymentMundipagg extends Model
         //Add saved credit card list
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
-            'catalog/view/account/account/after',
+            'catalog/view/account/*/after',
             'extension/payment/mundipagg_events/showSavedCreditcards'
         );
     }
@@ -333,7 +333,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function createCreditCardTable()
     {
         $this->db->query(
-            'CREATE TABLE IF NOT EXISTS `mundipagg_creditcard` (
+            'CREATE TABLE IF NOT EXISTS `'. DB_PREFIX .'mundipagg_creditcard` (
                 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `mundipagg_creditcard_id` VARCHAR(30) ,
                 `mundipagg_customer_id` VARCHAR(30) NOT NULL,

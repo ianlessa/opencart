@@ -29,6 +29,8 @@ $_['credit_card'] = [
     'configure_payment_title' => 'Payment title',
     'configure_invoice_name' => "Invoice's name",
     'configure_operation_type' => 'Operation type',
+    'configure_is_saved_enabled' => 'Enable Saved Credit Cards',
+    'configure_enable_two_credit_cards' => 'Enable two Credit Cards',
     'configure_auth_label' => 'Auth',
     'configure_auth_capture_label' => 'Auth and capture',
     'manage_section' => 'Manage cards',
@@ -38,7 +40,7 @@ $_['credit_card'] = [
     'enable' => 'Enable',
     'max_installments' => 'Max installments',
     'installments_without_interest' => 'Installments without interest',
-    'intial_interest' => 'Initial interest',
+    'initial_interest' => 'Initial interest',
     'incremental_interest' => 'Incremental interest'
 ];
 // -----------------------------------------------------------------

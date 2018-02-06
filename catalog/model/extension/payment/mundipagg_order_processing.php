@@ -187,14 +187,28 @@ class ModelExtensionPaymentMundipaggOrderProcessing extends Model
      */
     public function addOrderHistory($orderId, $orderStatus, $comment, $sendEmail)
     {
-        $this->load->model('checkout/order');
-        $this->model_checkout_order->addOrderHistory(
-            $orderId,
-            $orderStatus,
-            $comment,
-            $sendEmail,
-            false
-        );
+        $sql = "
+            INSERT INTO `" . DB_PREFIX . "order_history` 
+            (
+                order_id, 
+                order_status_id, 
+                notify, 
+                comment,
+                date_added
+            )
+            values(
+                " . $orderId . ",
+                " . $orderStatus . ",
+                " . $sendEmail . ",
+                " . '"' . $comment . '"' . ",
+                now()
+            )
+        ";
+
+        try {
+            $this->db->query($sql);
+        } catch (\Exception $e) {
+        }
     }
 
     /**

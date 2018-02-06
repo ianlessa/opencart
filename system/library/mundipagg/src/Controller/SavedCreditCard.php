@@ -18,8 +18,7 @@ class SavedCreditCard
         $savedCreditCards = new Creditcard($this->openCart);
         $this->openCart->load->model('extension/payment/mundipagg_customer');
 
-        $customer =
-            $this->
+        $customer =$this->
             openCart->model_extension_payment_mundipagg_customer->
             get($opencartCustomerId);
 

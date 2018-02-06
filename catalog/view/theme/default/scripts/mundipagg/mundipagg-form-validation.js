@@ -133,8 +133,14 @@ MundiPagg.Form = function() {
         addListeners: function() {
             // listener to show/hide installments
             this.cardBrand.addEventListener('DOMSubtreeModified', function(event) {
+                var brandUrl = this.cardBrand.getElementsByTagName('img')[0];
+
                 this.hideAll();
-                this.showSpecific(this.cardBrand.getAttribute('data-mundicheckout-brand'));
+
+                if (brandUrl) {
+                    brandUrl = brandUrl.getAttribute('src').split('/').pop().split('.')[0].toLowerCase();
+                    this.showSpecific(brandUrl);
+                }
             }.bind(this), false);
 
             // listener to handle form validation
@@ -205,7 +211,7 @@ function hideElements() {
             $(this).addClass("hidden");
         });
     })
-};
+}
 
 function showSpecific(brand) {
     if (brand != "" && brand != undefined) {
@@ -225,11 +231,17 @@ function showSpecific(brand) {
 
     mundiForm.setup(mundiValidator);
 
+    console.log('starting');
+
     MundiCheckout.init(
-        function () {
+        function(data) {
+            console.log('success');
+            console.log(data);
             return true;
         },
-        function() {
+        function(error) {
+            console.log('error');
+            console.log(error);
             $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
         }
     );

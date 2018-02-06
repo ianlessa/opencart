@@ -3,9 +3,11 @@
     <link href="{{ customizedFile }}" type="text/css" rel="stylesheet" />
 {% endif %}
 <section id="mundipaggCheckout">
-    {% if not creditCardStatus and not boletoStatus %}
+    {% if not creditCardStatus and not boletoStatus and not twoCreditCardsStatus %}
         <h3> {{ misc.no_payment_methods_enabled }} </h3>
     {% endif %}
+
+    {# Here comes tab info #}
     <ul  class="nav nav-justified">
         {% if creditCardStatus %}
             <li class="active mundipaggCheckoutTabs">
@@ -25,29 +27,23 @@
         {% endif %}
     </ul>
 
-        <div class="mundipaggCheckoutTabsContent tab-content clearfix">
-            {% if creditCardStatus %}
-                {{ creditcardTemplate }}
-            {% endif %}
-            {% if boletoStatus %}
-                {{ boletoTemplate }}
-            {% endif %}
+    <div class="mundipaggCheckoutTabsContent tab-content clearfix">
+        {% if creditCardStatus %}
+            {{ creditcardTemplate }}
+        {% endif %}
+        {% if boletoStatus %}
+            {{ boletoTemplate }}
+        {% endif %}
     </div>
 </section>
 
-<script src="{{ themeDirectory }}/scripts/mundipagg/mundipagg-checkout.js" data-mundicheckout-app-id="{{ publicKey }}"></script>
+<script src="{{ themeDirectory }}/scripts/mundipagg/transparent.js" data-mundicheckout-app-id="{{ publicKey }}"></script>
 <script src="{{ themeDirectory }}/scripts/mundipagg/mundipagg-form-validation.js"></script>
 
 <script>
     function generate() {
-
-        $("#generateBoletoBtn")
-            .addClass("disabled").
-            attr("disabled", "disabled").
-            text("Aguarde...");
-
-        $.get("{{ generate_boleto_url }}"
-        ).done(function( data ) {
+        $("#generateBoletoBtn").addClass("disabled").attr("disabled", "disabled").text("Aguarde...");
+        $.get("{{ generate_boleto_url }}").done(function(data) {
             if (data != undefined) {
                 window.open(data, "_blank");
                 window.location = "{{ checkout_success_url }}";

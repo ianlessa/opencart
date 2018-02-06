@@ -1,5 +1,15 @@
-<h2>{{ text.title }}</h2>
+{% if isAccountIndex %}
+    <h2>{{ text.title }}</h2>
 
-<ul class="list-unstyled">
-    <li><a href="{{ my_creditcards_url }}">{{ text.my_creditcards }}</a></li>
-</ul>
+    <ul class="list-unstyled">
+        <li><a href="{{ my_creditcards_url }}">{{ text.my_creditcards }}</a></li>
+    </ul>
+{% endif %}
+
+<script>
+    $(document).ready(function(){
+        $('#column-right > div.list-group > a:last-child')
+            .before('<a href="{{ my_creditcards_url }}" class="list-group-item">{{ text.my_creditcards }}</a>');
+    });
+</script>
+

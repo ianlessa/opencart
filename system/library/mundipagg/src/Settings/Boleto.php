@@ -1,6 +1,6 @@
 <?php
 
-namespace Mundipagg\Controller;
+namespace Mundipagg\Settings;
 
 class Boleto
 {
@@ -13,7 +13,7 @@ class Boleto
 
     public function isEnabled()
     {
-        return $this->openCart->config->get('payment_mundipagg_boleto_status') === '1';
+        return $this->getStatus() === '1';
     }
 
     public function getStatus()
@@ -22,6 +22,11 @@ class Boleto
     }
 
     public function getPaymentTitle()
+    {
+        return $this->openCart->config->get('payment_mundipagg_boleto_title');
+    }
+
+    public function getTitle()
     {
         return $this->openCart->config->get('payment_mundipagg_boleto_title');
     }
@@ -69,6 +74,18 @@ class Boleto
             'boletoStatus' => $this->getStatus(),
             'boletoText' => $this->openCart->language->get('boleto')
 
+        );
+    }
+
+    public function getAllSettings()
+    {
+        return array(
+            'boleto_enabled' => $this->getStatus(),
+            'boleto_title' => $this->getTitle(),
+            'boleto_name' => $this->getName(),
+            'boleto_bank' => $this->getBank(),
+            'boleto_instructions' => $this->getInstructions(),
+            'boleto_due_date' => $this->getDueAt()
         );
     }
 }
