@@ -98,16 +98,24 @@ class Order
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
 
-        $CreateOrderRequest = $this->createOrderRequest(
-            $items,
-            $createCustomerRequest,
-            $payments,
-            $orderData['order_id'],
-            $this->getMundipaggCustomerId($orderData['customer_id']),
-            $createShippingRequest,
-            $this->generalSettings->getModuleMetaData(),
-            $isAntiFraudEnabled
-        );
+        try {
+            $CreateOrderRequest = $this->createOrderRequest(
+                $items,
+                $createCustomerRequest,
+                $payments,
+                $orderData['order_id'],
+                $this->getMundipaggCustomerId($orderData['customer_id']),
+                $createShippingRequest,
+                $this->generalSettings->getModuleMetaData(),
+                $isAntiFraudEnabled
+            );
+
+        } catch (\Exception $e) {
+            Log::create()
+                ->error($e->getMessage(), __METHOD__)
+                ->withOrderId($orderData['order_id'])
+                ->withBackTraceInfo();
+        }
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
@@ -161,16 +169,24 @@ class Order
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
         $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds);
 
-        $createOrderRequest = $this->createOrderRequest(
-            $items,
-            $createCustomerRequest,
-            $payments,
-            $orderData['order_id'],
-            $this->getMundipaggCustomerId($orderData['customer_id']),
-            $createShippingRequest,
-            $this->generalSettings->getModuleMetaData(),
-            $isAntiFraudEnabled
-        );
+        try {
+            $createOrderRequest = $this->createOrderRequest(
+                $items,
+                $createCustomerRequest,
+                $payments,
+                $orderData['order_id'],
+                $this->getMundipaggCustomerId($orderData['customer_id']),
+                $createShippingRequest,
+                $this->generalSettings->getModuleMetaData(),
+                $isAntiFraudEnabled
+            );
+
+        } catch (\Exception $e) {
+            Log::create()
+                ->error($e->getMessage(), __METHOD__)
+                ->withOrderId($orderData['order_id'])
+                ->withBackTraceInfo();
+        }
 
         Log::create()
             ->info(LogMessages::CREATE_ORDER_MUNDIPAGG_REQUEST, __METHOD__)
@@ -603,19 +619,17 @@ class Order
      */
     public function updateOrderStatus($orderStatus)
     {
-        $this->openCart->load->model('checkout/order');
         $this->openCart->load->model('extension/payment/mundipagg_order_processing');
+        $model = $this->openCart->model_extension_payment_mundipagg_order_processing;
 
-        $this->openCart->model_checkout_order->addOrderHistory(
+        $model->addOrderHistory(
             $this->openCart->session->data['order_id'],
             $orderStatus,
             '',
             true
         );
 
-        $this->openCart->load->model('extension/payment/mundipagg_order_processing');
-
-        $this->openCart->model_extension_payment_mundipagg_order_processing->setOrderStatus(
+        $model->setOrderStatus(
             $this->openCart->session->data['order_id'],
             $orderStatus
         );
