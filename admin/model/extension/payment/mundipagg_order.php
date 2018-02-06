@@ -1,6 +1,6 @@
 <?php
 
-class ModelSaleMundipaggOrder extends Model
+class ModelExtensionPaymentMundipaggOrder extends Model
 {
     public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $override = false)
     {
