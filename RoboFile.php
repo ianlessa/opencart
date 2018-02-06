@@ -55,13 +55,13 @@ class RoboFile extends \Robo\Tasks
             ->run();
 
         $this->taskReplaceInFile('system/library/mundipagg/src/Controller/Settings.php')
-            ->from("return 'V$currentVersion';")
-            ->to("return 'V$version';")
+            ->from("return '$currentVersion';")
+            ->to("return '$version';")
             ->run();
 
         $this->taskReplaceInFile('system/library/mundipagg/src/LogMessages.php')
-            ->from("Opencart V$currentVersion |")
-            ->to("Opencart V$version |")
+            ->from("Opencart $currentVersion |")
+            ->to("Opencart $version |")
             ->run();
     }
 
