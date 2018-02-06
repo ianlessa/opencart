@@ -176,8 +176,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     $response = $this->getOrder()->create($orderData, $cart, 'boleto');
 
                     if (isset($response->charges[0]->lastTransaction->success)) {
+
+                        $this->load->model('extension/payment/mundipagg_order_processing');
+                        $model = $this->model_extension_payment_mundipagg_order_processing;
                         $this->saveBoletoInfoInOrderHistory($response);
                         $this->printBoletoUrl($response);
+                        $model->setOrderStatus($orderData['order_id'], 1);
                         return;
 
                     } else{
@@ -213,7 +217,15 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 "' target='_blank'>" .
                 $this->language->get('boleto')['click_to_generate'] .
                 "</a>";
-        $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 1, $orderComment, true);
+
+        $model = $this->model_extension_payment_mundipagg_order_processing;
+
+        $model->addOrderHistory(
+            $this->session->data['order_id'],
+            1,
+            $orderComment,
+            1
+        );
     }
 
     private function printBoletoUrl($response)

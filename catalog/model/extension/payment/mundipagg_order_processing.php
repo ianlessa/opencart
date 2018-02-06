@@ -188,7 +188,7 @@ class ModelExtensionPaymentMundipaggOrderProcessing extends Model
     public function addOrderHistory($orderId, $orderStatus, $comment, $sendEmail)
     {
         $sql = "
-            INSERT `" . DB_PREFIX . "order_history` 
+            INSERT INTO `" . DB_PREFIX . "order_history` 
             (
                 order_id, 
                 order_status_id, 
@@ -200,7 +200,7 @@ class ModelExtensionPaymentMundipaggOrderProcessing extends Model
                 " . $orderId . ",
                 " . $orderStatus . ",
                 " . $sendEmail . ",
-                '" . $comment . "',
+                " . '"' . $comment . '"' . ",
                 now()
             )
         ";
@@ -208,7 +208,6 @@ class ModelExtensionPaymentMundipaggOrderProcessing extends Model
         try {
             $this->db->query($sql);
         } catch (\Exception $e) {
-
         }
     }
 
