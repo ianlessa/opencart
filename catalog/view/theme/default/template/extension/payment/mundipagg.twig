@@ -25,14 +25,6 @@
                 </a>
             </li>
         {% endif %}
-        {% if twoCreditCardStatus %}
-            <li class="mundipaggCheckoutTabs">
-                <a href="#twoCreditCardsTab" data-toggle="tab">
-                    <i class="fa fa-file-text"></i>
-                    <p>Colocar nome aqui{{ twoCreditCard.payment_method_name }}</p>
-                </a>
-            </li>
-        {% endif %}
     </ul>
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
@@ -41,9 +33,6 @@
         {% endif %}
         {% if boletoStatus %}
             {{ boletoTemplate }}
-        {% endif %}
-        {% if twoCreditCardStatus %}
-            {{ twoCreditCardsTemplate }}
         {% endif %}
     </div>
 </section>
