@@ -116,6 +116,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         // check if payment with two credit cards is enabled
         if ($creditCardSettings->isTwoCreditCardsEnabled()) {
             $this->data = array_merge($this->data, $creditCardSettings->getTwoCreditCardsPageInfo());
+            $this->data['twoCreditCardsPaymentTitle'] = $creditCardSettings->getTwoCreditCardsPaymentTitle();
         }
 
         if ($boletoSettings->isEnabled()) {

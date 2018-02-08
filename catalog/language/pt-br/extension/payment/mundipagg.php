@@ -19,7 +19,7 @@ $_['credit_card'] = [
     'no_brands_enabled' => 'Nenhuma bandeira habilitada',
     'installments' => 'Parcelas',
     'without_interest' => 'sem juros',
-    'interest' => 'huros: ',
+    'interest' => 'juros: ',
     'new_credit_card' => 'Novo cartão',
     'save_creditcard_message' => 'Salvar este cartão para compras futuras'
 ];
