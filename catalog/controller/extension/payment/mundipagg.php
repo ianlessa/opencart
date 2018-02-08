@@ -133,7 +133,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $this->loadPaymentTemplates();
 
-        return $this->load->view('extension/payment/mundipagg', $this->data);
+        return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
     }
 
     private function loadUrls()
@@ -147,13 +147,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function loadPaymentTemplates()
     {
-        $viewPath = 'extension/payment/mundipagg_';
+        $viewPath = 'extension/payment/mundipagg/';
 
-        $this->data['savedCreditcardTemplate'] = $this->load->view($viewPath . 'saved_credit_card', $this->data);
-        $this->data['newCreditcardTemplate'] = $this->load->view($viewPath . 'new_credit_card', $this->data);
-        $this->data['creditcardTemplate'] = $this->load->view($viewPath . 'credit_card', $this->data);
+        $this->data['savedCreditcardTemplate'] = $this->load->view($viewPath . 'credit_card/saved_credit_card', $this->data);
+        $this->data['newCreditcardTemplate'] = $this->load->view($viewPath . 'credit_card/new_credit_card', $this->data);
+        $this->data['brandsTemplate'] = $this->load->view($viewPath . 'credit_card/brands', $this->data);
+        $this->data['creditcardTemplate'] = $this->load->view($viewPath . 'credit_card/credit_card', $this->data);
         $this->data['boletoTemplate'] = $this->load->view($viewPath . 'boleto', $this->data);
-        $this->data['twoCreditCardsTemplate'] = $this->load->view($viewPath . 'two_credit_cards', $this->data);
+        $this->data['twoCreditCardsTemplate'] = $this->load->view($viewPath . 'credit_card/two_credit_cards', $this->data);
     }
 
     /**
