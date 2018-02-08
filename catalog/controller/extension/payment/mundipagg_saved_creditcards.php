@@ -33,7 +33,7 @@ class ControllerExtensionPaymentMundipaggSavedCreditcards extends Controller {
         $data['deleteUrl'] = $this->url->link('extension/payment/mundipagg_saved_creditcards/delete', '', true);
 
         $this->document->setTitle($data['text']['title']);
-        $this->response->setOutput($this->load->view('extension/payment/mundipagg_saved_creditcards', $data));
+        $this->response->setOutput($this->load->view('extension/payment/mundipagg/credit_card/saved_creditcards', $data));
     }
 
     public function delete()
@@ -83,7 +83,7 @@ class ControllerExtensionPaymentMundipaggSavedCreditcards extends Controller {
 
         $breadcrumbs[] = [
             'text' => $this->languageMundiPagg['title'],
-            'href' => $this->url->link('extension/payment/mundipagg_saved_creditcards', '', true)
+            'href' => $this->url->link('extension/payment/mundipagg/credit_card/saved_creditcards', '', true)
         ];
         return $breadcrumbs;
     }

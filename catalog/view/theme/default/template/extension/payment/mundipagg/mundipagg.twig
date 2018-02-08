@@ -37,13 +37,13 @@
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
         {% if creditCardStatus %}
-            {{ creditcardTemplate }}
+            {% include baseCreditCardtemplate %}
         {% endif %}
         {% if boletoStatus %}
-            {{ boletoTemplate }}
+            {% include boletoTemplate %}
         {% endif %}
         {% if twoCreditCardStatus %}
-            {{ twoCreditCardsTemplate }}
+            {% include baseTwoCreditCardstemplate %}
         {% endif %}
     </div>
 </section>

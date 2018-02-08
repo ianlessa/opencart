@@ -247,12 +247,13 @@ function showSpecific(brand) {
     );
 })();
 
-function switchNewSaved(value) {
+function switchNewSaved(value, formId) {
+    console.log(formId);
     if(value == "new") {
-        $(".newCreditcard").show();
+        $(".creditCard-" + formId).show();
         $(".savedCreditcard").hide();
     } else {
-        $(".newCreditcard").hide();
+        $(".creditCard-" + formId).hide();
         $(".savedCreditcard").show();
     }
 }

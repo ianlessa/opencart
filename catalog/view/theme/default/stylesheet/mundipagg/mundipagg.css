@@ -70,15 +70,15 @@
 ** Credit card
 **/
 
-#creditCardTab{
+#creditCardTab, #twoCreditCardsTab{
     background-color:#F7F7F7;
 }
 
-#creditCardTab .mundipaggBrandBox {
+#creditCardTab .mundipaggBrandBox, #twoCreditCardsTab .mundipaggBrandBox {
  margin: 0 0 15px 0;
 }
 
-#creditCardTab .mundipaggBrandBox img{
+#creditCardTab .mundipaggBrandBox img, #twoCreditCardsTab .mundipaggBrandBox img{
     width: 36px;
     margin-right: 5px;
 }

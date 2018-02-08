@@ -1,12 +1,78 @@
-<div class="tab-pane active" id="creditCardTab">
-    {% if brandNames %}
-        <div class="row">
-            <h3 class="col-sm-12">Pagamento com cartão de crédito</h3>
+<div class="newCreditcard creditCard-{{ inputId }}">
+    <h2>{{ inputId }}</h2>
+    <div class="row">
+        <div class="col-sm-12">
+            <br>
+            <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
+                <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
+                <div class="input-group input-group ">
+                    <input name="card-number-0" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-0">
+                    <span class="input-group-addon" data-mundicheckout-element="brand-0" data-mundicheckout-brand data-mundicheckout-brand-image></span>
+                </div>
+                <span  id="credit-card-number-message" class="text-danger"></span>
+            </div>
+
+            <div class="col-sm-4">
+                <label>{{ credit_card.installments }}</label>
+                <div>
+                    <select name="payment-details-0" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}" required>
+                        <option value="">Selecione</option>
+                        {% for brand, installment in installments %}
+                            {% for details in installment %}
+                                {% if details.interest == 0 %}
+                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
+                                {% else %}
+                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-2" id="expiration-date-field ">
+                <label class="row">{{ credit_card.valid_thru }}</label>
+                <div class="row ">
+                    <select  name="card-exp-month" id="cardExpMonth" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-element="exp_month-0">
+                        {% for month in 1..12 %}
+                            <!-- this makes every month two digits long -->
+                            <!--option value="{{ "%02d"|format(month) }}">{{ "%02d"|format(month) }}</option-->
+                            <option value="{{ month }}">{{ month }}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="card-exp-year" id="cardExpYear" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-element="exp_year-0">
+                        {% for year in 2017..2030 %}
+                            <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <span  id="expiration-date-message" class="text-danger"></span>
+                </div>
+            </div>
         </div>
-        {{ brandsTemplate  }}
-        {{ savedCreditcardTemplate }}
-        {{ newCreditcardTemplate  }}
-    {% else %}
-        <h3>{{ credit_card.no_brands_enabled }}</h3>
-    {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-sm-5" id="holdername-field">
+            <label for="cardName">{{ credit_card.holder_name }}</label>
+            <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-element="holder_name-0">
+            <span  id="holder-name-message" class="text-danger"></span>
+        </div>
+
+        <div class="col-sm-2" id="cvv-field">
+            <label for="cardCVV">CVV</label>
+            <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-element="cvv-0">
+            <span id="cvv-message" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <span  id="token-error-message" class="text-danger"></span>
+        <br>
+        {%  if isSavedCreditcardEnabled %}
+            <div class="col-sm-12">
+                <input type="checkbox" class="float-to-left" name="cardSaveCreditcard" />
+                {{ credit_card.save_creditcard_message }}
+            </div>
+        {% endif %}
+    </div>
 </div>

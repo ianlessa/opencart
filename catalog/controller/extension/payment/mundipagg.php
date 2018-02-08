@@ -147,14 +147,19 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function loadPaymentTemplates()
     {
-        $viewPath = 'extension/payment/mundipagg/';
+        $path = 'default/template/extension/payment/mundipagg/';
 
-        $this->data['savedCreditcardTemplate'] = $this->load->view($viewPath . 'credit_card/saved_credit_card', $this->data);
-        $this->data['newCreditcardTemplate'] = $this->load->view($viewPath . 'credit_card/new_credit_card', $this->data);
-        $this->data['brandsTemplate'] = $this->load->view($viewPath . 'credit_card/brands', $this->data);
-        $this->data['creditcardTemplate'] = $this->load->view($viewPath . 'credit_card/credit_card', $this->data);
-        $this->data['boletoTemplate'] = $this->load->view($viewPath . 'boleto', $this->data);
-        $this->data['twoCreditCardsTemplate'] = $this->load->view($viewPath . 'credit_card/two_credit_cards', $this->data);
+        $this->data['creditCardTemplate'] = $path . 'credit_card/credit_card.twig';
+        $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
+        $this->data['baseTwoCreditCardstemplate'] = $path . 'credit_card/base_two.twig';
+        $this->data['twoCreditCardsTemplate'] = $path . 'credit_card/two.twig';
+        $this->data['savedCreditcardTemplate'] = $path . 'credit_card/saved.twig';
+        $this->data['newCreditcardTemplate'] = $path . 'credit_card/new.twig';
+        $this->data['savedSelectCreditcardTemplate'] = $path . 'credit_card/saved_select.twig';
+        $this->data['brandsTemplate'] = $path . 'credit_card/brands.twig';
+        $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
+        $this->data['boletoTemplate'] = $path . 'boleto.twig';
+        $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
     }
 
     /**
