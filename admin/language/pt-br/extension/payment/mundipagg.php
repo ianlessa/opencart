@@ -31,6 +31,7 @@ $_['credit_card'] = [
     'configure_operation_type' => 'Tipo da operação',
     'configure_is_saved_enabled' => 'Habilitar cartões salvos',
     'configure_enable_two_credit_cards' => 'Habilitar 2 cartões',
+    'configure_two_credit_cards_payment_title' => 'Título do pagamento para 2 cartões',
     'configure_auth_label' => 'Autorizar',
     'configure_auth_capture_label' => 'Autorizar e capturar',
     'manage_section' => 'Gerenciar cartões',
