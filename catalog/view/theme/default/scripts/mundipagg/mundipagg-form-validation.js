@@ -3,7 +3,7 @@ var MundiPagg = {};
 MundiPagg.Validator = function() {
     return {
         validateForm: function () {
-            /*var errors = [];
+            var errors = [];
 
             var creditCardNumber = this.validateCardNumber($("#cardNumber").val());
             var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpYear").val());
@@ -26,11 +26,11 @@ MundiPagg.Validator = function() {
                 errors['cvv'] = cvv;
             }
 
-            return errors;*/
+            return errors;
         },
 
         validateExpiration: function (month, year) {
-            /*var date = new Date();
+            var date = new Date();
 
             var expDate = new Date(year, month - 1, 1);
             var today = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -39,27 +39,27 @@ MundiPagg.Validator = function() {
                 return 'Cartão expirado';
             }
 
-            return undefined;*/
+            return undefined;
         },
 
         validateHolderName: function (name) {
-            /*if (!/^[a-zA-Z ]+$/.test(name)) {
+            if (!/^[a-zA-Z ]+$/.test(name)) {
                 return 'Nome no cartão inválido';
             }
 
-            return undefined;*/
+            return undefined;
         },
 
         validateCVV: function (cvv) {
-            /*if (cvv.length > 4 || cvv.length < 3 || !/^[0-9]+$/.test(cvv)) {
+            if (cvv.length > 4 || cvv.length < 3 || !/^[0-9]+$/.test(cvv)) {
                 return 'CVV inválido';
             }
 
-            return undefined;*/
+            return undefined;
         },
 
         validateCardNumber: function (number) {
-            /*if (!this.isValidCreditCardNumber(number)) {
+            if (!this.isValidCreditCardNumber(number)) {
                 return 'Cartão de crédito inválido';
             }
 
@@ -67,12 +67,12 @@ MundiPagg.Validator = function() {
                 return 'Por favor, digite somente números.';
             }
 
-            return undefined;*/
+            return undefined;
         },
 
         isValidCreditCardNumber: function (value) {
             // accept only digits, dashes or spaces
-            /*if (/[^0-9-\s]+/.test(value)) {
+            if (/[^0-9-\s]+/.test(value)) {
                 return false;
             }
 
@@ -91,7 +91,7 @@ MundiPagg.Validator = function() {
                 bEven = !bEven;
             }
 
-            return (nCheck % 10) == 0;*/
+            return (nCheck % 10) == 0;
         }
     };
 };
@@ -250,20 +250,18 @@ function switchNewSaved(value, formId) {
     if(value == "new") {
         $(".creditCard-" + formId).show();
         $(".savedCreditcard").hide();
-        //$("#credit-card-form-" + formId).attr("data-mundicheckout-form", "");
     } else {
         $(".creditCard-" + formId).hide();
         $(".savedCreditcard").show();
-        //$("#credit-card-form-" + formId).removeAttr("data-mundicheckout-form");
     }
 }
 
 function changeInstallments() {
-    /*showSpecific(
+    showSpecific(
         $( "#mundipaggSavedCreditCard option:selected" ).attr("brand")
-    );*/
+    );
 }
 
 $("#savedCreditcardInstallments").ready(function () {
-   // changeInstallments();
+   changeInstallments();
 });
