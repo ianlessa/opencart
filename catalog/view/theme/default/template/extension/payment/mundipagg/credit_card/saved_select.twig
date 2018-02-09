@@ -4,7 +4,7 @@
             <label>{{ credit_card.payment_method_name }}</label>
             <div>
                 <select
-                        name="mundipaggSavedCreditCard"
+                        name="mundipaggSavedCreditCard-{{ inputId }}"
                         id="mundipaggSavedCreditCard-{{ inputId }}"
                         inputId="{{ inputId }}"
                         class="form-control"
@@ -29,8 +29,8 @@
             <label>{{ credit_card.installments }}</label>
             <div>
                 <select
-                        name="payment-details-0"
-                        id="savedCreditcardInstallments"
+                        name="saved-credit-card-installments-{{ inputId }}"
+                        id="saved-credit-card-installments-{{ inputId }}"
                         class="form-control installments"
                 >
                     <option value="">Selecione</option>

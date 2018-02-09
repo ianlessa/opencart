@@ -15,7 +15,7 @@
             <div class="col-sm-4">
                 <label>{{ credit_card.installments }}</label>
                 <div>
-                    <select name="payment-details-0" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}" required>
+                    <select name="payment-details-0" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}">
                         <option value="">Selecione</option>
                         {% for brand, installment in installments %}
                             {% for details in installment %}
@@ -41,7 +41,7 @@
                         {% endfor %}
                     </select>
                     <select name="card-exp-year" id="cardExpYear" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-element="exp_year-0">
-                        {% for year in 2017..2030 %}
+                        {% for year in 2018..2030 %}
                             <option value="{{ year }}">{{ year }}</option>
                         {% endfor %}
                     </select>
@@ -70,8 +70,8 @@
         <br>
         {%  if isSavedCreditcardEnabled %}
             <div class="col-sm-12">
-                <input type="checkbox" class="float-to-left" name="cardSaveCreditcard" />
-                {{ credit_card.save_creditcard_message }}
+                <input type="checkbox" class="float-to-left" id="save-this-credit-card-{{ inputId }}" name="save-this-credit-card-{{ inputId }}" />
+                <label for="save-this-credit-card-{{ inputId }}">{{ credit_card.save_creditcard_message }}</label>
             </div>
         {% endif %}
     </div>

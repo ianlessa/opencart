@@ -4,7 +4,7 @@
             <h3 class="col-sm-12">Pagamento com 2 cartões de crédito</h3>
         </div>
 
-        <form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post">
+        <form action="index.php?route=extension/payment/mundipagg/processTwoCreditCards" method="post">
             {% include brandsTemplate  %}
             {%  set inputId = 1 %}
             {% include savedSelectCreditcardTemplate %}
@@ -19,9 +19,9 @@
         </form>
         {% if savedCreditcards != null %}
             <style>
-                .newCreditcard {
+                /*.newCreditcard {
                     display: none;
-                }
+                }*/
             </style>
         {% endif %}
     {% else %}

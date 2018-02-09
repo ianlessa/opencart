@@ -4,10 +4,10 @@
             <h3 class="col-sm-12">Pagamento com cartão de crédito</h3>
         </div>
 
-        <form action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post">
+        <form id="credit-card-form-0" action="index.php?route=extension/payment/mundipagg/processCreditCard" method="post" data-mundicheckout-form>
             {% include brandsTemplate  %}
             {%  set inputId = 0 %}
-            {% include savedSelectCreditcardTemplate %}
+            {% include savedCreditcardTemplate %}
             {% include newCreditcardTemplate %}
             <div class="row">
                 {% include submitTemplate %}

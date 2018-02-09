@@ -134,7 +134,7 @@ class Order
             $order->customer->id
         );
 
-        if (!empty($orderData['saveCreditcard'])) {
+        if (!empty($orderData['saveCreditCard'])) {
             $this->saveCreditCardIfNotExists($order);
         }
 
