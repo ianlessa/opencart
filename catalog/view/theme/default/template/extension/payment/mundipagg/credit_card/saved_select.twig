@@ -8,7 +8,7 @@
                         id="mundipaggSavedCreditCard-{{ inputId }}"
                         inputId="{{ inputId }}"
                         class="form-control"
-                        onchange="hideElements(); changeInstallments(); switchNewSaved(this.value, $(this).attr('inputId'))"
+                        onchange="changeInstallments(); switchNewSaved(this.value, $(this).attr('inputId'))"
                 >
                     {% for creditcard in savedCreditcards %}
                         {% if loop.first %}

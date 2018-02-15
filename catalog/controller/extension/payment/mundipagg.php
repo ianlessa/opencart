@@ -136,6 +136,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $savedCreditcard->getSavedCreditcardList($this->customer->getId());
         }
 
+        $order = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $this->data['amount'] = $order['total'];
+
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
@@ -164,6 +167,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['brandsTemplate'] = $path . 'credit_card/brands.twig';
         $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
         $this->data['boletoTemplate'] = $path . 'boleto.twig';
+        $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
         $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
     }
 
@@ -517,18 +521,18 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-0']);
-        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-1']);
+        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-1']);
+        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-2']);
 
-        if (count($paymentDetailsFirstCard) !== 2 || count($paymentDetailsSecondCard) !== 2) {
+        if (count($paymentDetailsFirstCard) !== 3 || count($paymentDetailsSecondCard) !== 3) {
             return false;
         }
 
-        if (!isset($requestData['total-0'], $requestData['total-1'])) {
+        if (!isset($requestData['amount-1'], $requestData['amount-2'])) {
             return false;
         }
 
-        if (!isset($requestData['munditoken-0'], $requestData['munditoken-1'])) {
+        if (!isset($requestData['munditoken-1'], $requestData['munditoken-2'])) {
             return false;
         }
 

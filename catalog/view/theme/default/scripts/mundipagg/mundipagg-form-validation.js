@@ -1,11 +1,13 @@
-var MundiPagg = {};
+/* var MundiPagg = {};
 
-MundiPagg.Validator = function() {
+MundiPagg.Validator = function(cardNumber) {
+    var cardNumber = cardNumber;
+
     return {
         validateForm: function () {
             var errors = [];
 
-            var creditCardNumber = this.validateCardNumber($("#cardNumber").val());
+            var creditCardNumber = this.validateCardNumber($(this.cardNumber).val());
             var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpYear").val());
             var holderName = this.validateHolderName($("#cardName").val());
             var cvv = this.validateCVV($("#cardCVV").val());
@@ -96,6 +98,8 @@ MundiPagg.Validator = function() {
     };
 };
 
+
+
 MundiPagg.Form = function() {
     return {
         setup: function(validator) {
@@ -134,7 +138,7 @@ MundiPagg.Form = function() {
             // listener to show/hide installments
             this.cardBrand.addEventListener('DOMSubtreeModified', function(event) {
                 var brandUrl = this.cardBrand.getElementsByTagName('img')[0];
-
+                    console.log(brandUrl);
                 this.hideAll();
 
                 if (brandUrl) {
@@ -199,7 +203,9 @@ MundiPagg.Form = function() {
         },
 
         showSpecific: function(brand, amount, inputId) {
-            if (typeof brand === 'undefined') {
+            console.log(brand, amount, inputId);
+
+            if (typeof brand === 'undefined' && amount > 0) {
                 this.hideAll();
             } else {
                 showSpecific(brand, amount, inputId);
@@ -235,7 +241,36 @@ function hideElements() {
             $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
         }
     );
-})();
+})();*/
+
+
+
+$("#mundipaggCheckout").ready(function () {
+
+    //Call checkout.js methods
+    MundiCheckout.init(
+        function(data) {
+            console.log('success');
+            console.log(data);
+            return true;
+        },
+        function(error) {
+            console.log('error');
+            console.log(error);
+            $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
+        }
+    );
+
+    //Brand listener
+    $('.input-group-addon').bind("DOMSubtreeModified",function(){
+        installments($(this));
+    });
+});
+
+
+function changeInstallments() {
+    return;
+}
 
 function switchNewSaved(value, formId) {
     if(value == "new") {
@@ -247,15 +282,51 @@ function switchNewSaved(value, formId) {
     }
 }
 
-function changeInstallments() {
-    /*showSpecific(
-        $( "#mundipaggSavedCreditCard option:selected" ).attr("brand")
-    );*/
+function installments(obj) {
+
+    var inputId = obj.attr("inputId");
+    clearInstallments(inputId);
+
+    if (
+        obj.html() != "" &&
+        typeof obj.html()  !== 'undefined'
+    ) {
+        var brandImage = obj.children("img");
+        var brand = brandImage.attr("src").split('/').pop().split('.')[0]
+        var amount = $("#amount-" + inputId).val();
+
+        console.log(brand, amount, inputId);
+
+        if (typeof brand !== 'undefined' && amount > 0) {
+            getInstallments(brand, amount, inputId);
+        }
+    }
 }
 
-$("#savedCreditcardInstallments").ready(function () {
-   changeInstallments();
-});
+function clearInstallments(inputId) {
+    //$("#new-creditcard-installments-" + inputId).html("");
+}
+
+function getInstallments(brand, amount, inputId) {
+
+    if (typeof brand === 'undefined' && amount > 0) {
+        //Hide
+    } else {
+
+        url = "index.php?route=extension/payment/mundipagg/api/installments&";
+        url += "brand=" + brand.toLowerCase();
+        url += "&total=" + amount;
+
+        $.get(url)
+        .done(function( data ) {
+            var html = buildInstallmentsOptions(brand, data);
+            $("#new-creditcard-installments-" + inputId).html(html);
+        }).fail(function () {
+            console.log('Get installments fail');
+        });
+    }
+}
+
 
 function buildInstallmentsOptions(brand, data) {
     var json = $.parseJSON(data);
@@ -271,7 +342,7 @@ function buildInstallmentsOptions(brand, data) {
         }
 
         html += "<option data-card-brand='" + brand.toLowerCase() + "' ";
-        html += "value='" + json[k].times + " | " + json[k].interest  + "'>";
+        html += "value='" + json[k].times + "|" + json[k].amount + "|" + json[k].interest  + "'>";
         html += brand + " - " + json[k].times + " x R$" + amount + " - " + interest;
         html += "</option>";
     });
@@ -279,16 +350,3 @@ function buildInstallmentsOptions(brand, data) {
     return html;
 }
 
-function showSpecific(brand, amount, inputId) {
-    url = "index.php?route=extension/payment/mundipagg/api/installments&";
-    url += "brand=" + brand.toLowerCase();
-    url += "&total=" + amount;
-
-    $.get(url)
-    .done(function( data ) {
-        var html = buildInstallmentsOptions(brand, data);
-        $("#new-creditcard-installments-" + inputId).html(html);
-    }).fail(function () {
-        console.log('Get installments fail');
-    });
-}
