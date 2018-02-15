@@ -1,31 +1,23 @@
 <div class="newCreditcard creditCard-{{ inputId }}">
     <h2>{{ inputId }}</h2>
+    <input type="text" inputId="{{ inputId }}" id="amount-{{ inputId }}" value="106">
     <div class="row">
         <div class="col-sm-12">
             <br>
             <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
                 <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
                 <div class="input-group input-group ">
-                    <input name="card-number-0" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-0">
-                    <span class="input-group-addon" data-mundicheckout-element="brand-0" data-mundicheckout-brand data-mundicheckout-brand-image></span>
+                    <input name="card-number-{{ inputId }}" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-{{ inputId }}">
+                    <span class="input-group-addon" inputId="{{ inputId }}" data-mundicheckout-element="brand-{{ inputId }}" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
-                <span  id="credit-card-number-message" class="text-danger"></span>
+                <span id="credit-card-number-message" class="text-danger"></span>
             </div>
 
             <div class="col-sm-4">
                 <label>{{ credit_card.installments }}</label>
                 <div>
-                    <select name="payment-details-0" class="form-control installments" id="newCreditcardInstallments" data-brand="{{ brand }}">
+                    <select name="payment-details--{{ inputId }}" class="form-control installments" id="new-creditcard-installments-{{ inputId }}" data-brand="{{ brand }}">
                         <option value="">Selecione</option>
-                        {% for brand, installment in installments %}
-                            {% for details in installment %}
-                                {% if details.interest == 0 %}
-                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
-                                {% else %}
-                                    <option data-card-brand="{{ brand | lower }}" value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%'}}</option>
-                                {% endif %}
-                            {% endfor %}
-                        {% endfor %}
                     </select>
                 </div>
             </div>

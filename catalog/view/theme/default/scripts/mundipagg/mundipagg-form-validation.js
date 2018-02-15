@@ -138,8 +138,11 @@ MundiPagg.Form = function() {
                 this.hideAll();
 
                 if (brandUrl) {
-                    brandUrl = brandUrl.getAttribute('src').split('/').pop().split('.')[0].toLowerCase();
-                    this.showSpecific(brandUrl);
+                    brand = brandUrl.getAttribute('src').split('/').pop().split('.')[0];
+                    inputId = this.cardBrand.getAttribute('inputId');
+                    amount = $("#amount-" + inputId).val();
+
+                    this.showSpecific(brand, amount, inputId);
                 }
             }.bind(this), false);
 
@@ -195,11 +198,11 @@ MundiPagg.Form = function() {
             hideElements();
         },
 
-        showSpecific: function(brand) {
-            if (brand) {
-                showSpecific(brand);
-            } else {
+        showSpecific: function(brand, amount, inputId) {
+            if (typeof brand === 'undefined') {
                 this.hideAll();
+            } else {
+                showSpecific(brand, amount, inputId);
             }
         }
     };
@@ -212,18 +215,6 @@ function hideElements() {
             $(this).addClass("hidden");
         });
     })
-}
-
-function showSpecific(brand) {
-    if (brand != "" && brand != undefined) {
-        brand = brand.toLowerCase();
-        var brandSelector = '[data-card-brand="' + brand + '"]';
-        var installments = document.querySelectorAll(brandSelector);
-
-        installments.forEach(function(element) {
-            element.classList.remove('hidden');
-        });
-    }
 }
 
 (function () {
@@ -257,11 +248,47 @@ function switchNewSaved(value, formId) {
 }
 
 function changeInstallments() {
-    showSpecific(
+    /*showSpecific(
         $( "#mundipaggSavedCreditCard option:selected" ).attr("brand")
-    );
+    );*/
 }
 
 $("#savedCreditcardInstallments").ready(function () {
    changeInstallments();
 });
+
+function buildInstallmentsOptions(brand, data) {
+    var json = $.parseJSON(data);
+    var html = "<option value=''> Selecione </option>";
+
+    Object.keys(json).forEach(function(k){
+
+        var amount = json[k].amount.toFixed(2).replace('.', ',');
+        if (json[k].interest === 0) {
+            var interest = 'Sem juros';
+        } else {
+            var interest = json[k].interest + '%';
+        }
+
+        html += "<option data-card-brand='" + brand.toLowerCase() + "' ";
+        html += "value='" + json[k].times + " | " + json[k].interest  + "'>";
+        html += brand + " - " + json[k].times + " x R$" + amount + " - " + interest;
+        html += "</option>";
+    });
+
+    return html;
+}
+
+function showSpecific(brand, amount, inputId) {
+    url = "index.php?route=extension/payment/mundipagg/api/installments&";
+    url += "brand=" + brand.toLowerCase();
+    url += "&total=" + amount;
+
+    $.get(url)
+    .done(function( data ) {
+        var html = buildInstallmentsOptions(brand, data);
+        $("#new-creditcard-installments-" + inputId).html(html);
+    }).fail(function () {
+        console.log('Get installments fail');
+    });
+}
