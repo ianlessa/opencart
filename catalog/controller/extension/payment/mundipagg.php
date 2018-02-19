@@ -169,6 +169,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['boletoTemplate'] = $path . 'boleto.twig';
         $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
         $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
+        $this->data['boletoCreditCardTemplate'] = $path . 'boleto_credit_card.twig';
     }
 
     /**

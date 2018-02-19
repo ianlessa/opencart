@@ -70,15 +70,15 @@
 ** Credit card
 **/
 
-#creditCardTab, #twoCreditCardsTab{
+#creditCardTab, #twoCreditCardsTab, #boletoCreditCardTab{
     background-color:#F7F7F7;
 }
 
-#creditCardTab .mundipaggBrandBox, #twoCreditCardsTab .mundipaggBrandBox {
+#creditCardTab .mundipaggBrandBox, #twoCreditCardsTab .mundipaggBrandBox, #boletoCreditCardTab .mundipaggBrandBox {
  margin: 0 0 15px 0;
 }
 
-#creditCardTab .mundipaggBrandBox img, #twoCreditCardsTab .mundipaggBrandBox img{
+#creditCardTab .mundipaggBrandBox img, #twoCreditCardsTab .mundipaggBrandBox img, #boletoCreditCardTab .mundipaggBrandBox img{
     width: 36px;
     margin-right: 5px;
 }
