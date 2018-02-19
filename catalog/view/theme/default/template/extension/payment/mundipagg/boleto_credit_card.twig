@@ -1,0 +1,30 @@
+<div class="tab-pane" id="boletoCreditCardTab">
+    {% if brandNames %}
+        <div class="row">
+            <h3 class="col-sm-12">Pagamento com cartão de crédito e boleto</h3>
+        </div>
+
+        <form id="credit-card-form-0" action="index.php?route=extension/payment/mundipagg/processBoletoCreditCard" method="post" data-mundicheckout-form>
+            {% include brandsTemplate  %}
+
+            <h3>Pagamento com cartão</h3>
+            {%  set inputId = 3 %}
+            {% include savedCreditcardTemplate %}
+            {% include newCreditcardTemplate %}
+            {% include orderAmountInput %}
+
+            <hr>
+
+            {%  include boletoTemplate %}
+        </form>
+        {% if savedCreditcards != null %}
+            <style>
+                .newCreditcard {
+                    display: none;
+                }
+            </style>
+        {% endif %}
+    {% else %}
+        <h3>{{ credit_card.no_brands_enabled }}</h3>
+    {% endif %}
+</div>
