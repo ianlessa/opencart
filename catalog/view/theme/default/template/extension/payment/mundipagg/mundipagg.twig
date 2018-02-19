@@ -29,7 +29,7 @@
             <li class="mundipaggCheckoutTabs">
                 <a href="#twoCreditCardsTab" data-toggle="tab">
                     <i class="fa fa-file-text"></i>
-                    <p>Colocar nome aqui{{ twoCreditCard.payment_method_name }}</p>
+                    <p>{{ twoCreditCardsPaymentTitle }}</p>
                 </a>
             </li>
         {% endif %}
@@ -37,13 +37,13 @@
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
         {% if creditCardStatus %}
-            {{ creditcardTemplate }}
+            {% include baseCreditCardtemplate %}
         {% endif %}
         {% if boletoStatus %}
-            {{ boletoTemplate }}
+            {% include boletoTemplate %}
         {% endif %}
         {% if twoCreditCardStatus %}
-            {{ twoCreditCardsTemplate }}
+            {% include baseTwoCreditCardstemplate %}
         {% endif %}
     </div>
 </section>

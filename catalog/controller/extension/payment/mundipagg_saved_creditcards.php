@@ -7,7 +7,7 @@ use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Model\Creditcard;
 use Mundipagg\Model\Customer;
 
-class ControllerAccountSavedCreditcards extends Controller {
+class ControllerExtensionPaymentMundipaggSavedCreditcards extends Controller {
 
     private $languageMundiPagg;
 
@@ -30,10 +30,10 @@ class ControllerAccountSavedCreditcards extends Controller {
         $data['text'] = $this->languageMundiPagg;
         $data['breadcrumbs'] = $this->setBreadcrumbs($data);
         $data['creditcards'] = $this->getCreditcards();
-        $data['deleteUrl'] = $this->url->link('account/saved_creditcards/delete', '', true);
+        $data['deleteUrl'] = $this->url->link('extension/payment/mundipagg_saved_creditcards/delete', '', true);
 
         $this->document->setTitle($data['text']['title']);
-        $this->response->setOutput($this->load->view('account/saved_creditcards', $data));
+        $this->response->setOutput($this->load->view('extension/payment/mundipagg/credit_card/saved_creditcards', $data));
     }
 
     public function delete()
@@ -83,7 +83,7 @@ class ControllerAccountSavedCreditcards extends Controller {
 
         $breadcrumbs[] = [
             'text' => $this->languageMundiPagg['title'],
-            'href' => $this->url->link('account/saved_creditcards', '', true)
+            'href' => $this->url->link('extension/payment/mundipagg/credit_card/saved_creditcards', '', true)
         ];
         return $breadcrumbs;
     }

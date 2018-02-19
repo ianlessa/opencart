@@ -3,8 +3,7 @@ admin/controller/extension/payment/mundipagg_events.php admin/controller/extensi
 admin/view/image/mundipagg/ admin/view/image/mundipagg/
 
 # model
-admin/model/extension/payment/mundipagg.php admin/model/extension/payment/mundipagg.php
-admin/model/sale/mundipagg/* admin/model/sale/mundipagg
+admin/model/extension/payment/* admin/model/extension/payment/
 
 # view
 admin/view/template/extension/payment/* admin/view/template/extension/payment/
@@ -19,11 +18,7 @@ admin/language/pt-br/payment/mundipagg.php admin/language/pt-br/extension/paymen
 ##Catalog
 
 # controller
-catalog/controller/extension/payment/mundipagg.php catalog/controller/extension/payment/mundipagg.php
-catalog/controller/extension/payment/mundipagg_credit_card.php catalog/controller/extension/payment/mundipagg_credit_card.php
-catalog/controller/extension/payment/mundipagg_events.php catalog/controller/extension/payment/mundipagg_events.php
-catalog/controller/extension/payment/mundipagg_webhook.php catalog/controller/extension/payment/mundipagg_webhook.php
-catalog/controller/account/* catalog/controller/account/
+catalog/controller/extension/payment/* catalog/controller/extension/payment/
 
 # language
 catalog/language/en-gb/extension/payment/mundipagg.php catalog/language/en-gb/extension/payment/mundipagg.php
@@ -34,8 +29,7 @@ catalog/model/extension/payment/* catalog/model/extension/payment/
 catalog/model/extension/total/* catalog/model/extension/total/
 
 # view
-catalog/view/theme/default/template/extension/payment/* catalog/view/theme/default/template/extension/payment/
-catalog/view/theme/default/template/extension/account/* catalog/view/theme/default/template/account/
+catalog/view/theme/default/template/extension/payment/mundipagg/* catalog/view/theme/default/template/extension/payment/mundipagg/
 
 # scripts
 catalog/view/theme/default/scripts/mundipagg/* catalog/view/theme/default/scripts/mundipagg/

@@ -103,4 +103,11 @@ FOOTER;
 
         return $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));
     }
+
+    public function addModuleLink() {
+        /**
+         * @todo
+         */
+        return;
+    }
 }

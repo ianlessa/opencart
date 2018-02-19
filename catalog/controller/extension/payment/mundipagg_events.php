@@ -266,9 +266,9 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
 
         $templateData['text'] = $this->language->get('saved_creditcard');
         $templateData['isAccountIndex'] = $route === 'account/account';
-        $templateData['my_creditcards_url'] = $this->url->link('account/saved_creditcards', '', true);
+        $templateData['my_creditcards_url'] = $this->url->link('extension/payment/mundipagg_saved_creditcards', '', true);
 
-        $view  = $this->load->view('extension/payment/mundipagg_saved_credit_card_account_content', $templateData);
+        $view  = $this->load->view('extension/payment/mundipagg/credit_card/saved_credit_card_account_content', $templateData);
         $data['content_bottom'] .= $view;
 
         if (isset($this->session->data['error_warning'])) {

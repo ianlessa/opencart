@@ -469,6 +469,20 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            <div class="form-group required">
+                                <label class="col-sm-2 control-label" for="two-credit-cards-title">
+                                    {{ credit_card.configure_two_credit_cards_payment_title }}
+                                </label>
+                                <div class="col-sm-10">
+                                    <input
+                                            type="text"
+                                            name="payment_mundipagg_credit_card_two_credit_cards_payment_title"
+                                            placeholder="{{ credit_card.configure_two_credit_cards_payment_title }}"
+                                            id="two-credit-cards-title"
+                                            class="form-control"
+                                            value="{{ settings.credit_card_two_credit_cards_payment_title }}"/>
+                                </div>
+                            </div>
 
                             <div class="panel-heading">
                                 <h3>{{ credit_card.manage_section }}</h3>

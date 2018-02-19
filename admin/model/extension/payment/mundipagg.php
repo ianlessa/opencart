@@ -58,6 +58,13 @@ class ModelExtensionPaymentMundipagg extends Model
             'extension/payment/mundipagg_events/onOrderList'
         );
 
+        //Add module link to main menu
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg',
+            'admin/view/common/column_let/before',
+            'extension/payment/mundipagg_events/addModuleLink'
+        );
+
         //Add saved credit card list
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',

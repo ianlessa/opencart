@@ -108,26 +108,26 @@ class TwoCreditCards
 
     private function setAmount()
     {
-        $this->amount[] = $this->details['total-0'];
-        $this->amount[] = $this->details['total-1'];
+        $this->amount[] = $this->details['amount-1'];
+        $this->amount[] = $this->details['amount-2'];
     }
 
     private function setInterest()
     {
-        $this->interest[] = explode('|', $this->details['payment-details-0'])[1];
         $this->interest[] = explode('|', $this->details['payment-details-1'])[1];
+        $this->interest[] = explode('|', $this->details['payment-details-2'])[1];
     }
 
     private function setToken()
     {
-        $this->token[] = $this->details['munditoken-0'];
         $this->token[] = $this->details['munditoken-1'];
+        $this->token[] = $this->details['munditoken-2'];
     }
 
     private function setInstallments()
     {
-        $this->installments[] = explode('|', $this->details['payment-details-0'])[0];
         $this->installments[] = explode('|', $this->details['payment-details-1'])[0];
+        $this->installments[] = explode('|', $this->details['payment-details-2'])[0];
 
         $this->order->setInstallments($this->installments);
     }

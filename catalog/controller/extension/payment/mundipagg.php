@@ -43,6 +43,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     private $mundipaggOrderUpdateModel;
 
+    private $onOff = [
+        'off' => false,
+        'on' => true
+    ];
+
     /**
      * It loads opencart/mundipagg models
      *
@@ -116,6 +121,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         // check if payment with two credit cards is enabled
         if ($creditCardSettings->isTwoCreditCardsEnabled()) {
             $this->data = array_merge($this->data, $creditCardSettings->getTwoCreditCardsPageInfo());
+            $this->data['twoCreditCardsPaymentTitle'] = $creditCardSettings->getTwoCreditCardsPaymentTitle();
         }
 
         if ($boletoSettings->isEnabled()) {
@@ -130,9 +136,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $savedCreditcard->getSavedCreditcardList($this->customer->getId());
         }
 
+        $order = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $this->data['amount'] = $order['total'];
+
         $this->loadPaymentTemplates();
 
-        return $this->load->view('extension/payment/mundipagg', $this->data);
+        return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
     }
 
     private function loadUrls()
@@ -146,13 +155,20 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function loadPaymentTemplates()
     {
-        $viewPath = 'extension/payment/mundipagg_';
+        $path = 'default/template/extension/payment/mundipagg/';
 
-        $this->data['savedCreditcardTemplate'] = $this->load->view($viewPath . 'saved_credit_card', $this->data);
-        $this->data['newCreditcardTemplate'] = $this->load->view($viewPath . 'new_credit_card', $this->data);
-        $this->data['creditcardTemplate'] = $this->load->view($viewPath . 'credit_card', $this->data);
-        $this->data['boletoTemplate'] = $this->load->view($viewPath . 'boleto', $this->data);
-        $this->data['twoCreditCardsTemplate'] = $this->load->view($viewPath . 'two_credit_cards', $this->data);
+        $this->data['creditCardTemplate'] = $path . 'credit_card/credit_card.twig';
+        $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
+        $this->data['baseTwoCreditCardstemplate'] = $path . 'credit_card/base_two.twig';
+        $this->data['twoCreditCardsTemplate'] = $path . 'credit_card/two.twig';
+        $this->data['savedCreditcardTemplate'] = $path . 'credit_card/saved.twig';
+        $this->data['newCreditcardTemplate'] = $path . 'credit_card/new.twig';
+        $this->data['savedSelectCreditcardTemplate'] = $path . 'credit_card/saved_select.twig';
+        $this->data['brandsTemplate'] = $path . 'credit_card/brands.twig';
+        $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
+        $this->data['boletoTemplate'] = $path . 'boleto.twig';
+        $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
+        $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
     }
 
     /**
@@ -315,6 +331,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @param $installments
      * @param $orderData
      * @param $cardToken
+     * @param $cardId
      * @return mixed
      */
     private function createCreditCardOrder($interest, $installments, $orderData, $cardToken, $cardId)
@@ -366,7 +383,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function processCreditCard()
     {
         $this->load();
-        
+
         if (!$this->isValidateCreditCardRequest()) {
             Log::create()
                 ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
@@ -374,42 +391,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        // we only have munditoken-1 when in two credit cards payment
-        if (isset($this->request->post['munditoken-1'])) {
-            $this->processTwoCreditCards();
-        } else {
-            $this->processSingleCreditCard();
-        }
-    }
-
-    private function processSingleCreditCard()
-    {
+        $card = $this->fillCreditCardData(0);
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
-        // payment with saved credit card
-        if (isset($this->request->post['mundipaggSavedCreditCard'])) {
-            $cardId = $this->request->post['mundipaggSavedCreditCard'];
-            $cardToken = null;
-        } else {
-            $cardToken = $this->request->post['munditoken-0'];
-            $saveCreditCard = false;
-            if (isset($this->request->post['cardSaveCreditcard'])) {
-                $saveCreditCard = $this->request->post['cardSaveCreditcard'];
-            }
-
-            $orderData['saveCreditcard'] = $saveCreditCard === 'on';
-            $cardId = null;
-        }
-
-        $paymentDetails = explode('|', $this->request->post['payment-details-0']);
+        $orderData['saveCreditCard'] = $card['saveThisCard'];
 
         try {
             $response = $this->createCreditCardOrder(
-                (double)$paymentDetails[1],
-                $paymentDetails[0],
+                (double)$card['paymentDetails'][1],
+                $card['paymentDetails'][0],
                 $orderData,
-                $cardToken,
-                $cardId
+                $card['cardToken'],
+                $card['cardId']
             );
         } catch (Exception $e) {
             Log::create()
@@ -437,8 +429,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
-    private function processTwoCreditCards()
+    public function processTwoCreditCards()
     {
+        $this->load();
+
         if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
             Log::create()
                 ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
@@ -473,20 +467,73 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
+    /**
+     * @param $formId
+     * @return array
+     */
+    private function fillCreditCardData($formId)
+    {
+        $post = $this->request->post;
+
+        $card['saveThisCard'] = false;
+        $card['cardId'] = null;
+
+        // Payment with saved credit card
+        if (
+            !empty($post['mundipaggSavedCreditCard-' . $formId]) &&
+            $post['mundipaggSavedCreditCard-' . $formId] != 'new'
+        ) {
+            return $this->fillSavedCreditCardData($post, $formId);
+        }
+
+        // New credit card
+        return $this->fillNewCreditCardData($post, $formId);
+    }
+
+    private function fillSavedCreditCardData($post, $formId)
+    {
+        $installments = $post['saved-credit-card-installments-' . $formId];
+        $card['paymentDetails'] = explode('|', $installments);
+        $card['cardId'] = $post['mundipaggSavedCreditCard-' . $formId];
+        $card['cardToken'] = null;
+        $card['saveThisCard'] = false;
+
+        return $card;
+    }
+
+    private function fillNewCreditCardData($post, $formId)
+    {
+        $card['cardToken'] = $post['munditoken-' . $formId];
+        $card['saveThisCard'] = false;
+        $card['cardId'] = null;
+
+        if (isset($post['save-this-credit-card-' . $formId])) {
+            $card['saveThisCard'] =
+                $this->onOff[
+                $post['save-this-credit-card-' . $formId]]
+            ;
+        }
+
+        $installments = $post['payment-details-' . $formId];
+        $card['paymentDetails'] = explode('|', $installments);
+
+        return $card;
+    }
+
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-0']);
-        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-1']);
+        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-1']);
+        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-2']);
 
-        if (count($paymentDetailsFirstCard) !== 2 || count($paymentDetailsSecondCard) !== 2) {
+        if (count($paymentDetailsFirstCard) !== 3 || count($paymentDetailsSecondCard) !== 3) {
             return false;
         }
 
-        if (!isset($requestData['total-0'], $requestData['total-1'])) {
+        if (!isset($requestData['amount-1'], $requestData['amount-2'])) {
             return false;
         }
 
-        if (!isset($requestData['munditoken-0'], $requestData['munditoken-1'])) {
+        if (!isset($requestData['munditoken-1'], $requestData['munditoken-2'])) {
             return false;
         }
 
