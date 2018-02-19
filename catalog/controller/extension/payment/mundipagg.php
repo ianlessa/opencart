@@ -490,7 +490,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         return $this->fillNewCreditCardData($post, $formId);
     }
 
-    private function fillSavedCreditCardData($post, $formId) {
+    private function fillSavedCreditCardData($post, $formId)
+    {
         $installments = $post['saved-credit-card-installments-' . $formId];
         $card['paymentDetails'] = explode('|', $installments);
         $card['cardId'] = $post['mundipaggSavedCreditCard-' . $formId];
