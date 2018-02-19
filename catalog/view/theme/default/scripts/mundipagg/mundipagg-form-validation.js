@@ -261,6 +261,15 @@ $("#mundipaggCheckout").ready(function () {
         }
     );
 
+    $(".mundipagg-saved-creditCard").on("change", function(){
+        switchNewSaved($(this).val(), $(this).attr('inputId'));
+        fillSavedCreditCardInstallments($(this));
+    })
+
+    $(".mundipagg-saved-creditCard").each(function(){
+        fillSavedCreditCardInstallments($(this));
+    });
+
     //Brand listener
     $('.input-group-addon').bind("DOMSubtreeModified",function(){
         installments($(this));
@@ -275,10 +284,10 @@ function changeInstallments() {
 function switchNewSaved(value, formId) {
     if(value == "new") {
         $(".creditCard-" + formId).show();
-        $(".savedCreditcard").hide();
+        $("#saved-creditcard-installments-" + formId).parent().hide();
     } else {
         $(".creditCard-" + formId).hide();
-        $(".savedCreditcard").show();
+        $("#saved-creditcard-installments-" + formId).parent().show();
     }
 }
 
@@ -289,26 +298,23 @@ function installments(obj) {
 
     if (
         obj.html() != "" &&
-        typeof obj.html()  !== 'undefined'
+        typeof obj.html() !== 'undefined'
     ) {
         var brandImage = obj.children("img");
         var brand = brandImage.attr("src").split('/').pop().split('.')[0]
         var amount = $("#amount-" + inputId).val();
 
-        console.log(brand, amount, inputId);
-
-        if (typeof brand !== 'undefined' && amount > 0) {
-            getInstallments(brand, amount, inputId);
+        if (typeof brand !== "undefined" && amount > 0) {
+            getInstallments(brand, amount, inputId, "new");
         }
     }
 }
 
 function clearInstallments(inputId) {
-    //$("#new-creditcard-installments-" + inputId).html("");
+
 }
 
-function getInstallments(brand, amount, inputId) {
-
+function getInstallments(brand, amount, inputId, newSaved) {
     if (typeof brand === 'undefined' && amount > 0) {
         //Hide
     } else {
@@ -320,7 +326,7 @@ function getInstallments(brand, amount, inputId) {
         $.get(url)
         .done(function( data ) {
             var html = buildInstallmentsOptions(brand, data);
-            $("#new-creditcard-installments-" + inputId).html(html);
+            $("#" + newSaved + "-creditcard-installments-" + inputId).html(html);
         }).fail(function () {
             console.log('Get installments fail');
         });
@@ -350,3 +356,12 @@ function buildInstallmentsOptions(brand, data) {
     return html;
 }
 
+function fillSavedCreditCardInstallments(obj) {
+    if(obj.val() != "new") {
+        var inputId = obj.attr("inputId");
+        var amount = $("#amount-" + inputId).val();
+        var brand = obj.children("option:selected").attr("brand");
+
+        getInstallments(brand, amount, inputId, "saved");
+    }
+}

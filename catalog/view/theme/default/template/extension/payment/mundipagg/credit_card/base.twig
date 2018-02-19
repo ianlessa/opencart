@@ -9,8 +9,9 @@
             {%  set inputId = 0 %}
             {% include savedCreditcardTemplate %}
             {% include newCreditcardTemplate %}
-
-            {% include orderAmountInput %}
+            <span class="hidden">
+                {% include orderAmountInput %}
+            </span>
             <hr>
             <div class="row">
                 {% include submitTemplate %}

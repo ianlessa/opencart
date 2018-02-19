@@ -7,14 +7,14 @@
                         name="mundipaggSavedCreditCard-{{ inputId }}"
                         id="mundipaggSavedCreditCard-{{ inputId }}"
                         inputId="{{ inputId }}"
-                        class="form-control"
-                        onchange="changeInstallments(); switchNewSaved(this.value, $(this).attr('inputId'))"
+                        class="form-control mundipagg-saved-creditCard"
                 >
                     {% for creditcard in savedCreditcards %}
                         {% if loop.first %}
                             <option selected="selected" value="{{ creditcard.id }}"
                                     brand="{{ creditcard.brand }}">{{ creditcard.brand }}
                                 xxxx-{{ creditcard.last_four_digits }}</option>
+
                         {% else %}
                             <option value="{{ creditcard.id }}"
                                     brand="{{ creditcard.brand }}">{{ creditcard.brand }}
@@ -27,26 +27,13 @@
         </div>
         <div class="col-sm-4 savedCreditcard">
             <label>{{ credit_card.installments }}</label>
-            <div>
-                <select
-                        name="saved-credit-card-installments-{{ inputId }}"
-                        id="saved-credit-card-installments-{{ inputId }}"
-                        class="form-control installments"
-                >
-                    <option value="">Selecione</option>
-                    {% for brand, installment in installments %}
-                        {% for details in installment %}
-                            {% if details.interest == 0 %}
-                                <option data-card-brand="{{ brand | lower }}"
-                                        value="{{ details.installments ~ '|' ~ details.interest }} ">{{ brand ~ ' - ' ~ details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.without_interest }}</option>
-                            {% else %}
-                                <option data-card-brand="{{ brand | lower }}"
-                                        value="{{ details.installments ~ '|' ~ details.interest }}">{{ brand ~ ' - ' ~  details.installments ~ ' x ' ~ details.amount  ~ ' - ' ~ credit_card.interest ~ details.interest ~ '%' }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                </select>
-            </div>
+            <select
+                    name="saved-credit-card-installments-{{ inputId }}"
+                    id="saved-creditcard-installments-{{ inputId }}"
+                    class="form-control installments"
+            >
+                <option value="">Selecione</option>
+            </select>
         </div>
     </div>
 </div>
