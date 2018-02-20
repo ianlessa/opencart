@@ -5,7 +5,6 @@ use Mundipagg\LogMessages;
 
 class ModelExtensionPaymentMundipaggBoletoLink extends Model
 {
-
     public function getBoletoLinks($orderId)
     {
         $sql = "SELECT link FROM
@@ -31,5 +30,4 @@ class ModelExtensionPaymentMundipaggBoletoLink extends Model
                 ->withQuery($sql);
         }
     }
-
 }

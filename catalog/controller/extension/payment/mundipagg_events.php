@@ -296,7 +296,7 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
     public function prepareCheckoutOrderInfo(string $route, $data = array(), $template = null)
     {
         $this->session->data['boleto_links'] = [];
-        if(isset($this->session->data['order_id'])) {
+        if (isset($this->session->data['order_id'])) {
             $orderId = $this->session->data['order_id'];
             $this->load->model('extension/payment/mundipagg_boleto_link');
             $boletoLinks = $this->model_extension_payment_mundipagg_boleto_link->getBoletoLinks($orderId);
@@ -320,10 +320,6 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $view  = $this->load->view('extension/payment/mundipagg/success/order_info', $templateData);
         $data['content_bottom'] .= $view;
 
-        if (isset($this->session->data['error_warning'])) {
-            $data['error_warning'] = $this->session->data['error_warning'];
-            unset($this->session->data['error_warning']);
-        }
         foreach ($data as $key => $value) {
             $template->set($key, $value);
         }
