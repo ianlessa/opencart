@@ -73,9 +73,15 @@ class ModelExtensionPaymentMundipagg extends Model
         );
 
         $this->model_setting_event->addEvent(
-            'payment_mundipagg_boleto_checkout_url8',
+            'payment_mundipagg_show_checkout_order_info',
             'catalog/view/common/success/after',
-            'extension/payment/mundipagg_events/showCheckoutSuccessBoletoUrl'
+            'extension/payment/mundipagg_events/showCheckoutOrderInfo'
+        );
+
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_prepare_checkout_order_info',
+            'catalog/controller/checkout/success/before',
+            'extension/payment/mundipagg_events/prepareCheckoutOrderInfo'
         );
     }
 
