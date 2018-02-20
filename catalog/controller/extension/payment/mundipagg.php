@@ -195,9 +195,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     if (isset($response->charges[0]->lastTransaction->success)) {
 
                         $this->load->model('extension/payment/mundipagg_order_processing');
+                        $this->load->model('extension/payment/mundipagg_boleto_link');
                         $model = $this->model_extension_payment_mundipagg_order_processing;
                         $this->saveBoletoInfoInOrderHistory($response);
                         $this->printBoletoUrl($response);
+                        $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
+                            $this->session->data['order_id'],
+                            $this->getBoletoUrl($response)
+                        );
                         $model->setOrderStatus($orderData['order_id'], 1);
                         return;
 
@@ -247,7 +252,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function printBoletoUrl($response)
     {
-        echo $response->charges[0]->lastTransaction->url;
+        echo $this->getBoletoUrl($response);
+    }
+
+    private function getBoletoUrl($response)
+    {
+        return $response->charges[0]->lastTransaction->url;
     }
 
     /**
