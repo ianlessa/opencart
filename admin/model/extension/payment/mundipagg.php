@@ -24,6 +24,7 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->createOrderTable();
         $this->createChargeTable();
         $this->createCreditCardTable();
+        $this->createBoletoLinkTable();
 
         $this->populatePaymentTable();
         $this->installEvents();
@@ -41,6 +42,7 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->dropOrderTable();
         $this->dropChargeTable();
         $this->dropCreditCardTable();
+        $this->dropBoletoLinkTable();
         $this->uninstallEvents();
     }
 
@@ -373,6 +375,22 @@ class ModelExtensionPaymentMundipagg extends Model
         );
     }
 
+    private function createBoletoLinkTable()
+    {
+        $this->db->query(
+            'CREATE TABLE IF NOT EXISTS `'. DB_PREFIX .'mundipagg_boleto_link` (
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `opencart_order_id` INT(11) NOT NULL,
+                `link` VARCHAR(100) NOT NULL
+                );'
+        );
+    }
 
+    private function dropBoletoLinkTable()
+    {
+        $this->db->query(
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_boleto_link`;'
+        );
+    }
 }
 
