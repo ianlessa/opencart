@@ -15,8 +15,8 @@ class ModelExtensionPaymentMundipaggBoletoLink extends Model
         return $query->rows;
     }
 
-    public function saveBoletoLink($orderId, $link) {
-
+    public function saveBoletoLink($orderId, $link)
+    {
         $sql = "INSERT INTO `". DB_PREFIX ."mundipagg_boleto_link`
             (opencart_order_id, link) VALUES($orderId, '$link')
             ";

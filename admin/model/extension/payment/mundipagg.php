@@ -381,7 +381,7 @@ class ModelExtensionPaymentMundipagg extends Model
             'CREATE TABLE IF NOT EXISTS `'. DB_PREFIX .'mundipagg_boleto_link` (
                 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `opencart_order_id` INT(11) NOT NULL,
-                `link` VARCHAR(100) NOT NULL
+                `link` VARCHAR(256) NOT NULL
                 );'
         );
     }
