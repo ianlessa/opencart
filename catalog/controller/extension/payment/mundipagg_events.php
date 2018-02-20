@@ -298,7 +298,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $template = new Template($this->registry->get('config')->get('template_engine'));
         $this->load->language('extension/payment/mundipagg');
 
-        $templateData['text'] = $this->language->get('boleto');
+        $boletoLang = $this->language->get('boleto');
+        $templateData['boleto_link_message'] = sprintf($boletoLang['click_to_follow'],'test');
 
         $view  = $this->load->view('extension/payment/mundipagg/success/order_info', $templateData);
         $data['content_bottom'] .= $view;
