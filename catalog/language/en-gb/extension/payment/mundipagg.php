@@ -3,7 +3,7 @@ $_['boleto'] = [
       'payment_method_name' => 'Boleto',
       'title' => 'Pagamento via boleto',
       'click_to_generate' => 'Clique aqui para gerar seu boleto.',
-      'click_to_follow' => 'Clique <a href="%s">aqui</a> para exibir seu boleto.',
+      'click_to_follow' => 'Click <a href="%s" target="_blank">here</a> to show your billet.',
       'pending_order_status' => 'Pedido pendente - Aguardando pagamento do boleto.',
       'instructions' => "Após clicar em 'Clique aqui para gerar seu boleto' "
                         . "você será redirecionado para uma nova janela "
