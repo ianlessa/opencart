@@ -71,6 +71,12 @@ class ModelExtensionPaymentMundipagg extends Model
             'catalog/view/account/*/after',
             'extension/payment/mundipagg_events/showSavedCreditcards'
         );
+
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_boleto_checkout_url8',
+            'catalog/view/common/success/after',
+            'extension/payment/mundipagg_events/showCheckoutSuccessBoletoUrl'
+        );
     }
 
     /***

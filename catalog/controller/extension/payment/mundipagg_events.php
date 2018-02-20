@@ -292,4 +292,36 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
                 get('template_cache')
             );
     }
+
+    public function showCheckoutSuccessBoletoUrl(string $route, $data = array(), $template = null)
+    {
+        $template = new Template($this->registry->get('config')->get('template_engine'));
+        $this->load->language('extension/payment/mundipagg');
+
+        $templateData['text'] = $this->language->get('boleto');
+
+        $view  = $this->load->view('extension/payment/mundipagg/success/order_info', $templateData);
+        $data['content_bottom'] .= $view;
+
+        if (isset($this->session->data['error_warning'])) {
+            $data['error_warning'] = $this->session->data['error_warning'];
+            unset($this->session->data['error_warning']);
+        }
+        foreach ($data as $key => $value) {
+            $template->set($key, $value);
+        }
+
+        return $template
+            ->render(
+                $this->
+                registry->
+                get('config')->
+                get('template_directory') .
+                $route,
+                $this->
+                registry->
+                get('config')->
+                get('template_cache')
+            );
+    }
 }
