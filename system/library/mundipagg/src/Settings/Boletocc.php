@@ -73,7 +73,6 @@ class Boletocc
         return array(
             'boletoccStatus' => $this->getStatus(),
             'boletoccText' => $this->openCart->language->get('boletocc')
-
         );
     }
 

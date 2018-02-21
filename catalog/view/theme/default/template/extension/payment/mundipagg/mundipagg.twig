@@ -33,12 +33,14 @@
                 </a>
             </li>
         {% endif %}
+        {% if boletoccStatus %}
         <li class="mundipaggCheckoutTabs">
             <a href="#boletoCreditCardTab" data-toggle="tab">
                 <i class="fa fa-file-text"></i>
                 <p>Boleto + cartão de crédito</p>
             </a>
         </li>
+        {% endif %}
     </ul>
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
