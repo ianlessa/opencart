@@ -83,7 +83,7 @@ class ControllerExtensionPaymentMundipaggSavedCreditcards extends Controller {
 
         $breadcrumbs[] = [
             'text' => $this->languageMundiPagg['title'],
-            'href' => $this->url->link('extension/payment/mundipagg/credit_card/saved_creditcards', '', true)
+            'href' => $this->url->link('extension/payment/mundipagg_saved_creditcards', '', true)
         ];
         return $breadcrumbs;
     }
