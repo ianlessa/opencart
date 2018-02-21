@@ -4,6 +4,7 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
+use Mundipagg\Settings\Boletocc as BoletoccSettings;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -435,6 +436,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['general'] = $this->language->get('general');
         $this->data['credit_card'] = $this->language->get('credit_card');
         $this->data['boleto'] = $this->language->get('boleto');
+        $this->data['boletocc'] = $this->language->get('boletocc');
         $this->data['antifraud'] = $this->language->get('antifraud');
         $this->data['misc'] = $this->language->get('misc');
     }
@@ -501,6 +503,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $creditCardSettings = new CreditCardSettings($this);
         $boletoSettings = new BoletoSettings($this);
+        $boletoccSettings = new BoletoccSettings($this);
 
         $this->data['settings'] = array(
             'general_status'             => $this->config->get('payment_mundipagg_status'),
@@ -520,7 +523,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['settings'] = array_merge(
             $this->data['settings'],
             $creditCardSettings->getAllSettings(),
-            $boletoSettings->getAllSettings()
+            $boletoSettings->getAllSettings(),
+            $boletoccSettings->getAllSettings()
         );
 
         $this->load->model('extension/payment/mundipagg');

@@ -57,6 +57,17 @@ $_['boleto'] = [
 ];
 // -----------------------------------------------------------------
 
+$_['boletocc'] = [
+    'label' => 'Boleto + CreditCard',
+    'configure_section' => 'Boleto + CreditCard configuration',
+    'configure_payment_title' => 'Payment title',
+    'configure_name' => "Name",
+    'configure_select_bank' => 'Select bank',
+    'configure_due_at' => 'Due at',
+    'configure_instructions' => 'Instructions'
+];
+// -----------------------------------------------------------------
+
 // -----------------------------------------------------------------
 
 $_['antifraud'] = [
