@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Settings;
 
-class Boletocc
+class BoletoCreditCard
 {
     private $openCart;
 
@@ -18,17 +18,17 @@ class Boletocc
 
     public function getStatus()
     {
-        return $this->openCart->config->get('payment_mundipagg_boletocc_status');
+        return $this->openCart->config->get('payment_mundipagg_boletoCreditCard_status');
     }
 
     public function getPaymentTitle()
     {
-        return $this->openCart->config->get('payment_mundipagg_boletocc_title');
+        return $this->openCart->config->get('payment_mundipagg_boletoCreditCard_title');
     }
 
     public function getTitle()
     {
-        return $this->openCart->config->get('payment_mundipagg_boletocc_title');
+        return $this->openCart->config->get('payment_mundipagg_boletoCreditCard_title');
     }
 
     public function getName()
@@ -66,25 +66,25 @@ class Boletocc
         );
     }
 
-    public function getBoletoccPageInfo()
+    public function getBoletoCreditCardPageInfo()
     {
         $this->openCart->load->language('extension/payment/mundipagg');
 
         return array(
-            'boletoccStatus' => $this->getStatus(),
-            'boletoccText' => $this->openCart->language->get('boletocc')
+            'boletoCreditCardStatus' => $this->getStatus(),
+            'boletoCreditCardText' => $this->openCart->language->get('boletoCreditCard')
         );
     }
 
     public function getAllSettings()
     {
-        return array(
-            'boletocc_enabled' => $this->getStatus(),
-            'boletocc_title' => $this->getTitle(),
-            'boletocc_name' => $this->getName(),
-            'boletocc_bank' => $this->getBank(),
-            'boletocc_instructions' => $this->getInstructions(),
-            'boletocc_due_date' => $this->getDueAt()
-        );
+        return [
+            'boletoCreditCard_enabled' => $this->getStatus(),
+            'boletoCreditCard_title' => $this->getTitle(),
+            'boletoCreditCard_name' => $this->getName(),
+            'boletoCreditCard_bank' => $this->getBank(),
+            'boletoCreditCard_instructions' => $this->getInstructions(),
+            'boletoCreditCard_due_date' => $this->getDueAt()
+        ];
     }
 }

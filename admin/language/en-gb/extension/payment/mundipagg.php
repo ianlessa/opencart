@@ -57,7 +57,7 @@ $_['boleto'] = [
 ];
 // -----------------------------------------------------------------
 
-$_['boletocc'] = [
+$_['boletoCreditCard'] = [
     'label' => 'Boleto + CreditCard',
     'configure_section' => 'Boleto + CreditCard configuration',
     'configure_payment_title' => 'Payment title',

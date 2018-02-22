@@ -14,7 +14,7 @@ use Mundipagg\LogMessages;
 use Mundipagg\Order;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
-use Mundipagg\Settings\Boletocc as BoletoccSettings;
+use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Settings\General as GeneralSettings;
 
 class ControllerExtensionPaymentMundipagg extends Controller
@@ -106,7 +106,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function index()
     {
         $boletoSettings = new BoletoSettings($this);
-        $boletoccSettings = new BoletoccSettings($this);
+        $boletoCreditCardSettings = new BoletoCreditCardSettings($this);
         $generalSettings = new GeneralSettings($this);
         $creditCardSettings = new CreditCardSettings($this);
         $savedCreditcard = new SavedCreditCard($this);
@@ -130,8 +130,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->data = array_merge($this->data, $boletoSettings->getBoletoPageInfo());
         }
 
-        if ($boletoccSettings->isEnabled()) {
-            $this->data = array_merge($this->data, $boletoccSettings->getBoletoccPageInfo());
+        if ($boletoCreditCardSettings->isEnabled()) {
+            $this->data = array_merge($this->data, $boletoCreditCardSettings->getBoletoCreditCardPageInfo());
         }
 
         $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
