@@ -517,6 +517,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['cardToken'],
                 $card['cardId']
             );
+
         } catch (Exception $e) {
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
@@ -534,6 +535,31 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 ->withOrderId($this->session->data['order_id']);
 
             $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        if (isset($response->charges[0]->lastTransaction->success)) {
+
+            $this->load->model('extension/payment/mundipagg_order_processing');
+            $this->load->model('extension/payment/mundipagg_boleto_link');
+            $model = $this->model_extension_payment_mundipagg_order_processing;
+            $this->saveBoletoInfoInOrderHistory($response);
+            $this->printBoletoUrl($response);
+            $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
+                $this->session->data['order_id'],
+                $this->getBoletoUrl($response)
+            );
+            $model->setOrderStatus($orderData['order_id'], 1);
+
+        } else{
+            Log::create()
+                ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
+                ->withOrderId($this->session->data['order_id'])
+                ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
+
+            Log::create()
+                ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
 
         $novaOrderMundial = $this->getOrder();
