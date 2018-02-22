@@ -310,7 +310,10 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $this->load->language('extension/payment/mundipagg');
 
         $templateData = [];
-        $boletoLinks = $this->session->data['boleto_links'];
+        $boletoLinks = [];
+        if (isset($this->session->data['boleto_links'])) {
+            $boletoLinks = $this->session->data['boleto_links'];
+        }
         if (count($boletoLinks) > 0) {
             $boletoLang = $this->language->get('boleto');
             $boletoLink = $boletoLinks[0]['link'];
