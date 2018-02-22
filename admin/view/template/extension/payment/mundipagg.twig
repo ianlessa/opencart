@@ -27,6 +27,7 @@
 		                <li class="active"><a href="#tab-general" data-toggle="tab" title="{{ general.label }}">{{ general.label }}</a></li>
 		                <li><a href="#tab-credit-card" data-toggle="tab" title="{{ credit_card.label }}">{{ credit_card.label }}</a></li>
                         <li><a href="#tab-boleto" data-toggle="tab" title="{{ boleto.label }}">{{ boleto.label }}</a></li>
+                        <li><a href="#tab-boletoCreditCard" data-toggle="tab" title="{{ boletoCreditCard.label }}">{{ boletoCreditCard.label }}</a></li>
                         <li><a href="#tab-antifraud" data-toggle="tab" title="{{ antifraud.label }}">{{ antifraud.label }}</a></li>
                         <li><a href="#tab-logs" data-toggle="tab" title="{{ logs.label }}">{{ logs.label }}</a></li>
                     </ul>
@@ -646,6 +647,28 @@
                             </div>
 
 		                </div> <!-- tab-boleto -->
+
+                        <div class="tab-pane" id="tab-boletoCreditCard">
+                            <div class="panel-heading">
+                                <h3>{{ boletoCreditCard.configure_section }}</h3>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="boletoCreditCard-enabled">{{ misc.enabled }}</label>
+                                <div class="col-sm-10">
+                                    {% if not settings.boletoCreditCard_enabled %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-enabled" value="1">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    {% elseif settings.boletoCreditCard_enabled == '0' %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-enabled" value="1">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-disabled" value="0" checked="checked">{{ misc.no }}</label>
+                                    {% elseif settings.boletoCreditCard_enabled == '1' %}
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-enabled" value="1" checked="checked">{{ misc.yes }}</label>
+                                        <label class="radio-inline"><input type="radio" name="payment_mundipagg_boletoCreditCard_status" id="boletoCreditCard-disabled" value="0">{{ misc.no }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div> <!-- tab-boletoCreditCard -->
 
                         <div class="tab-pane" id="tab-antifraud">
                             <div class="panel-heading">

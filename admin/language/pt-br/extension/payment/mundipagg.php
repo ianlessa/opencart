@@ -57,6 +57,18 @@ $_['boleto'] = [
 ];
 // -----------------------------------------------------------------
 
+$_['boletoCreditCard'] = [
+    'label' => 'Boleto + Cartão de Crédito',
+    'configure_section' => 'Configuração do boleto + cartão de crédito',
+    'configure_payment_title' => 'Título do pagamento',
+    'configure_name' => "Nome",
+    'configure_select_bank' => 'Banco',
+    'configure_due_at' => 'Número de dias do vencimento do boleto após a data da compra',
+    'configure_instructions' => 'Instruções de pagamento'
+];
+// -----------------------------------------------------------------
+
+
 // -----------------------------------------------------------------
 
 $_['antifraud'] = [
