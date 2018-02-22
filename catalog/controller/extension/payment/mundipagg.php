@@ -309,8 +309,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $orderData['amountWithInterest'] =
             $this->setInterestToOrder($orderData, $interest);
-        
-        return $order->create($orderData, $this->cart, 'creditCard', $cardToken, $cardId);
+
+        $paymentMethod = 'creditcard';
+
+        if (isset($orderData['boletoCreditCard'])) {
+           $paymentMethod = 'boletocreditcard';
+        }
+        return $order->create($orderData, $this->cart, $paymentMethod, $cardToken, $cardId);
     }
     
     private function getOrder()
@@ -414,7 +419,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         try {
             $response = $this->createCreditCardOrder(
-                (double)$card['paymentDetails'][1],
+                (double)$card['paymentDetails'][2],
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
@@ -484,6 +489,60 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
+    public function processBoletoCreditCard()
+    {
+        $this->load();
+
+        if (!$this->isValidateCreditCardRequest()) {
+            Log::create()
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $post = $this->request->post;
+        $formId = $post['mundipagg-formid'];
+
+        $card = $this->fillCreditCardData($formId);
+        $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $orderData['saveCreditCard'] = $card['saveThisCard'];
+        $orderData['boletoCreditCard'] = true;
+        $orderData['creditCardAmount'] = floatval($card['amount']);
+
+        try {
+            $response = $this->createCreditCardOrder(
+                (double)$card['paymentDetails'][2],
+                $card['paymentDetails'][0],
+                $orderData,
+                $card['cardToken'],
+                $card['cardId']
+            );
+        } catch (Exception $e) {
+            Log::create()
+                ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
+                ->withOrderId($this->session->data['order_id'])
+                ->withException($e);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+        if (!$orderStatus) {
+            Log::create()
+                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->withResponseStatus($response->status)
+                ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $novaOrderMundial = $this->getOrder();
+        $novaOrderMundial->updateOrderStatus($orderStatus);
+
+        $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+        $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
     /**
      * @param $formId
      * @return array
@@ -533,7 +592,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $installments = $post['payment-details-' . $formId];
         $card['paymentDetails'] = explode('|', $installments);
-
+        if(isset($post['amount-' . $formId])) {
+            $card['amount'] = $post['amount-' . $formId];
+        }
         return $card;
     }
 
