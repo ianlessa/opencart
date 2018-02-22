@@ -627,8 +627,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private function setInterestToOrder($orderData, $interest)
     {
         if ($interest > 0) {
-            $amountWithInterest = $this->setInterestToAmount($orderData['total'], $interest);
-            $interestAmount = $amountWithInterest - $orderData['total'];
+            $total = $orderData['total'];
+            if (isset($orderData['boletoCreditCard'])) {
+                $total = $orderData['creditCardAmount'];
+            }
+            
+            $amountWithInterest = $this->setInterestToAmount($total, $interest);
+            $interestAmount = $amountWithInterest - $total;
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrder(
