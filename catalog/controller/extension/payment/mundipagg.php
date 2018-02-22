@@ -179,59 +179,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
     }
 
     /**
-     * Generate boleto
-     * @return void
-     */
-    public function generateBoleto()
-    {
-        if (!$this->customer->isLogged()) {
-            $this->response->redirect($this->url->link('checkout/failure', '', true));
-        }
-
-        $this->load();
-
-        if (isset($this->session->data['order_id'])) {
-            $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
-            if ($this->validate($orderData)) {
-                if ($orderData['payment_code'] === 'mundipagg') {
-                    $cart = $this->cart;
-                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
-
-                    if (isset($response->charges[0]->lastTransaction->success)) {
-
-                        $this->load->model('extension/payment/mundipagg_order_processing');
-                        $this->load->model('extension/payment/mundipagg_boleto_link');
-                        $model = $this->model_extension_payment_mundipagg_order_processing;
-                        $this->saveBoletoInfoInOrderHistory($response);
-                        $this->printBoletoUrl($response);
-                        $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
-                            $this->session->data['order_id'],
-                            $this->getBoletoUrl($response)
-                        );
-                        $model->setOrderStatus($orderData['order_id'], 1);
-                        return;
-
-                    } else{
-                        Log::create()
-                            ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
-                            ->withOrderId($this->session->data['order_id'])
-                            ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
-
-                        Log::create()
-                            ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
-                            ->withOrderId($this->session->data['order_id']);
-                        $this->response->redirect($this->url->link('checkout/failure', '', true));
-                    }
-                }
-            }
-        }
-
-        Log::create()->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
-        $this->response->redirect($this->url->link('checkout/cart'));
-    }
-
-    /**
      * Save payment info and print boleto url
      * @param string $response Api's response
      * @return void
@@ -390,6 +337,59 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $mundiOrderId,
             $openCartOrderId
         );
+    }
+
+    /**
+     * Generate boleto
+     * @return void
+     */
+    public function generateBoleto()
+    {
+        if (!$this->customer->isLogged()) {
+            $this->response->redirect($this->url->link('checkout/failure', '', true));
+        }
+
+        $this->load();
+
+        if (isset($this->session->data['order_id'])) {
+            $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+            if ($this->validate($orderData)) {
+                if ($orderData['payment_code'] === 'mundipagg') {
+                    $cart = $this->cart;
+                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
+
+                    if (isset($response->charges[0]->lastTransaction->success)) {
+
+                        $this->load->model('extension/payment/mundipagg_order_processing');
+                        $this->load->model('extension/payment/mundipagg_boleto_link');
+                        $model = $this->model_extension_payment_mundipagg_order_processing;
+                        $this->saveBoletoInfoInOrderHistory($response);
+                        $this->printBoletoUrl($response);
+                        $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
+                            $this->session->data['order_id'],
+                            $this->getBoletoUrl($response)
+                        );
+                        $model->setOrderStatus($orderData['order_id'], 1);
+                        return;
+
+                    } else{
+                        Log::create()
+                            ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
+                            ->withOrderId($this->session->data['order_id'])
+                            ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
+
+                        Log::create()
+                            ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
+                            ->withOrderId($this->session->data['order_id']);
+                        $this->response->redirect($this->url->link('checkout/failure', '', true));
+                    }
+                }
+            }
+        }
+
+        Log::create()->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
+        $this->response->redirect($this->url->link('checkout/cart'));
     }
 
     /**
