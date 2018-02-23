@@ -517,7 +517,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['cardToken'],
                 $card['cardId']
             );
-
         } catch (Exception $e) {
             Log::create()
                 ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
@@ -548,7 +547,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $this->session->data['order_id'],
                 $this->getBoletoUrl($response)
             );
-            $model->setOrderStatus($orderData['order_id'], 1);
 
         } else{
             Log::create()
@@ -660,17 +658,18 @@ class ControllerExtensionPaymentMundipagg extends Controller
             
             $amountWithInterest = $this->setInterestToAmount($total, $interest);
             $interestAmount = $amountWithInterest - $total;
+            $totalAmountWithInterest = $orderData['total'] + $interestAmount;
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrder(
                     $orderData['order_id'],
-                    $amountWithInterest
+                    $totalAmountWithInterest
                 );
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrderTotals(
                     $orderData['order_id'],
-                    $amountWithInterest
+                    $totalAmountWithInterest
                 );
 
             $this->mundipaggOrderUpdateModel->

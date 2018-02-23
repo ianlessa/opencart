@@ -101,6 +101,7 @@ class Order
             $this->boletoAmount += $interest;
 
             $totalOrderAmount = $this->creditCardAmount + $this->boletoAmount;
+            $orderData['amountWithInterest'] = $totalOrderAmount;
         }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
