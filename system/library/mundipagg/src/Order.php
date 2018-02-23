@@ -98,7 +98,7 @@ class Order
             $this->creditCardAmount = $orderData['creditCardAmount'];
             $interest = $orderData['amountWithInterest'] - $this->creditCardAmount;
             $this->boletoAmount = (floatval($orderData['total']) - $this->creditCardAmount);
-            $this->boletoAmount += $interest;
+            $this->creditCardAmount += $interest;
 
             $totalOrderAmount = $this->creditCardAmount + $this->boletoAmount;
             $orderData['amountWithInterest'] = $totalOrderAmount;
