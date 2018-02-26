@@ -446,8 +446,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $novaOrderMundial = $this->getOrder();
-        $novaOrderMundial->updateOrderStatus($orderStatus);
+        $newOrder = $this->getOrder();
+        $newOrder->updateOrderStatus($orderStatus);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
@@ -562,8 +562,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
 
-        $novaOrderMundial = $this->getOrder();
-        $novaOrderMundial->updateOrderStatus($orderStatus);
+        $newOrder = $this->getOrder();
+        $newOrder->updateOrderStatus($orderStatus);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
@@ -618,7 +618,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $installments = $post['payment-details-' . $formId];
         $card['paymentDetails'] = explode('|', $installments);
-        if(isset($post['amount-' . $formId])) {
+        if (isset($post['amount-' . $formId])) {
             $card['amount'] = $post['amount-' . $formId];
         }
         return $card;
