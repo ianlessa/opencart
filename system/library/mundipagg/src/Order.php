@@ -451,7 +451,7 @@ class Order
                     $orderAmount,
                     $cardId
                 );
-            case 'boletocreditcard':
+            case 'boletoCreditCard':
                 $creditCardAmount = $this->creditCardAmount * 100 ;
                 $boletoAmount = ceil($this->boletoAmount * 100);
 

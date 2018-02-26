@@ -312,10 +312,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $orderData['amountWithInterest'] =
             $this->setInterestToOrder($orderData, $interest);
 
-        $paymentMethod = 'creditcard';
+        $paymentMethod = 'creditCard';
 
         if (isset($orderData['boletoCreditCard'])) {
-           $paymentMethod = 'boletocreditcard';
+           $paymentMethod = 'boletoCreditCard';
         }
         return $order->create($orderData, $this->cart, $paymentMethod, $cardToken, $cardId);
     }
