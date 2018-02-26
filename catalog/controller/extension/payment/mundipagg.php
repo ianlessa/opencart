@@ -172,63 +172,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['savedSelectCreditcardTemplate'] = $path . 'credit_card/saved_select.twig';
         $this->data['brandsTemplate'] = $path . 'credit_card/brands.twig';
         $this->data['baseCreditCardtemplate'] = $path . 'credit_card/base.twig';
-        $this->data['boletoTemplate'] = $path . 'boleto.twig';
+        $this->data['baseBoletoTemplate'] = $path . 'boleto/base.twig';
+        $this->data['infoBoletoTemplate'] = $path . 'boleto/info.twig';
+        $this->data['submitBoletoTemplate'] = $path . 'boleto/submit.twig';
         $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
         $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
         $this->data['boletoCreditCardTemplate'] = $path . 'boleto_credit_card.twig';
-    }
-
-    /**
-     * Generate boleto
-     * @return void
-     */
-    public function generateBoleto()
-    {
-        if (!$this->customer->isLogged()) {
-            $this->response->redirect($this->url->link('checkout/failure', '', true));
-        }
-
-        $this->load();
-
-        if (isset($this->session->data['order_id'])) {
-            $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
-            if ($this->validate($orderData)) {
-                if ($orderData['payment_code'] === 'mundipagg') {
-                    $cart = $this->cart;
-                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
-
-                    if (isset($response->charges[0]->lastTransaction->success)) {
-
-                        $this->load->model('extension/payment/mundipagg_order_processing');
-                        $this->load->model('extension/payment/mundipagg_boleto_link');
-                        $model = $this->model_extension_payment_mundipagg_order_processing;
-                        $this->saveBoletoInfoInOrderHistory($response);
-                        $this->printBoletoUrl($response);
-                        $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
-                            $this->session->data['order_id'],
-                            $this->getBoletoUrl($response)
-                        );
-                        $model->setOrderStatus($orderData['order_id'], 1);
-                        return;
-
-                    } else{
-                        Log::create()
-                            ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
-                            ->withOrderId($this->session->data['order_id'])
-                            ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
-
-                        Log::create()
-                            ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
-                            ->withOrderId($this->session->data['order_id']);
-                        $this->response->redirect($this->url->link('checkout/failure', '', true));
-                    }
-                }
-            }
-        }
-
-        Log::create()->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
-        $this->response->redirect($this->url->link('checkout/cart'));
     }
 
     /**
@@ -362,8 +311,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $orderData['amountWithInterest'] =
             $this->setInterestToOrder($orderData, $interest);
-        
-        return $order->create($orderData, $this->cart, 'creditCard', $cardToken, $cardId);
+
+        $paymentMethod = 'creditcard';
+
+        if (isset($orderData['boletoCreditCard'])) {
+           $paymentMethod = 'boletocreditcard';
+        }
+        return $order->create($orderData, $this->cart, $paymentMethod, $cardToken, $cardId);
     }
     
     private function getOrder()
@@ -393,6 +347,59 @@ class ControllerExtensionPaymentMundipagg extends Controller
     }
 
     /**
+     * Generate boleto
+     * @return void
+     */
+    public function generateBoleto()
+    {
+        if (!$this->customer->isLogged()) {
+            $this->response->redirect($this->url->link('checkout/failure', '', true));
+        }
+
+        $this->load();
+
+        if (isset($this->session->data['order_id'])) {
+            $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+            if ($this->validate($orderData)) {
+                if ($orderData['payment_code'] === 'mundipagg') {
+                    $cart = $this->cart;
+                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
+
+                    if (isset($response->charges[0]->lastTransaction->success)) {
+
+                        $this->load->model('extension/payment/mundipagg_order_processing');
+                        $this->load->model('extension/payment/mundipagg_boleto_link');
+                        $model = $this->model_extension_payment_mundipagg_order_processing;
+                        $this->saveBoletoInfoInOrderHistory($response);
+                        $this->printBoletoUrl($response);
+                        $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
+                            $this->session->data['order_id'],
+                            $this->getBoletoUrl($response)
+                        );
+                        $model->setOrderStatus($orderData['order_id'], 1);
+                        return;
+
+                    } else{
+                        Log::create()
+                            ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
+                            ->withOrderId($this->session->data['order_id'])
+                            ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
+
+                        Log::create()
+                            ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
+                            ->withOrderId($this->session->data['order_id']);
+                        $this->response->redirect($this->url->link('checkout/failure', '', true));
+                    }
+                }
+            }
+        }
+
+        Log::create()->error(LogMessages::ORDER_ID_NOT_FOUND, __METHOD__);
+        $this->response->redirect($this->url->link('checkout/cart'));
+    }
+
+    /**
      * This method process the credit card transaction
      *
      * @return void
@@ -414,7 +421,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         try {
             $response = $this->createCreditCardOrder(
-                (double)$card['paymentDetails'][1],
+                (double)$card['paymentDetails'][2],
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
@@ -439,8 +446,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $novaOrderMundial = $this->getOrder();
-        $novaOrderMundial->updateOrderStatus($orderStatus);
+        $newOrder = $this->getOrder();
+        $newOrder->updateOrderStatus($orderStatus);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
@@ -480,6 +487,84 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         $this->getOrder()->updateOrderStatus($orderStatus);
+        $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+        $this->response->redirect($this->url->link('checkout/success', '', true));
+    }
+
+    public function processBoletoCreditCard()
+    {
+        $this->load();
+
+        if (!$this->isValidateCreditCardRequest()) {
+            Log::create()
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $post = $this->request->post;
+        $formId = $post['mundipagg-formid'];
+
+        $card = $this->fillCreditCardData($formId);
+        $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $orderData['saveCreditCard'] = $card['saveThisCard'];
+        $orderData['boletoCreditCard'] = true;
+        $orderData['creditCardAmount'] = floatval($card['amount']);
+
+        try {
+            $response = $this->createCreditCardOrder(
+                (double)$card['paymentDetails'][2],
+                $card['paymentDetails'][0],
+                $orderData,
+                $card['cardToken'],
+                $card['cardId']
+            );
+        } catch (Exception $e) {
+            Log::create()
+                ->error(LogMessages::UNABLE_TO_CREATE_ORDER, __METHOD__)
+                ->withOrderId($this->session->data['order_id'])
+                ->withException($e);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        $orderStatus = $this->getOrder()->translateStatusFromMP($response);
+        if (!$orderStatus) {
+            Log::create()
+                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->withResponseStatus($response->status)
+                ->withOrderId($this->session->data['order_id']);
+
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
+        if (isset($response->charges[0]->lastTransaction->success)) {
+
+            $this->load->model('extension/payment/mundipagg_order_processing');
+            $this->load->model('extension/payment/mundipagg_boleto_link');
+            $model = $this->model_extension_payment_mundipagg_order_processing;
+            $this->saveBoletoInfoInOrderHistory($response);
+            $this->printBoletoUrl($response);
+            $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
+                $this->session->data['order_id'],
+                $this->getBoletoUrl($response)
+            );
+
+        } else{
+            Log::create()
+                ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
+                ->withOrderId($this->session->data['order_id'])
+                ->withRequest(json_encode($response, JSON_PRETTY_PRINT));
+
+            Log::create()
+                ->error(LogMessages::UNKNOWN_API_RESPONSE, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure', '', true));
+        }
+
+        $newOrder = $this->getOrder();
+        $newOrder->updateOrderStatus($orderStatus);
+
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
@@ -533,7 +618,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $installments = $post['payment-details-' . $formId];
         $card['paymentDetails'] = explode('|', $installments);
-
+        if (isset($post['amount-' . $formId])) {
+            $card['amount'] = $post['amount-' . $formId];
+        }
         return $card;
     }
 
@@ -566,19 +653,25 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private function setInterestToOrder($orderData, $interest)
     {
         if ($interest > 0) {
-            $amountWithInterest = $this->setInterestToAmount($orderData['total'], $interest);
-            $interestAmount = $amountWithInterest - $orderData['total'];
+            $total = $orderData['total'];
+            if (isset($orderData['boletoCreditCard'])) {
+                $total = $orderData['creditCardAmount'];
+            }
+            
+            $amountWithInterest = $this->setInterestToAmount($total, $interest);
+            $interestAmount = $amountWithInterest - $total;
+            $totalAmountWithInterest = $orderData['total'] + $interestAmount;
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrder(
                     $orderData['order_id'],
-                    $amountWithInterest
+                    $totalAmountWithInterest
                 );
 
             $this->mundipaggOrderUpdateModel->
                 updateOrderAmountInOrderTotals(
                     $orderData['order_id'],
-                    $amountWithInterest
+                    $totalAmountWithInterest
                 );
 
             $this->mundipaggOrderUpdateModel->

@@ -310,11 +310,15 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $this->load->language('extension/payment/mundipagg');
 
         $templateData = [];
-        $boletoLinks = $this->session->data['boleto_links'];
+        $boletoLinks = [];
+        if (isset($this->session->data['boleto_links'])) {
+            $boletoLinks = $this->session->data['boleto_links'];
+        }
         if (count($boletoLinks) > 0) {
             $boletoLang = $this->language->get('boleto');
             $boletoLink = $boletoLinks[0]['link'];
             $templateData['boleto_link_message'] = sprintf($boletoLang['click_to_follow'],$boletoLink);
+            $templateData['boleto_link'] = $boletoLink;
         }
         unset($this->session->data['boleto_links']);
         $view  = $this->load->view('extension/payment/mundipagg/success/order_info', $templateData);
