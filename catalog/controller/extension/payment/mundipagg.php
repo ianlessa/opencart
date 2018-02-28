@@ -600,6 +600,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $card['cardToken'] = null;
         $card['saveThisCard'] = false;
 
+        if (isset($post['amount-' . $formId])) {
+            $card['amount'] = $post['amount-' . $formId];
+        }
+
         return $card;
     }
 
