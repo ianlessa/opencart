@@ -140,8 +140,6 @@ MundiPagg.Validator = function() {
     };
 };
 
-
-
 MundiPagg.Form = function() {
     return {
         setup: function(validator) {
@@ -205,19 +203,25 @@ MundiPagg.Form = function() {
             }.bind(this));
 
             // add listener to clean up card number field
-            this.cardNumberField.addEventListener("keyup", function() {
-                this.cleanUpField(this.cardNumberField, /[^[0-9]/gi);
-            }.bind(this), false);
+            this.cardNumberFields.each(function(index,input){
+                input.addEventListener("keyup", function() {
+                    this.cleanUpField(input, /[^[0-9]/gi);
+                }.bind(this), false);
+            }.bind(this));
 
-            // add listener to clean up card number field
-            this.cardNameField.addEventListener("keyup", function() {
-                this.cleanUpField(this.cardNameField, /[^[a-zA-Z ]/gi);
-            }.bind(this), false);
+            // add listener to clean up card name field
+            this.cardNameFields.each(function(index,input){
+                input.addEventListener("keyup", function() {
+                    this.cleanUpField(input, /[^[a-zA-Z ]/gi);
+                }.bind(this), false);
+            }.bind(this));
 
             // add listener to clean up cvv field
-            this.cardCVVField.addEventListener("keyup", function() {
-                this.cleanUpField(this.cardCVVField, /[^[0-9]/gi);
-            }.bind(this), false);
+            this.cardCVVFields.each(function(index,input){
+                input.addEventListener("keyup", function() {
+                    this.cleanUpField(input, /[^[0-9]/gi);
+                }.bind(this), false);
+            }.bind(this));
         },
 
         cleanUpField: function(field, regex) {
@@ -228,9 +232,9 @@ MundiPagg.Form = function() {
 
             this.cardBrand = document.querySelector('[data-mundicheckout-brand]');
             this.submitForm = $('[data-mundicheckout-form]');
-            this.cardNumberField = document.getElementById('cardNumber');
-            this.cardNameField = document.getElementById('cardName');
-            this.cardCVVField = document.getElementById('cardCVV');
+            this.cardNumberFields = $('.mundipagg-cardNumber');
+            this.cardNameFields = $('.mundipagg-cardName');
+            this.cardCVVFields = $('.mundipagg-cardCVV');
         },
 
         hideAll: function() {

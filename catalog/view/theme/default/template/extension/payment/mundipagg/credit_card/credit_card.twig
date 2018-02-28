@@ -5,7 +5,12 @@
             <div class="col-sm-3 clear-left-padding" style="padding-left: 0;">
                 <label for="cardNumber">{{ credit_card.credit_card_number }}</label>
                 <div class="input-group input-group ">
-                    <input name="card-number-{{ inputId }}" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-{{ inputId }}">
+                    <input
+                            name="card-number-{{ inputId }}"
+                            type="text"
+                            class="form-control col-sm-12 mundipagg-cardNumber"
+                            maxlength="19" id="cardNumber"
+                            data-mundicheckout-element="number-{{ inputId }}">
                     <span class="input-group-addon" inputId="{{ inputId }}" data-mundicheckout-element="brand-{{ inputId }}" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
                 <span id="credit-card-number-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
@@ -51,13 +56,25 @@
     <div class="row">
         <div class="col-sm-5" id="holdername-field">
             <label for="cardName">{{ credit_card.holder_name }}</label>
-            <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-element="holder_name-{{ inputId }}">
+            <input
+                    name="holder-name"
+                    type="text"
+                    class="form-control mundipagg-cardName"
+                    maxlength="50"
+                    id="cardName"
+                    data-mundicheckout-element="holder_name-{{ inputId }}">
             <span  id="holder-name-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-2" id="cvv-field">
             <label for="cardCVV">CVV</label>
-            <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-element="cvv-{{ inputId }}">
+            <input
+                    name="cvv"
+                    type="text"
+                    class="form-control mundipagg-cardCVV"
+                    maxlength="4"
+                    id="cardCVV"
+                    data-mundicheckout-element="cvv-{{ inputId }}">
             <span id="cvv-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
