@@ -1,34 +1,71 @@
-/* var MundiPagg = {};
+var MundiPagg = {};
 
-MundiPagg.Validator = function(cardNumber) {
-    var cardNumber = cardNumber;
-
+MundiPagg.Validator = function() {
     return {
-        validateForm: function () {
-            var errors = [];
+        validateForm: function (form) {
+            var hasErrors = false;
+            var errors = {
+                'credit-card-number': {},
+                'expiration': {},
+                'holder-name': {},
+                'cvv' : {},
+                'new_installments': {},
+                'saved_installments': {}
+            };
+            var inputsToValidate = form.find('[data-mundicheckout-element]');
 
-            var creditCardNumber = this.validateCardNumber($(this.cardNumber).val());
-            var expiration = this.validateExpiration($("#cardExpMonth").val(), $("#cardExpYear").val());
-            var holderName = this.validateHolderName($("#cardName").val());
-            var cvv = this.validateCVV($("#cardCVV").val());
+            inputsToValidate.each(function(index,element){
+                var checkoutElement = $(element).attr('data-mundicheckout-element').split("-");;
+                var elementIndex = checkoutElement[1];
+                var elementType = checkoutElement[0];
+                var elementValue = $(element).val();
 
-            if (creditCardNumber !== undefined) {
-                errors['credit-card-number'] = creditCardNumber;
-            }
-
-            if (expiration !== undefined) {
-                errors['expiration'] = expiration;
-            }
-
-            if (holderName !== undefined) {
-                errors['holder-name'] = holderName;
-            }
-
-            if (cvv !== undefined) {
-                errors['cvv'] = cvv;
-            }
-
-            return errors;
+                switch(elementType) {
+                    case 'number':
+                        error = this.validateCardNumber(elementValue);
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors['credit-card-number'][elementIndex] = error;
+                        }
+                        break;
+                    case 'holder_name':
+                        error = this.validateHolderName(elementValue);
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors['holder-name'][elementIndex] = error;
+                        }
+                        break;
+                    case 'exp_month':
+                    case 'exp_year':
+                        var exp_month = $('[data-mundicheckout-element="exp_month-'+elementIndex+'"]');
+                        var exp_year = $('[data-mundicheckout-element="exp_year-'+elementIndex+'"]');
+                        error = this.validateExpiration($(exp_month).val(), $(exp_year).val());
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors['expiration'][elementIndex] = error;
+                        }
+                        break;
+                    case 'cvv':
+                        error =  this.validateCVV($(element).val());
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors['cvv'][elementIndex] = error;
+                        }
+                        break;
+                    case 'new_installments':
+                    case 'saved_installments':
+                        error = this.validateInstallments($(element).val());
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors[elementType][elementIndex] = error;
+                        }
+                    break;
+                }
+            }.bind(this));
+            return {
+                hasErrors : hasErrors,
+                errors : errors
+            };
         },
 
         validateExpiration: function (month, year) {
@@ -72,6 +109,11 @@ MundiPagg.Validator = function(cardNumber) {
             return undefined;
         },
 
+        validateInstallments: function (number) {
+            var errorMsg = "Por favor, selecione as parcelas.";
+            return number === '' ? errorMsg : undefined;
+        },
+
         isValidCreditCardNumber: function (value) {
             // accept only digits, dashes or spaces
             if (/[^0-9-\s]+/.test(value)) {
@@ -110,28 +152,28 @@ MundiPagg.Form = function() {
         },
 
         showErrorMessages: function(errors) {
-            if (errors['credit-card-number']) {
-                $('#credit-card-number-message').text(errors['credit-card-number']);
-            }
+            var errorIndexes = {
+                'credit-card-number': 'credit-card-number-message',
+                'expiration': 'expiration-date-message',
+                'holder-name': 'holder-name-message',
+                'cvv' : 'cvv-message',
+                'new_installments': 'new_installments-message',
+                'saved_installments': 'saved_installments-message'
+            };
 
-            if (errors['expiration']) {
-                $('#expiration-date-message').text(errors['expiration']);
-            }
-
-            if (errors['holder-name']) {
-                $('#holder-name-message').text(errors['holder-name']);
-            }
-
-            if (errors['cvv']) {
-                $('#cvv-message').text(errors['cvv']);
-            }
+            Object.keys(errorIndexes).forEach(function(property){
+                if (errors[property]) {
+                    Object.keys(errors[property]).forEach(function(key){
+                        $('#' + errorIndexes[property] + '-' + key).text(errors[property][key]);
+                    });
+                }
+            });
         },
 
-        clearErrorMessages: function() {
-            this.creditCardNumberMessageField.text('');
-            this.expirationDateMessageField.text('');
-            this.holderNameMessageField.text('');
-            this.cvvMessageField.text('');
+        clearErrorMessages: function(form) {
+            form.find('.form-validation-error-message').each(function(index,element){
+               $(element).text('');
+            });
         },
 
         addListeners: function() {
@@ -145,22 +187,22 @@ MundiPagg.Form = function() {
                     brand = brandUrl.getAttribute('src').split('/').pop().split('.')[0];
                     inputId = this.cardBrand.getAttribute('inputId');
                     amount = $("#amount-" + inputId).val();
-
                     this.showSpecific(brand, amount, inputId);
                 }
             }.bind(this), false);
-
             // listener to handle form validation
-            this.submitForm.addEventListener('submit', function(event) {
-                this.clearErrorMessages();
-                var result = this.validator.validateForm();
+            this.submitForm.each(function(index,formElement){
+                formElement.addEventListener('submit', function(event) {
+                    this.clearErrorMessages($(formElement));
+                    var result = this.validator.validateForm($(formElement));
 
-                if (Object.keys(result).length > 0) {
-                    this.showErrorMessages(result);
-                    event.stopImmediatePropagation();
-                    event.preventDefault();
-                }
-            }.bind(this), false);
+                    if (result.hasErrors) {
+                        this.showErrorMessages(result.errors);
+                        event.stopImmediatePropagation();
+                        event.preventDefault();
+                    }
+                }.bind(this), false);
+            }.bind(this));
 
             // add listener to clean up card number field
             this.cardNumberField.addEventListener("keyup", function() {
@@ -185,14 +227,7 @@ MundiPagg.Form = function() {
         initializeVariables: function() {
 
             this.cardBrand = document.querySelector('[data-mundicheckout-brand]');
-            this.submitForm = $('[data-mundicheckout-form]')[0];
-
-            this.creditCardNumberMessageField = $('#credit-card-number-message').text('');
-            this.expirationDateMessageField = $('#expiration-date-message').text('');
-            this.holderNameMessageField = $('#holder-name-message').text('');
-            this.cvvMessageField = $('#cvv-message').text('');
-            this.tokenErrorMessage = $('#token-error-message').text('');
-
+            this.submitForm = $('[data-mundicheckout-form]');
             this.cardNumberField = document.getElementById('cardNumber');
             this.cardNameField = document.getElementById('cardName');
             this.cardCVVField = document.getElementById('cardCVV');
@@ -207,8 +242,6 @@ MundiPagg.Form = function() {
 
             if (typeof brand === 'undefined' && amount > 0) {
                 this.hideAll();
-            } else {
-                showSpecific(brand, amount, inputId);
             }
         }
     };
@@ -223,29 +256,12 @@ function hideElements() {
     })
 }
 
-(function () {
+$("#mundipaggCheckout").ready(function () {
+
     var mundiValidator = MundiPagg.Validator();
     var mundiForm = MundiPagg.Form();
 
     mundiForm.setup(mundiValidator);
-
-    MundiCheckout.init(
-        function(data) {
-            console.log('success');
-            console.log(data);
-            return true;
-        },
-        function(error) {
-            console.log('error');
-            console.log(error);
-            $('#token-error-message').text('Ocorreu um erro, verifique as informações fornecidas');
-        }
-    );
-})();*/
-
-
-
-$("#mundipaggCheckout").ready(function () {
 
     //Call checkout.js methods
     MundiCheckout.init(

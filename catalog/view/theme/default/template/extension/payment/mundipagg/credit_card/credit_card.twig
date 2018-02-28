@@ -8,16 +8,23 @@
                     <input name="card-number-{{ inputId }}" type="text" class="form-control col-sm-12 " maxlength="19" id="cardNumber" data-mundicheckout-element="number-{{ inputId }}">
                     <span class="input-group-addon" inputId="{{ inputId }}" data-mundicheckout-element="brand-{{ inputId }}" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
-                <span id="credit-card-number-message" class="text-danger"></span>
+                <span id="credit-card-number-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
             </div>
 
             <div class="col-sm-4">
                 <label>{{ credit_card.installments }}</label>
                 <div>
-                    <select name="payment-details-{{ inputId }}" class="form-control installments" id="new-creditcard-installments-{{ inputId }}" data-brand="{{ brand }}">
+                    <select
+                            name="payment-details-{{ inputId }}"
+                            class="form-control installments"
+                            id="new-creditcard-installments-{{ inputId }}"
+                            data-brand="{{ brand }}"
+                            data-mundicheckout-element="new_installments-{{ inputId }}"
+                    >
                         <option value="">Selecione</option>
                     </select>
                 </div>
+                <span id="new_installments-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
             </div>
 
             <div class="col-sm-2" id="expiration-date-field ">
@@ -35,7 +42,7 @@
                             <option value="{{ year }}">{{ year }}</option>
                         {% endfor %}
                     </select>
-                    <span  id="expiration-date-message" class="text-danger"></span>
+                    <span  id="expiration-date-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
                 </div>
             </div>
         </div>
@@ -45,18 +52,18 @@
         <div class="col-sm-5" id="holdername-field">
             <label for="cardName">{{ credit_card.holder_name }}</label>
             <input name="holder-name" type="text" class="form-control" maxlength="50" id="cardName" data-mundicheckout-element="holder_name-{{ inputId }}">
-            <span  id="holder-name-message" class="text-danger"></span>
+            <span  id="holder-name-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-2" id="cvv-field">
             <label for="cardCVV">CVV</label>
             <input name="cvv" type="text" class="form-control" maxlength="4" id="cardCVV" data-mundicheckout-element="cvv-{{ inputId }}">
-            <span id="cvv-message" class="text-danger"></span>
+            <span id="cvv-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 
     <div class="row">
-        <span  id="token-error-message" class="text-danger"></span>
+        <span  id="token-error-message" class="text-danger form-validation-error-message"></span>
         <br>
         {%  if isSavedCreditcardEnabled %}
             <div class="col-sm-12">

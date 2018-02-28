@@ -31,9 +31,11 @@
                     name="saved-credit-card-installments-{{ inputId }}"
                     id="saved-creditcard-installments-{{ inputId }}"
                     class="form-control installments"
+                    data-mundicheckout-element="saved_installments-{{ inputId }}"
             >
                 <option value="">Selecione</option>
             </select>
+            <span id="saved_installments-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 </div>
