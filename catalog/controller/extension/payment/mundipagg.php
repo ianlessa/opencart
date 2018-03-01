@@ -600,6 +600,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $card['cardToken'] = null;
         $card['saveThisCard'] = false;
 
+        if (isset($post['amount-' . $formId])) {
+            $card['amount'] = $post['amount-' . $formId];
+        }
+
         return $card;
     }
 
@@ -626,8 +630,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        $paymentDetailsFirstCard = explode('|', $requestData['payment-details-1']);
-        $paymentDetailsSecondCard = explode('|', $requestData['payment-details-2']);
+        //@fixme do the validations.
+        return true;
+        $paymentDetailsKey = 'payment-details';
+        if (isset($requestData['saved-credit-card-installments-1'])) {
+            $paymentDetailsKey = 'saved-credit-card-installments';
+        }
+        $paymentDetailsFirstCard = explode('|', $requestData[$paymentDetailsKey.'-1']);
+        $paymentDetailsSecondCard = explode('|', $requestData[$paymentDetailsKey.'-2']);
 
         if (count($paymentDetailsFirstCard) !== 3 || count($paymentDetailsSecondCard) !== 3) {
             return false;
