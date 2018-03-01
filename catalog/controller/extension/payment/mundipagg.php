@@ -514,6 +514,18 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $post = $this->request->post;
         $formId = $post['mundipagg-formid'];
 
+        //validate creditcard amount;
+        $creditCardAmount = floatval($post['amount-' . $formId]);
+        $orderId = $this->session->data['order_id'];
+        $orderDetails = $this->model_checkout_order->getOrder($orderId);
+        $orderTotal = floatval($orderDetails['total']);
+        if($creditCardAmount <= 0 || $creditCardAmount >= $orderTotal) {
+            Log::create()
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
+
         $card = $this->fillCreditCardData($formId);
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $orderData['saveCreditCard'] = $card['saveThisCard'];
