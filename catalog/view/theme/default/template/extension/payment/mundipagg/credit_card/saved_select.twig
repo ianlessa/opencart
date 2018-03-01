@@ -39,3 +39,9 @@
         </div>
     </div>
 </div>
+<script src="{{ themeDirectory }}/scripts/mundipagg/mundipagg-checkout.js"></script>
+<script>
+    $("#mundipaggSavedCreditCard-" + {{ inputId }}).ready(function(){
+        initSavedCreditCardsSelect({{ inputId }});
+    });
+</script>
