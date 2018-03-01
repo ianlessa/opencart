@@ -18,6 +18,7 @@ class TwoCreditCards
     private $order;
 
     private $amount;
+    private $amountWithInterest;
     private $interest;
     private $installments;
     private $token;
@@ -56,7 +57,7 @@ class TwoCreditCards
                 $this->orderDetails,
                 $this->cart,
                 'twoCreditCards',
-                $this->amount,
+                $this->amountWithInterest,
                 $this->token,
                 $this->cardId
             );
@@ -99,6 +100,7 @@ class TwoCreditCards
     {
         $this->setAmount();
         $this->setInterest();
+        $this->setAmountWithInterest();
         $this->setToken();
         $this->setCardId();
         $this->setInstallments();
@@ -117,6 +119,16 @@ class TwoCreditCards
     {
         $this->interest[] = explode('|', $this->details['payment-details-1'])[2];
         $this->interest[] = explode('|', $this->details['payment-details-2'])[2];
+    }
+
+
+    private function setAmountWithInterest()
+    {
+        $firstCardAmount = intval($this->amount[0]) + ((floatval($this->interest[0]) /100) * intval($this->amount[0]));
+        $secondCardAmount = intval($this->amount[1]) + ((floatval($this->interest[1]) / 100 )* intval($this->amount[1]));
+
+        $this->amountWithInterest[] = $firstCardAmount;
+        $this->amountWithInterest[] = $secondCardAmount;
     }
 
     private function setToken()
