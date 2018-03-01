@@ -89,8 +89,8 @@ class TwoCreditCards
 
     private function getAmountWithInterest()
     {
-        $firstCardAmount = intval($this->amount[0]) + (floatval($this->interest[0]) * intval($this->amount[0]));
-        $secondCardAmount = intval($this->amount[1]) + (floatval($this->interest[1]) * intval($this->amount[1]));
+        $firstCardAmount = intval($this->amount[0]) + ((floatval($this->interest[0]) /100) * intval($this->amount[0]));
+        $secondCardAmount = intval($this->amount[1]) + ((floatval($this->interest[1]) / 100 )* intval($this->amount[1]));
 
         return $firstCardAmount + $secondCardAmount;
     }
