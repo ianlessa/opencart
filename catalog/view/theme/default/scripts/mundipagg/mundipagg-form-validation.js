@@ -14,11 +14,29 @@ MundiPagg.Validator = function() {
             };
             var inputsToValidate = form.find('[data-mundicheckout-element]');
 
+            var ignoredForms = JSON.parse(form.attr('disabled-forms'));
+
             inputsToValidate.each(function(index,element){
                 var checkoutElement = $(element).attr('data-mundicheckout-element').split("-");;
                 var elementIndex = checkoutElement[1];
                 var elementType = checkoutElement[0];
                 var elementValue = $(element).val();
+
+                //if the form is on the disable list, validate only saved card installments;
+                if (
+                    ignoredForms.indexOf(parseInt(elementIndex)) > -1 &&
+                    elementType !== 'saved_installments'
+                ) {
+                    return;
+                }
+
+                //if the form isn't on the disable list, ignore saved card installments validation;
+                if (
+                    ignoredForms.indexOf(parseInt(elementIndex)) === -1 &&
+                    elementType === 'saved_installments'
+                ) {
+                    return;
+                }
 
                 switch(elementType) {
                     case 'number':
