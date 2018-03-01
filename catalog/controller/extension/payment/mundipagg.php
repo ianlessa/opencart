@@ -459,14 +459,23 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
             Log::create()
-                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
                 ->withOrderId($this->session->data['order_id']);
 
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
         try {
-            $twoCreditCards = new TwoCreditCards($this, $this->request->post, $this->cart);
+            //@fixme do it in a better way
+            $postData = $this->request->post;
+            $paymentDetailsKey1 = $postData['mundipaggSavedCreditCard-1'] === 'new' ?
+                'new-creditcard-installments-1' : 'saved-creditcard-installments-1';
+            $paymentDetailsKey2 = $postData['mundipaggSavedCreditCard-2'] === 'new' ?
+                'new-creditcard-installments-2' : 'saved-creditcard-installments-2';
+            $postData['payment-details-1'] = $postData[$paymentDetailsKey1];
+            $postData['payment-details-2'] = $postData[$paymentDetailsKey2];
+            ////////////////////////////////////
+            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart);
             $response = $twoCreditCards->processPayment();
         } catch (\Exception $e) {
             Log::create()
@@ -635,6 +644,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
         foreach ($requestData as $input => $value) {
             $inputData = explode('-',$input);
             $inputId = array_pop($inputData);
+            if(!is_numeric($inputId)) {
+                continue;
+            }
             $key = implode('-',$inputData);
             if (!isset($cardsData[$inputId])) {
                 $cardsData[$inputId] = [];

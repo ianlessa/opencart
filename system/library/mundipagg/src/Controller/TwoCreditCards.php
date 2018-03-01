@@ -100,6 +100,7 @@ class TwoCreditCards
         $this->setAmount();
         $this->setInterest();
         $this->setToken();
+        $this->setCardId();
         $this->setInstallments();
         $this->setSaveCreditCard();
 
@@ -114,14 +115,27 @@ class TwoCreditCards
 
     private function setInterest()
     {
-        $this->interest[] = explode('|', $this->details['payment-details-1'])[1];
-        $this->interest[] = explode('|', $this->details['payment-details-2'])[1];
+        $this->interest[] = explode('|', $this->details['payment-details-1'])[2];
+        $this->interest[] = explode('|', $this->details['payment-details-2'])[2];
     }
 
     private function setToken()
     {
         $this->token[] = $this->details['munditoken-1'];
         $this->token[] = $this->details['munditoken-2'];
+    }
+
+    private function setCardId()
+    {
+
+        $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
+        $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
+
+        foreach($this->cardId as &$cardId) {
+            if($cardId === 'new') {
+                $cardId = null;
+            }
+        }
     }
 
     private function setInstallments()
