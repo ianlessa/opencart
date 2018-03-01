@@ -655,6 +655,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         //do the validations
+        $totalAmount = 0;
         foreach($cardsData as $inputId => $cardData) {
             if (!isset($cardData['mundipaggSavedCreditCard'])) {
                 return false;
@@ -675,7 +676,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
             if (count(explode('|',$cardData[$check])) !== 3) {
                 return false;
             }
+            $totalAmount += floatval($cardData['amount']);
         }
+
+        //validate amounts;
+        $orderId = $this->session->data['order_id'];
+        $orderDetails = $this->model_checkout_order->getOrder($orderId);
+        $orderTotal = floatval($orderDetails['total']);
+        if($totalAmount !== $orderTotal) {
+            return false;
+        }
+
         return true;
     }
 
