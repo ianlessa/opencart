@@ -312,6 +312,18 @@ $("#mundipaggCheckout").ready(function () {
     $('.input-group-addon').bind("DOMSubtreeModified",function(){
         installments($(this));
     });
+
+    //to preserve card installments;
+    $('.installments').change(function(event){
+        var targetInput = event.target;
+        var elementId = targetInput.id;
+
+        $('input[name="'+elementId+'"][type="hidden"]').remove();
+        $('<input />').attr('type','hidden').attr('name',elementId).appendTo($(targetInput).parent());
+        $('input[name="'+elementId+'"][type="hidden"]').val(targetInput.value);
+    });
+
+
 });
 
 

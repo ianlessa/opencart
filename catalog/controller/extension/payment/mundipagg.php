@@ -630,27 +630,40 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        //@fixme do the validations.
-        return true;
-        $paymentDetailsKey = 'payment-details';
-        if (isset($requestData['saved-credit-card-installments-1'])) {
-            $paymentDetailsKey = 'saved-credit-card-installments';
-        }
-        $paymentDetailsFirstCard = explode('|', $requestData[$paymentDetailsKey.'-1']);
-        $paymentDetailsSecondCard = explode('|', $requestData[$paymentDetailsKey.'-2']);
-
-        if (count($paymentDetailsFirstCard) !== 3 || count($paymentDetailsSecondCard) !== 3) {
-            return false;
-        }
-
-        if (!isset($requestData['amount-1'], $requestData['amount-2'])) {
-            return false;
+        //prepare card data
+        $cardsData = [];
+        foreach ($requestData as $input => $value) {
+            $inputData = explode('-',$input);
+            $inputId = array_pop($inputData);
+            $key = implode('-',$inputData);
+            if (!isset($cardsData[$inputId])) {
+                $cardsData[$inputId] = [];
+            }
+            $cardsData[$inputId][$key] = $value;
         }
 
-        if (!isset($requestData['munditoken-1'], $requestData['munditoken-2'])) {
-            return false;
+        //do the validations
+        foreach($cardsData as $inputId => $cardData) {
+            if (!isset($cardData['mundipaggSavedCreditCard'])) {
+                return false;
+            }
+            if (!isset($cardData['amount'])) {
+                return false;
+            }
+            $check = 'saved-creditcard-installments';
+            if ($cardData['mundipaggSavedCreditCard'] === 'new') {
+                $check = 'new-creditcard-installments';
+                if (!isset($cardData['munditoken'])) {
+                    return false;
+                }
+            }
+            if (!isset($cardData[$check])) {
+                return false;
+            }
+            if (count(explode('|',$cardData[$check])) !== 3) {
+                return false;
+            }
         }
-
         return true;
     }
 
