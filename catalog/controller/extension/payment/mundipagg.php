@@ -453,6 +453,23 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
+    private function getPostData() {
+        $postData = $this->request->post;
+        for($index = 1; $index <= 2; $index++) {
+            $paymentDetailsKey = 'saved-creditcard-installments-' . $index;
+            if (
+                $postData['mundipaggSavedCreditCard-' . $index] === 'new' ||
+                $postData['mundipaggSavedCreditCard-' . $index] === null
+            ) {
+                $paymentDetailsKey = 'new-creditcard-installments-' . $index;
+            }
+            if (!isset($postData['payment-details-' . $index])) {
+                $postData['payment-details-' . $index] = $postData[$paymentDetailsKey];
+            }
+        }
+        return $postData;
+    }
+
     public function processTwoCreditCards()
     {
         $this->load();
@@ -466,30 +483,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         try {
-            //@fixme do it in a better way
-            $postData = $this->request->post;
-            $paymentDetailsKey1 = 'saved-creditcard-installments-1';
-            if (
-                $postData['mundipaggSavedCreditCard-1'] === 'new' ||
-                $postData['mundipaggSavedCreditCard-1'] === null
-            ) {
-                $paymentDetailsKey1 = 'new-creditcard-installments-1';
-            }
-            if (!isset($postData['payment-details-1'])) {
-                $postData['payment-details-1'] = $postData[$paymentDetailsKey1];
-            }
-
-            $paymentDetailsKey2 = 'saved-creditcard-installments-2';
-            if (
-                $postData['mundipaggSavedCreditCard-2'] === 'new' ||
-                $postData['mundipaggSavedCreditCard-2'] === null
-            ) {
-                $paymentDetailsKey2 = 'new-creditcard-installments-2';
-            }
-            if (!isset($postData['payment-details-2'])) {
-                $postData['payment-details-2'] = $postData[$paymentDetailsKey2];
-            }
-            ////////////////////////////////////
+            $postData = $this->getPostData();
             $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart);
             $response = $twoCreditCards->processPayment();
         } catch (\Exception $e) {
