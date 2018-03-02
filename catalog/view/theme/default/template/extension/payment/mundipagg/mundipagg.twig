@@ -55,6 +55,7 @@
         {% endif %}
         {% include boletoCreditCardTemplate %}
     </div>
+    <input type="hidden" id="mundipagg-order-total" value="{{ amount }}" />
 </section>
 
 <script src="{{ themeDirectory }}/scripts/mundipagg/transparent.js" data-mundicheckout-app-id="{{ publicKey }}"></script>

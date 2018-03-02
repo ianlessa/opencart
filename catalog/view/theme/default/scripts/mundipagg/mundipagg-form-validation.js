@@ -18,15 +18,16 @@ MundiPagg.Validator = function() {
             var ignoredForms = JSON.parse(form.attr('disabled-forms'));
 
             inputsToValidate.each(function(index,element){
-                var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");;
+                var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");
                 var elementIndex = checkoutElement[1];
                 var elementType = checkoutElement[0];
                 var elementValue = $(element).val();
 
-                //if the form is on the disable list, validate only saved card installments;
+                //if the form is on the disable list, validate only saved card installments and amount;
                 if (
                     ignoredForms.indexOf(parseInt(elementIndex)) > -1 &&
-                    elementType !== 'saved_installments'
+                    elementType !== 'saved_installments' &&
+                    elementType !== 'amount'
                 ) {
                     return;
                 }
@@ -80,7 +81,8 @@ MundiPagg.Validator = function() {
                         }
                         break;
                     case 'amount':
-                        error = this.validateAmounts($(element).val());
+                        var max = parseFloat($('#mundipagg-order-total').val());
+                        error = this.validateAmount($(element).val(),max,inputsToValidate);
                         if (typeof error !== 'undefined') {
                             hasErrors = true;
                             errors['amount'][elementIndex] = error;
@@ -92,6 +94,29 @@ MundiPagg.Validator = function() {
                 hasErrors : hasErrors,
                 errors : errors
             };
+        },
+
+        validateAmount: function(value,max,inputs) {
+            var floatValue = parseFloat(value);
+            if (floatValue <= 0) {
+                return 'Valor não pode ser menor ou igual a zero.'
+            }
+
+            if (floatValue > max) {
+                return 'Valor não pode ser maior que ' + max + '.';
+            }
+
+            var amountsAccumulator = 0;
+            inputs.each(function(index,element){
+                let checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");
+                if (checkoutElement[0] === 'amount') {
+                    amountsAccumulator += parseFloat($(element).val());
+                }
+            });
+            if (amountsAccumulator !== max) {
+                return 'A soma dos valores deve ser exatamente ' + max + '.'
+            }
+            return undefined;
         },
 
         validateExpiration: function (month, year) {
@@ -182,7 +207,8 @@ MundiPagg.Form = function() {
                 'holder-name': 'holder-name-message',
                 'cvv' : 'cvv-message',
                 'new_installments': 'new_installments-message',
-                'saved_installments': 'saved_installments-message'
+                'saved_installments': 'saved_installments-message',
+                'amount': 'amount-message'
             };
 
             Object.keys(errorIndexes).forEach(function(property){
@@ -215,7 +241,7 @@ MundiPagg.Form = function() {
                 }
             }.bind(this), false);
             // listener to handle form validation
-            this.submitForm.each(function(index,formElement){
+            this.submitForms.each(function(index,formElement){
                 formElement.addEventListener('submit', function(event) {
                     this.clearErrorMessages($(formElement));
                     var result = this.validator.validateForm($(formElement));
@@ -226,6 +252,26 @@ MundiPagg.Form = function() {
                         event.preventDefault();
                     }
                 }.bind(this), false);
+
+                //setting autobalance;
+                var amountInputs = $(formElement).find(".mundipagg-amount");
+                if (amountInputs.length === 2) { //needs amount auto balance
+                    $(amountInputs).each(function(index,element) {
+                        var oppositeIndex = index === 0 ? 1 : 0;
+                        var oppositeInput = amountInputs[oppositeIndex];
+                        var max = parseFloat($('#mundipagg-order-total').val());
+                        $(element).on('input',function(){
+                            var elementValue = parseFloat($(element).val());
+                            if (elementValue > max) {
+                                elementValue = max;
+                            }
+                            var oppositeValue = max - elementValue;
+                            $(oppositeInput).val(oppositeValue);
+                            $(element).val(elementValue);
+                        });
+                    });
+                }
+
             }.bind(this));
 
             // add listener to clean up card number field
@@ -257,7 +303,7 @@ MundiPagg.Form = function() {
         initializeVariables: function() {
 
             this.cardBrand = document.querySelector('[data-mundicheckout-brand]');
-            this.submitForm = $('[data-mundicheckout-form]');
+            this.submitForms = $('[data-mundicheckout-form]');
             this.cardNumberFields = $('.mundipagg-cardNumber');
             this.cardNameFields = $('.mundipagg-cardName');
             this.cardCVVFields = $('.mundipagg-cardCVV');
