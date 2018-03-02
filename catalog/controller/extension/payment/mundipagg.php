@@ -453,20 +453,39 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
+    private function getPostData()
+    {
+        $postData = $this->request->post;
+        for ($index = 1; $index <= 2; $index++) {
+            $paymentDetailsKey = 'saved-creditcard-installments-' . $index;
+            if (
+                $postData['mundipaggSavedCreditCard-' . $index] === 'new' ||
+                $postData['mundipaggSavedCreditCard-' . $index] === null
+            ) {
+                $paymentDetailsKey = 'new-creditcard-installments-' . $index;
+            }
+            if (!isset($postData['payment-details-' . $index])) {
+                $postData['payment-details-' . $index] = $postData[$paymentDetailsKey];
+            }
+        }
+        return $postData;
+    }
+
     public function processTwoCreditCards()
     {
         $this->load();
 
         if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
             Log::create()
-                ->error(LogMessages::UNKNOWN_ORDER_STATUS, __METHOD__)
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
                 ->withOrderId($this->session->data['order_id']);
 
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
         try {
-            $twoCreditCards = new TwoCreditCards($this, $this->request->post, $this->cart);
+            $postData = $this->getPostData();
+            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart);
             $response = $twoCreditCards->processPayment();
         } catch (\Exception $e) {
             Log::create()
@@ -504,6 +523,18 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $post = $this->request->post;
         $formId = $post['mundipagg-formid'];
+
+        //validate creditcard amount;
+        $creditCardAmount = floatval($post['amount-' . $formId]);
+        $orderId = $this->session->data['order_id'];
+        $orderDetails = $this->model_checkout_order->getOrder($orderId);
+        $orderTotal = floatval($orderDetails['total']);
+        if ($creditCardAmount <= 0 || $creditCardAmount >= $orderTotal) {
+            Log::create()
+                ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
+                ->withOrderId($this->session->data['order_id']);
+            $this->response->redirect($this->url->link('checkout/failure'));
+        }
 
         $card = $this->fillCreditCardData($formId);
         $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -594,7 +625,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private function fillSavedCreditCardData($post, $formId)
     {
-        $installments = $post['saved-credit-card-installments-' . $formId];
+        $installments = $post['saved-creditcard-installments-' . $formId];
         $card['paymentDetails'] = explode('|', $installments);
         $card['cardId'] = $post['mundipaggSavedCreditCard-' . $formId];
         $card['cardToken'] = null;
@@ -628,30 +659,100 @@ class ControllerExtensionPaymentMundipagg extends Controller
         return $card;
     }
 
+    private function prepareCreditCardsValidationData($requestData)
+    {
+        $cardsData = [];
+        foreach ($requestData as $input => $value) {
+            $inputData = explode('-',$input);
+            $inputId = array_pop($inputData);
+
+            if (!is_numeric($inputId)) {
+                continue;
+            }
+
+            $key = implode('-',$inputData);
+
+            if (!isset($cardsData[$inputId])) {
+                $cardsData[$inputId] = [];
+            }
+
+            $cardsData[$inputId][$key] = $value;
+        }
+        return $cardsData;
+    }
+
+    private function isSavedCreditCardValidationNeeded()
+    {
+        $creditCardSettings = new CreditCardSettings($this);
+        $savedCreditcard = new SavedCreditCard($this);
+
+        $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
+        $savedCreditcards = null;
+
+        if ($isSavedCreditCardEnabled) {
+            $savedCreditcards = $savedCreditcard->getSavedCreditcardList($this->customer->getId());
+        }
+
+        return $isSavedCreditCardEnabled && $savedCreditcards != null;
+    }
+    private function validateCreditCardData($cardData,$validateSaved)
+    {
+        if (!$validateSaved) {
+            $cardData['mundipaggSavedCreditCard'] = 'new';
+        }
+
+        if (!isset($cardData['mundipaggSavedCreditCard'])) {
+            return false;
+        }
+
+        if (!isset($cardData['amount'])) {
+            return false;
+        }
+
+        $check = 'saved-creditcard-installments';
+        if ($cardData['mundipaggSavedCreditCard'] === 'new') {
+            $check = 'new-creditcard-installments';
+            if (!isset($cardData['munditoken'])) {
+                return false;
+            }
+        }
+
+        if (!isset($cardData[$check])) {
+            return false;
+        }
+
+        if (count(explode('|',$cardData[$check])) !== 3) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validateAmount($totalAmount)
+    {
+        $orderId = $this->session->data['order_id'];
+        $orderDetails = $this->model_checkout_order->getOrder($orderId);
+        $orderTotal = floatval($orderDetails['total']);
+
+        return $totalAmount === $orderTotal;
+    }
+
     private function isValidTwoCreditCardsRequest($requestData)
     {
-        //@fixme do the validations.
-        return true;
-        $paymentDetailsKey = 'payment-details';
-        if (isset($requestData['saved-credit-card-installments-1'])) {
-            $paymentDetailsKey = 'saved-credit-card-installments';
-        }
-        $paymentDetailsFirstCard = explode('|', $requestData[$paymentDetailsKey.'-1']);
-        $paymentDetailsSecondCard = explode('|', $requestData[$paymentDetailsKey.'-2']);
+        //prepare card data
+        $cardsData = $this->prepareCreditCardsValidationData($requestData);
+        $validateSaved = $this->isSavedCreditCardValidationNeeded();
 
-        if (count($paymentDetailsFirstCard) !== 3 || count($paymentDetailsSecondCard) !== 3) {
-            return false;
-        }
-
-        if (!isset($requestData['amount-1'], $requestData['amount-2'])) {
-            return false;
+        //do the validations
+        $totalAmount = 0;
+        foreach ($cardsData as $inputId => $cardData) {
+            if (!$this->validateCreditCardData($cardData,$validateSaved)) {
+                return false;
+            }
+            $totalAmount += floatval($cardData['amount']);
         }
 
-        if (!isset($requestData['munditoken-1'], $requestData['munditoken-2'])) {
-            return false;
-        }
-
-        return true;
+        return $this->validateAmount($totalAmount);
     }
 
     /**

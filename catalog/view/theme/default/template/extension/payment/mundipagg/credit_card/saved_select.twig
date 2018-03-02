@@ -28,12 +28,14 @@
         <div class="col-sm-4 savedCreditcard">
             <label>{{ credit_card.installments }}</label>
             <select
-                    name="saved-credit-card-installments-{{ inputId }}"
+                    name="saved-creditcard-installments-{{ inputId }}"
                     id="saved-creditcard-installments-{{ inputId }}"
                     class="form-control installments"
+                    data-mundipagg-validation-element="saved_installments-{{ inputId }}"
             >
                 <option value="">Selecione</option>
             </select>
+            <span id="saved_installments-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 </div>
