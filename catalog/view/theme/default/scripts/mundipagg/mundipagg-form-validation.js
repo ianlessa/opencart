@@ -14,8 +14,13 @@ MundiPagg.Validator = function() {
                 'amount': {}
             };
             var inputsToValidate = form.find('[data-mundipagg-validation-element]');
+            var ignoredForms = [];
+            try {
+                ignoredForms = JSON.parse(form.attr('disabled-forms'));
+            } catch(e){
+                ignoredForms = [];
+            }
 
-            var ignoredForms = JSON.parse(form.attr('disabled-forms'));
 
             inputsToValidate.each(function(index,element){
                 var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");

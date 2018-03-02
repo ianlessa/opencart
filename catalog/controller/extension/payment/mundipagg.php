@@ -468,12 +468,27 @@ class ControllerExtensionPaymentMundipagg extends Controller
         try {
             //@fixme do it in a better way
             $postData = $this->request->post;
-            $paymentDetailsKey1 = $postData['mundipaggSavedCreditCard-1'] === 'new' ?
-                'new-creditcard-installments-1' : 'saved-creditcard-installments-1';
-            $paymentDetailsKey2 = $postData['mundipaggSavedCreditCard-2'] === 'new' ?
-                'new-creditcard-installments-2' : 'saved-creditcard-installments-2';
-            $postData['payment-details-1'] = $postData[$paymentDetailsKey1];
-            $postData['payment-details-2'] = $postData[$paymentDetailsKey2];
+            $paymentDetailsKey1 = 'saved-creditcard-installments-1';
+            if (
+                $postData['mundipaggSavedCreditCard-1'] === 'new' ||
+                $postData['mundipaggSavedCreditCard-1'] === null
+            ) {
+                $paymentDetailsKey1 = 'new-creditcard-installments-1';
+            }
+            if (!isset($postData['payment-details-1'])) {
+                $postData['payment-details-1'] = $postData[$paymentDetailsKey1];
+            }
+
+            $paymentDetailsKey2 = 'saved-creditcard-installments-2';
+            if (
+                $postData['mundipaggSavedCreditCard-2'] === 'new' ||
+                $postData['mundipaggSavedCreditCard-2'] === null
+            ) {
+                $paymentDetailsKey2 = 'new-creditcard-installments-2';
+            }
+            if (!isset($postData['payment-details-2'])) {
+                $postData['payment-details-2'] = $postData[$paymentDetailsKey2];
+            }
             ////////////////////////////////////
             $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart);
             $response = $twoCreditCards->processPayment();
@@ -667,8 +682,20 @@ class ControllerExtensionPaymentMundipagg extends Controller
         }
 
         //do the validations
+        $creditCardSettings = new CreditCardSettings($this);
+        $savedCreditcard = new SavedCreditCard($this);
+        $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
+        $savedCreditcards = null;
+        if ($isSavedCreditCardEnabled) {
+            $savedCreditcards = $savedCreditcard->getSavedCreditcardList($this->customer->getId());
+        }
+        $validateSaved = $isSavedCreditCardEnabled && $savedCreditcards != null;
+
         $totalAmount = 0;
         foreach($cardsData as $inputId => $cardData) {
+            if (!$validateSaved) {
+                $cardData['mundipaggSavedCreditCard'] = 'new';
+            }
             if (!isset($cardData['mundipaggSavedCreditCard'])) {
                 return false;
             }
