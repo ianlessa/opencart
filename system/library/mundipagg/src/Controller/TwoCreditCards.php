@@ -90,8 +90,19 @@ class TwoCreditCards
 
     private function getAmountWithInterest()
     {
-        $firstCardAmount = intval($this->amount[0]) + ((floatval($this->interest[0]) /100) * intval($this->amount[0]));
-        $secondCardAmount = intval($this->amount[1]) + ((floatval($this->interest[1]) / 100 )* intval($this->amount[1]));
+        $firstCardAmount =
+            intval($this->amount[0]) +
+            (
+                (floatval($this->interest[0]) / 100) *
+                intval($this->amount[0])
+            );
+
+        $secondCardAmount =
+            intval($this->amount[1]) +
+            (
+                (floatval($this->interest[1]) / 100 ) *
+                intval($this->amount[1])
+            );
 
         return $firstCardAmount + $secondCardAmount;
     }
@@ -121,11 +132,21 @@ class TwoCreditCards
         $this->interest[] = explode('|', $this->details['payment-details-2'])[2];
     }
 
-
     private function setAmountWithInterest()
     {
-        $firstCardAmount = intval($this->amount[0]) + ((floatval($this->interest[0]) /100) * intval($this->amount[0]));
-        $secondCardAmount = intval($this->amount[1]) + ((floatval($this->interest[1]) / 100 )* intval($this->amount[1]));
+        $firstCardAmount =
+            intval($this->amount[0]) +
+            (
+                (floatval($this->interest[0]) / 100) *
+                intval($this->amount[0])
+            );
+
+        $secondCardAmount =
+            intval($this->amount[1]) +
+            (
+                (floatval($this->interest[1]) / 100 ) *
+                intval($this->amount[1])
+            );
 
         $this->amountWithInterest[] = $firstCardAmount;
         $this->amountWithInterest[] = $secondCardAmount;
@@ -139,15 +160,8 @@ class TwoCreditCards
 
     private function setCardId()
     {
-
         $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
         $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
-
-        foreach($this->cardId as &$cardId) {
-            if($cardId === 'new') {
-                $cardId = null;
-            }
-        }
     }
 
     private function setInstallments()

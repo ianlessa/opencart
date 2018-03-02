@@ -3,7 +3,8 @@ var MundiPagg = {};
 MundiPagg.Validator = function() {
     return {
 
-        skipValidation: function(ignoredForms,elementType,elementIndex){
+        skipValidation: function(ignoredForms,elementType,elementIndex)
+        {
             //if the form is on the disable list, validate only saved card installments and amount;
             if (
                 ignoredForms.indexOf(parseInt(elementIndex)) > -1 &&
@@ -16,7 +17,6 @@ MundiPagg.Validator = function() {
             //if the form isn't on the disable list, ignore saved card installments validation;
             return ignoredForms.indexOf(parseInt(elementIndex)) === -1 &&
                 elementType === 'saved_installments';
-
         },
 
         initValidationContext: function(form,callerObject) {
@@ -62,7 +62,8 @@ MundiPagg.Validator = function() {
             };
         },
 
-        validateForm: function (form) {
+        validateForm: function (form)
+        {
             var validationContext = this.initValidationContext(form,this);
 
             validationContext.inputsToValidate.each(function(index,element){
@@ -108,7 +109,8 @@ MundiPagg.Validator = function() {
             };
         },
 
-        validateAmount: function(value,max,inputs) {
+        validateAmount: function(value,max,inputs)
+        {
             var floatValue = parseFloat(value);
             if (floatValue <= 0) {
                 return 'Valor não pode ser menor ou igual a zero.'
@@ -277,12 +279,16 @@ MundiPagg.Form = function() {
                         var oppositeIndex = index === 0 ? 1 : 0;
                         var oppositeInput = amountInputs[oppositeIndex];
                         var max = parseFloat($('#mundipagg-order-total').val());
+
                         $(element).on('input',function(){
                             var elementValue = parseFloat($(element).val());
+
                             if (elementValue > max) {
                                 elementValue = max;
                             }
+
                             var oppositeValue = max - elementValue;
+
                             $(oppositeInput).val(oppositeValue);
                             $(element).val(elementValue);
                         });
@@ -350,7 +356,6 @@ function hideElements() {
 }
 
 $("#mundipaggCheckout").ready(function () {
-
     var mundiValidator = MundiPagg.Validator();
     var mundiForm = MundiPagg.Form();
 

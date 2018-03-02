@@ -96,7 +96,7 @@ class Order
         );
     }
 
-    public function updateAmount($orderId,$amount)
+    public function updateAmount($orderId, $amount)
     {
         $sql = "UPDATE `" . DB_PREFIX . "order` " .
             "set `total` = '" . $amount . "' " .
