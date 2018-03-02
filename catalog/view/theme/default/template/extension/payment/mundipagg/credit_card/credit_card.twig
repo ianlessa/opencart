@@ -10,6 +10,7 @@
                             type="text"
                             class="form-control col-sm-12 mundipagg-cardNumber"
                             maxlength="19" id="cardNumber"
+                            data-mundipagg-validation-element="number-{{ inputId }}"
                             data-mundicheckout-element="number-{{ inputId }}">
                     <span class="input-group-addon" inputId="{{ inputId }}" data-mundicheckout-element="brand-{{ inputId }}" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
@@ -24,7 +25,7 @@
                             class="form-control installments"
                             id="new-creditcard-installments-{{ inputId }}"
                             data-brand="{{ brand }}"
-                            data-mundicheckout-element="new_installments-{{ inputId }}"
+                            data-mundipagg-validation-element="new_installments-{{ inputId }}"
                     >
                         <option value="">Selecione</option>
                     </select>
@@ -35,14 +36,26 @@
             <div class="col-sm-2" id="expiration-date-field ">
                 <label class="row">{{ credit_card.valid_thru }}</label>
                 <div class="row ">
-                    <select  name="card-exp-month" id="cardExpMonth" class="form-control col-sm-6" style="width: 40%;" data-mundicheckout-element="exp_month-{{ inputId }}">
+                    <select
+                            name="card-exp-month"
+                            id="cardExpMonth"
+                            class="form-control col-sm-6"
+                            style="width: 40%;"
+                            data-mundipagg-validation-element="exp_month-{{ inputId }}"
+                            data-mundicheckout-element="exp_month-{{ inputId }}">
                         {% for month in 1..12 %}
                             <!-- this makes every month two digits long -->
                             <!--option value="{{ "%02d"|format(month) }}">{{ "%02d"|format(month) }}</option-->
                             <option value="{{ month }}">{{ month }}</option>
                         {% endfor %}
                     </select>
-                    <select name="card-exp-year" id="cardExpYear" class="form-control col-sm-6" style="width: 60%" data-mundicheckout-element="exp_year-{{ inputId }}">
+                    <select
+                            name="card-exp-year"
+                            id="cardExpYear"
+                            class="form-control col-sm-6"
+                            style="width: 60%"
+                            data-mundipagg-validation-element="exp_year-{{ inputId }}"
+                            data-mundicheckout-element="exp_year-{{ inputId }}">
                         {% for year in 2018..2030 %}
                             <option value="{{ year }}">{{ year }}</option>
                         {% endfor %}
@@ -62,6 +75,7 @@
                     class="form-control mundipagg-cardName"
                     maxlength="50"
                     id="cardName"
+                    data-mundipagg-validation-element="holder_name-{{ inputId }}"
                     data-mundicheckout-element="holder_name-{{ inputId }}">
             <span  id="holder-name-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
@@ -74,6 +88,7 @@
                     class="form-control mundipagg-cardCVV"
                     maxlength="4"
                     id="cardCVV"
+                    data-mundipagg-validation-element="cvv-{{ inputId }}"
                     data-mundicheckout-element="cvv-{{ inputId }}">
             <span id="cvv-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>

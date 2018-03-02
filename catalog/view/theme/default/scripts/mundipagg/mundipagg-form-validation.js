@@ -10,14 +10,15 @@ MundiPagg.Validator = function() {
                 'holder-name': {},
                 'cvv' : {},
                 'new_installments': {},
-                'saved_installments': {}
+                'saved_installments': {},
+                'amount': {}
             };
-            var inputsToValidate = form.find('[data-mundicheckout-element]');
+            var inputsToValidate = form.find('[data-mundipagg-validation-element]');
 
             var ignoredForms = JSON.parse(form.attr('disabled-forms'));
 
             inputsToValidate.each(function(index,element){
-                var checkoutElement = $(element).attr('data-mundicheckout-element').split("-");;
+                var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");;
                 var elementIndex = checkoutElement[1];
                 var elementType = checkoutElement[0];
                 var elementValue = $(element).val();
@@ -55,8 +56,8 @@ MundiPagg.Validator = function() {
                         break;
                     case 'exp_month':
                     case 'exp_year':
-                        var exp_month = $('[data-mundicheckout-element="exp_month-'+elementIndex+'"]');
-                        var exp_year = $('[data-mundicheckout-element="exp_year-'+elementIndex+'"]');
+                        var exp_month = $('[data-mundipagg-validation-element="exp_month-'+elementIndex+'"]');
+                        var exp_year = $('[data-mundipagg-validation-element="exp_year-'+elementIndex+'"]');
                         error = this.validateExpiration($(exp_month).val(), $(exp_year).val());
                         if (typeof error !== 'undefined') {
                             hasErrors = true;
@@ -64,7 +65,7 @@ MundiPagg.Validator = function() {
                         }
                         break;
                     case 'cvv':
-                        error =  this.validateCVV($(element).val());
+                        error = this.validateCVV($(element).val());
                         if (typeof error !== 'undefined') {
                             hasErrors = true;
                             errors['cvv'][elementIndex] = error;
@@ -77,7 +78,14 @@ MundiPagg.Validator = function() {
                             hasErrors = true;
                             errors[elementType][elementIndex] = error;
                         }
-                    break;
+                        break;
+                    case 'amount':
+                        error = this.validateAmounts($(element).val());
+                        if (typeof error !== 'undefined') {
+                            hasErrors = true;
+                            errors['amount'][elementIndex] = error;
+                        }
+                        break;
                 }
             }.bind(this));
             return {
@@ -312,18 +320,6 @@ $("#mundipaggCheckout").ready(function () {
     $('.input-group-addon').bind("DOMSubtreeModified",function(){
         installments($(this));
     });
-
-    //to preserve card installments;
-    $('.installments').change(function(event){
-        var targetInput = event.target;
-        var elementId = targetInput.id;
-
-        $('input[name="'+elementId+'"][type="hidden"]').remove();
-        $('<input />').attr('type','hidden').attr('name',elementId).appendTo($(targetInput).parent());
-        $('input[name="'+elementId+'"][type="hidden"]').val(targetInput.value);
-    });
-
-
 });
 
 
