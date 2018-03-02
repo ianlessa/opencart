@@ -2,102 +2,109 @@ var MundiPagg = {};
 
 MundiPagg.Validator = function() {
     return {
-        validateForm: function (form) {
-            var hasErrors = false;
-            var errors = {
-                'credit-card-number': {},
-                'expiration': {},
-                'holder-name': {},
-                'cvv' : {},
-                'new_installments': {},
-                'saved_installments': {},
-                'amount': {}
-            };
-            var inputsToValidate = form.find('[data-mundipagg-validation-element]');
+
+        skipValidation: function(ignoredForms,elementType,elementIndex){
+            //if the form is on the disable list, validate only saved card installments and amount;
+            if (
+                ignoredForms.indexOf(parseInt(elementIndex)) > -1 &&
+                elementType !== 'saved_installments' &&
+                elementType !== 'amount'
+            ) {
+                return true;
+            }
+
+            //if the form isn't on the disable list, ignore saved card installments validation;
+            return ignoredForms.indexOf(parseInt(elementIndex)) === -1 &&
+                elementType === 'saved_installments';
+
+        },
+
+        initValidationContext: function(form,callerObject) {
             var ignoredForms = [];
             try {
                 ignoredForms = JSON.parse(form.attr('disabled-forms'));
             } catch(e){
                 ignoredForms = [];
             }
+            return {
+                hasErrors: false,
+                errors: {
+                    'credit-card-number': {},
+                    'expiration': {},
+                    'holder-name': {},
+                    'cvv' : {},
+                    'new_installments': {},
+                    'saved_installments': {},
+                    'amount': {}
+                },
+                validationFunction: {
+                    'number': callerObject.validateCardNumber,
+                    'exp_month': callerObject.validateExpiration,
+                    'exp_year': callerObject.validateExpiration,
+                    'holder_name': callerObject.validateHolderName,
+                    'cvv' : callerObject.validateCVV,
+                    'new_installments': callerObject.validateInstallments,
+                    'saved_installments': callerObject.validateInstallments,
+                    'amount': callerObject.validateAmount
+                },
+                validationErrorType: {
+                    'number': 'credit-card-number',
+                    'exp_month': 'expiration',
+                    'exp_year': 'expiration',
+                    'holder_name': 'holder-name',
+                    'cvv' : 'cvv',
+                    'new_installments': 'new_installments',
+                    'saved_installments': 'saved_installments',
+                    'amount': 'amount'
+                },
+                inputsToValidate: form.find('[data-mundipagg-validation-element]'),
+                ignoredForms: ignoredForms
+            };
+        },
 
+        validateForm: function (form) {
+            var validationContext = this.initValidationContext(form,this);
 
-            inputsToValidate.each(function(index,element){
+            validationContext.inputsToValidate.each(function(index,element){
                 var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");
                 var elementIndex = checkoutElement[1];
                 var elementType = checkoutElement[0];
                 var elementValue = $(element).val();
 
-                //if the form is on the disable list, validate only saved card installments and amount;
-                if (
-                    ignoredForms.indexOf(parseInt(elementIndex)) > -1 &&
-                    elementType !== 'saved_installments' &&
-                    elementType !== 'amount'
-                ) {
+                if(this.skipValidation(validationContext.ignoredForms,elementType,elementIndex)) {
                     return;
                 }
 
-                //if the form isn't on the disable list, ignore saved card installments validation;
-                if (
-                    ignoredForms.indexOf(parseInt(elementIndex)) === -1 &&
-                    elementType === 'saved_installments'
-                ) {
-                    return;
-                }
-
+                var validationFunction = validationContext.validationFunction[elementType];
+                var arg1 = elementValue;
+                var arg2 = null;
+                var arg3 = null;
                 switch(elementType) {
-                    case 'number':
-                        error = this.validateCardNumber(elementValue);
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors['credit-card-number'][elementIndex] = error;
-                        }
-                        break;
-                    case 'holder_name':
-                        error = this.validateHolderName(elementValue);
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors['holder-name'][elementIndex] = error;
-                        }
-                        break;
                     case 'exp_month':
                     case 'exp_year':
-                        var exp_month = $('[data-mundipagg-validation-element="exp_month-'+elementIndex+'"]');
-                        var exp_year = $('[data-mundipagg-validation-element="exp_year-'+elementIndex+'"]');
-                        error = this.validateExpiration($(exp_month).val(), $(exp_year).val());
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors['expiration'][elementIndex] = error;
-                        }
-                        break;
-                    case 'cvv':
-                        error = this.validateCVV($(element).val());
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors['cvv'][elementIndex] = error;
-                        }
-                        break;
-                    case 'new_installments':
-                    case 'saved_installments':
-                        error = this.validateInstallments($(element).val());
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors[elementType][elementIndex] = error;
-                        }
+                        arg1 = $($('[data-mundipagg-validation-element="exp_month-'+elementIndex+'"]')).val();
+                        arg2 = $($('[data-mundipagg-validation-element="exp_year-'+elementIndex+'"]')).val();
                         break;
                     case 'amount':
-                        var max = parseFloat($('#mundipagg-order-total').val());
-                        error = this.validateAmount($(element).val(),max,inputsToValidate);
-                        if (typeof error !== 'undefined') {
-                            hasErrors = true;
-                            errors['amount'][elementIndex] = error;
-                        }
+                        arg2 = parseFloat($('#mundipagg-order-total').val());
+                        arg3 = validationContext.inputsToValidate;
                         break;
                 }
+
+                var error = validationFunction(arg1,arg2,arg3);
+                if (typeof error !== 'undefined') {
+                    validationContext.hasErrors = true;
+                    validationContext.errors[
+                        validationContext.validationErrorType[
+                            elementType
+                            ]
+                        ][elementIndex] = error;
+                }
             }.bind(this));
+
             return {
-                hasErrors : hasErrors,
-                errors : errors
+                hasErrors : validationContext.hasErrors,
+                errors : validationContext.errors
             };
         },
 
@@ -154,7 +161,7 @@ MundiPagg.Validator = function() {
         },
 
         validateCardNumber: function (number) {
-            if (!this.isValidCreditCardNumber(number)) {
+            if (!isValidCreditCardNumber(number)) {
                 return 'Cartão de crédito inválido';
             }
 
@@ -168,33 +175,33 @@ MundiPagg.Validator = function() {
         validateInstallments: function (number) {
             var errorMsg = "Por favor, selecione as parcelas.";
             return number === '' ? errorMsg : undefined;
-        },
-
-        isValidCreditCardNumber: function (value) {
-            // accept only digits, dashes or spaces
-            if (/[^0-9-\s]+/.test(value)) {
-                return false;
-            }
-
-            var nCheck = 0, nDigit = 0, bEven = false;
-            value = value.replace(/\D/g, "");
-
-            for (var n = value.length - 1; n >= 0; n--) {
-                var cDigit = value.charAt(n),
-                    nDigit = parseInt(cDigit, 10);
-
-                if (bEven) {
-                    if ((nDigit *= 2) > 9) nDigit -= 9;
-                }
-
-                nCheck += nDigit;
-                bEven = !bEven;
-            }
-
-            return (nCheck % 10) == 0;
         }
     };
 };
+
+function isValidCreditCardNumber(value) {
+    // accept only digits, dashes or spaces
+    if (/[^0-9-\s]+/.test(value)) {
+        return false;
+    }
+
+    var nCheck = 0, nDigit = 0, bEven = false;
+    value = value.replace(/\D/g, "");
+
+    for (var n = value.length - 1; n >= 0; n--) {
+        var cDigit = value.charAt(n),
+            nDigit = parseInt(cDigit, 10);
+
+        if (bEven) {
+            if ((nDigit *= 2) > 9) nDigit -= 9;
+        }
+
+        nCheck += nDigit;
+        bEven = !bEven;
+    }
+
+    return (nCheck % 10) == 0;
+}
 
 MundiPagg.Form = function() {
     return {
@@ -249,12 +256,17 @@ MundiPagg.Form = function() {
             this.submitForms.each(function(index,formElement){
                 formElement.addEventListener('submit', function(event) {
                     this.clearErrorMessages($(formElement));
-                    var result = this.validator.validateForm($(formElement));
-
-                    if (result.hasErrors) {
-                        this.showErrorMessages(result.errors);
+                    try {
+                        var result = this.validator.validateForm($(formElement));
+                        if (result.hasErrors) {
+                            this.showErrorMessages(result.errors);
+                            event.stopImmediatePropagation();
+                            event.preventDefault();
+                        }
+                    } catch (e) {
                         event.stopImmediatePropagation();
                         event.preventDefault();
+                        throw e;
                     }
                 }.bind(this), false);
 
