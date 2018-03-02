@@ -664,9 +664,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         return $card;
     }
 
-    private function isValidTwoCreditCardsRequest($requestData)
-    {
-        //prepare card data
+    private function prepareCreditCardsValidationData($requestData) {
         $cardsData = [];
         foreach ($requestData as $input => $value) {
             $inputData = explode('-',$input);
@@ -680,8 +678,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
             }
             $cardsData[$inputId][$key] = $value;
         }
+        return $cardsData;
+    }
 
-        //do the validations
+    private function isSavedCreditCardValidationNeeded() {
         $creditCardSettings = new CreditCardSettings($this);
         $savedCreditcard = new SavedCreditCard($this);
         $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
@@ -689,44 +689,56 @@ class ControllerExtensionPaymentMundipagg extends Controller
         if ($isSavedCreditCardEnabled) {
             $savedCreditcards = $savedCreditcard->getSavedCreditcardList($this->customer->getId());
         }
-        $validateSaved = $isSavedCreditCardEnabled && $savedCreditcards != null;
+        return $isSavedCreditCardEnabled && $savedCreditcards != null;
+    }
+    private function validateCreditCardData($cardData,$validateSaved) {
+        if (!$validateSaved) {
+            $cardData['mundipaggSavedCreditCard'] = 'new';
+        }
+        if (!isset($cardData['mundipaggSavedCreditCard'])) {
+            return false;
+        }
+        if (!isset($cardData['amount'])) {
+            return false;
+        }
+        $check = 'saved-creditcard-installments';
+        if ($cardData['mundipaggSavedCreditCard'] === 'new') {
+            $check = 'new-creditcard-installments';
+            if (!isset($cardData['munditoken'])) {
+                return false;
+            }
+        }
+        if (!isset($cardData[$check])) {
+            return false;
+        }
+        if (count(explode('|',$cardData[$check])) !== 3) {
+            return false;
+        }
+        return true;
+    }
 
+    private function validateAmount($totalAmount){
+        $orderId = $this->session->data['order_id'];
+        $orderDetails = $this->model_checkout_order->getOrder($orderId);
+        $orderTotal = floatval($orderDetails['total']);
+        return $totalAmount === $orderTotal;
+    }
+
+    private function isValidTwoCreditCardsRequest($requestData)
+    {
+        //prepare card data
+        $cardsData = $this->prepareCreditCardsValidationData($requestData);
+        $validateSaved = $this->isSavedCreditCardValidationNeeded();
+
+        //do the validations
         $totalAmount = 0;
         foreach($cardsData as $inputId => $cardData) {
-            if (!$validateSaved) {
-                $cardData['mundipaggSavedCreditCard'] = 'new';
-            }
-            if (!isset($cardData['mundipaggSavedCreditCard'])) {
-                return false;
-            }
-            if (!isset($cardData['amount'])) {
-                return false;
-            }
-            $check = 'saved-creditcard-installments';
-            if ($cardData['mundipaggSavedCreditCard'] === 'new') {
-                $check = 'new-creditcard-installments';
-                if (!isset($cardData['munditoken'])) {
-                    return false;
-                }
-            }
-            if (!isset($cardData[$check])) {
-                return false;
-            }
-            if (count(explode('|',$cardData[$check])) !== 3) {
+            if (!$this->validateCreditCardData($cardData,$validateSaved)) {
                 return false;
             }
             $totalAmount += floatval($cardData['amount']);
         }
-
-        //validate amounts;
-        $orderId = $this->session->data['order_id'];
-        $orderDetails = $this->model_checkout_order->getOrder($orderId);
-        $orderTotal = floatval($orderDetails['total']);
-        if($totalAmount !== $orderTotal) {
-            return false;
-        }
-
-        return true;
+        return $this->validateAmount($totalAmount);
     }
 
     /**
