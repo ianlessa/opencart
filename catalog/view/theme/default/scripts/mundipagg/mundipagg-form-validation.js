@@ -254,7 +254,7 @@ MundiPagg.Form = function() {
                     this.showSpecific(brand, amount, inputId);
                 }
             }.bind(this), false);
-            // listener to handle form validation
+            // listener to handle form validation and remove sensitive information.
             this.submitForms.each(function(index,formElement){
                 formElement.addEventListener('submit', function(event) {
                     this.clearErrorMessages($(formElement));
@@ -264,7 +264,39 @@ MundiPagg.Form = function() {
                             this.showErrorMessages(result.errors);
                             event.stopImmediatePropagation();
                             event.preventDefault();
+                            return;
                         }
+
+                        //remove sensitive information if a saved credit card is used
+                        var formChildren = $(formElement).find('input, select');
+                        $(formChildren).each(function(index,element){
+                            if (!element.hasAttribute('data-mundipagg-validation-element')) {
+                                return;
+                            }
+
+                            var checkoutElement =
+                                $(element).attr('data-mundipagg-validation-element').split("-");
+                            var elementIndex = checkoutElement[1];
+                            var elementType = checkoutElement[0];
+                            var savedCreditCardSelect = $('#mundipaggSavedCreditCard-' + elementIndex);
+
+                            if (
+                                savedCreditCardSelect.val() === 'new' ||
+                                typeof savedCreditCardSelect.val() === 'undefined'
+                            ) {
+                                return;
+                            }
+
+                            switch(elementType){
+                                case 'number':
+                                case 'exp_month':
+                                case 'exp_year':
+                                case 'holder_name':
+                                case 'cvv':
+                                    $(element).remove();
+                            }
+                        });
+
                     } catch (e) {
                         event.stopImmediatePropagation();
                         event.preventDefault();
@@ -273,6 +305,7 @@ MundiPagg.Form = function() {
                 }.bind(this), false);
 
                 var amountInputs = $(formElement).find(".mundipagg-amount");
+
                 //distribute amount through amount inputs;
                 if(amountInputs.length > 1) {
                     var distributedAmount = parseFloat($('#mundipagg-order-total').val());
