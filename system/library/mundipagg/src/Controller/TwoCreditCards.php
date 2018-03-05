@@ -174,10 +174,8 @@ class TwoCreditCards
 
     private function setSaveCreditCard()
     {
-//        $this->saveCreditCards[] = $this->details['save-credit-card-0'];
-        $this->saveCreditCards[] = true;
-//        $this->saveCreditCards[] = $this->details['save-credit-card-1'];
-        $this->saveCreditCards[] = true;
+        $this->saveCreditCards[] = $this->details['save-this-credit-card-1'] === 'on';
+        $this->saveCreditCards[] = $this->details['save-this-credit-card-2'] === 'on';
     }
 
     private function saveCreditCards($orderResponse)
