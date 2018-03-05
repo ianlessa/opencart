@@ -272,8 +272,17 @@ MundiPagg.Form = function() {
                     }
                 }.bind(this), false);
 
-                //setting autobalance;
                 var amountInputs = $(formElement).find(".mundipagg-amount");
+                //distribute amount through amount inputs;
+                if(amountInputs.length > 1) {
+                    var distributedAmount = parseFloat($('#mundipagg-order-total').val());
+                    distributedAmount /= amountInputs.length;
+                    $(amountInputs).each(function(index,element) {
+                        $(element).val(distributedAmount);
+                    });
+                }
+
+                //setting autobalance;
                 if (amountInputs.length === 2) { //needs amount auto balance
                     $(amountInputs).each(function(index,element) {
                         var oppositeIndex = index === 0 ? 1 : 0;
