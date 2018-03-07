@@ -16,8 +16,10 @@
             <hr>
             <input type="hidden" name="mundipagg-formid" id="mundipagg-formid" value="{{ inputId }}" />
 
-            {%  include infoBoletoTemplate %}
-            {%  include submitTemplate %}
+            {% include infoBoletoTemplate %}
+            {%  set inputId = 4 %}
+            {% include orderAmountInput %}
+            {% include submitTemplate %}
         </form>
         {% if savedCreditcards != null %}
             <style>

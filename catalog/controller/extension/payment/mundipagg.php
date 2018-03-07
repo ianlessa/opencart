@@ -425,7 +425,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
-                $card['cardId']
+                [$card['cardId']]
             );
         } catch (Exception $e) {
             Log::create()
@@ -548,7 +548,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
-                $card['cardId']
+                [$card['cardId']]
             );
         } catch (Exception $e) {
             Log::create()
