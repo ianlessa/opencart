@@ -25,16 +25,37 @@
                 </a>
             </li>
         {% endif %}
+        {% if twoCreditCardStatus %}
+            <li class="mundipaggCheckoutTabs">
+                <a href="#twoCreditCardsTab" data-toggle="tab">
+                    <i class="fa fa-file-text"></i>
+                    <p>{{ twoCreditCardsPaymentTitle }}</p>
+                </a>
+            </li>
+        {% endif %}
+        {% if boletoCreditCardStatus %}
+        <li class="mundipaggCheckoutTabs">
+            <a href="#boletoCreditCardTab" data-toggle="tab">
+                <i class="fa fa-file-text"></i>
+                <p>Boleto + cartão de crédito</p>
+            </a>
+        </li>
+        {% endif %}
     </ul>
 
     <div class="mundipaggCheckoutTabsContent tab-content clearfix">
         {% if creditCardStatus %}
-            {{ creditcardTemplate }}
+            {% include baseCreditCardtemplate %}
         {% endif %}
         {% if boletoStatus %}
-            {{ boletoTemplate }}
+            {% include baseBoletoTemplate %}
         {% endif %}
+        {% if twoCreditCardStatus %}
+            {% include baseTwoCreditCardstemplate %}
+        {% endif %}
+        {% include boletoCreditCardTemplate %}
     </div>
+    <input type="hidden" id="mundipagg-order-total" value="{{ amount }}" />
 </section>
 
 <script src="{{ themeDirectory }}/scripts/mundipagg/transparent.js" data-mundicheckout-app-id="{{ publicKey }}"></script>

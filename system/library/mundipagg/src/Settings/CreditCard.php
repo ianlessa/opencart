@@ -36,6 +36,17 @@ class CreditCard
         return $this->openCart->config->get('payment_mundipagg_credit_card_operation');
     }
 
+    public function isTwoCreditCardsEnabled()
+    {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_two_credit_cards_enabled') === 'true';
+    }
+
+    public function getTwoCreditCardsPaymentTitle()
+    {
+        return $this->openCart->config->get('payment_mundipagg_credit_card_two_credit_cards_payment_title');
+    }
+
+
     public function getAllSettings()
     {
         return array(
@@ -44,14 +55,11 @@ class CreditCard
             'credit_card_invoice_name' => $this->getInvoiceName(),
             'credit_card_operation' => $this->getOperation(),
             'credit_card_is_saved_enabled' => $this->isSavedCreditcardEnabled(),
-            'credit_card_two_credit_cards_enabled' => $this->isTwoCreditCardsEnabled()
+            'credit_card_two_credit_cards_enabled' => $this->isTwoCreditCardsEnabled(),
+            'credit_card_two_credit_cards_payment_title' => $this->getTwoCreditCardsPaymentTitle()
         );
     }
 
-    public function isTwoCreditCardsEnabled()
-    {
-        return $this->openCart->config->get('payment_mundipagg_credit_card_two_credit_cards_enabled') === 'true';
-    }
 
     public function getPaymentInformation()
     {
@@ -100,9 +108,9 @@ class CreditCard
         $info = array();
 
         $info = array_merge($info, $this->getCards());
-        $info = array_merge($info, array('creditCardStatus' => $this->getStatus()));
-        $info = array_merge($info, array('creditCardText' => $this->getCreditCardLanguage()));
-        $info = array_merge($info, array('installments' => $this->getInstallments()));
+        $info = array_merge($info, ['creditCardStatus' => $this->getStatus()]);
+        $info = array_merge($info, ['creditCardText' => $this->getCreditCardLanguage()]);
+        $info = array_merge($info, ['installments' => $this->getInstallments()]);
 
         return $info;
     }

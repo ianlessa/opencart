@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-sm-2" id="holdername-field">
+        <label for="amount-{{ inputId }}">Valor</label>
+        <input name="amount-{{ inputId }}"
+               type="number"
+               min="0"
+               class="form-control mundipagg-amount"
+               maxlength="9"
+               inputId="{{ inputId }}"
+               id="amount-{{ inputId }}"
+               value="{{ amount }}"
+               data-mundipagg-validation-element="amount-{{ inputId }}"
+        >
+        <span id="amount-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
+    </div>
+</div>
+

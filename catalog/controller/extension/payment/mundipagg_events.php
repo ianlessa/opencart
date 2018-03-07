@@ -268,13 +268,62 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $templateData['isAccountIndex'] = $route === 'account/account';
         $templateData['my_creditcards_url'] = $this->url->link('extension/payment/mundipagg_saved_creditcards', '', true);
 
-        $view  = $this->load->view('extension/payment/mundipagg_saved_credit_card_account_content', $templateData);
+        $view  = $this->load->view('extension/payment/mundipagg/credit_card/saved_credit_card_account_content', $templateData);
         $data['content_bottom'] .= $view;
 
         if (isset($this->session->data['error_warning'])) {
             $data['error_warning'] = $this->session->data['error_warning'];
             unset($this->session->data['error_warning']);
         }
+        foreach ($data as $key => $value) {
+            $template->set($key, $value);
+        }
+
+        return $template
+            ->render(
+                $this->
+                registry->
+                get('config')->
+                get('template_directory') .
+                $route,
+                $this->
+                registry->
+                get('config')->
+                get('template_cache')
+            );
+    }
+
+    public function prepareCheckoutOrderInfo(string $route, $data = array(), $template = null)
+    {
+        $this->session->data['boleto_links'] = [];
+        if (isset($this->session->data['order_id'])) {
+            $orderId = $this->session->data['order_id'];
+            $this->load->model('extension/payment/mundipagg_boleto_link');
+            $boletoLinks = $this->model_extension_payment_mundipagg_boleto_link->getBoletoLinks($orderId);
+            $this->session->data['boleto_links'] = $boletoLinks;
+        }
+    }
+
+    public function showCheckoutOrderInfo(string $route, $data = array(), $template = null)
+    {
+        $template = new Template($this->registry->get('config')->get('template_engine'));
+        $this->load->language('extension/payment/mundipagg');
+
+        $templateData = [];
+        $boletoLinks = [];
+        if (isset($this->session->data['boleto_links'])) {
+            $boletoLinks = $this->session->data['boleto_links'];
+        }
+        if (count($boletoLinks) > 0) {
+            $boletoLang = $this->language->get('boleto');
+            $boletoLink = $boletoLinks[0]['link'];
+            $templateData['boleto_link_message'] = sprintf($boletoLang['click_to_follow'],$boletoLink);
+            $templateData['boleto_link'] = $boletoLink;
+        }
+        unset($this->session->data['boleto_links']);
+        $view  = $this->load->view('extension/payment/mundipagg/success/order_info', $templateData);
+        $data['content_bottom'] .= $view;
+
         foreach ($data as $key => $value) {
             $template->set($key, $value);
         }

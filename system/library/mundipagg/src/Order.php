@@ -94,6 +94,15 @@ class Order
         if (!empty($orderData['amountWithInterest'])) {
             $totalOrderAmount = $orderData['amountWithInterest'];
         }
+        if (isset($orderData['boletoCreditCard'])) {
+            $this->creditCardAmount = $orderData['creditCardAmount'];
+            $interest = $orderData['amountWithInterest'] - $this->creditCardAmount;
+            $this->boletoAmount = (floatval($orderData['total']) - $this->creditCardAmount);
+            $this->creditCardAmount += $interest;
+
+            $totalOrderAmount = $this->creditCardAmount + $this->boletoAmount;
+            $orderData['amountWithInterest'] = $totalOrderAmount;
+        }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
         $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
@@ -134,7 +143,7 @@ class Order
             $order->customer->id
         );
 
-        if (!empty($orderData['saveCreditcard'])) {
+        if (!empty($orderData['saveCreditCard'])) {
             $this->saveCreditCardIfNotExists($order);
         }
 
@@ -442,6 +451,23 @@ class Order
                     $orderAmount,
                     $cardId
                 );
+            case 'boletoCreditCard':
+                $creditCardAmount = $this->creditCardAmount * 100 ;
+                $boletoAmount = ceil($this->boletoAmount * 100);
+
+                $boletoPayment = $this->getBoletoPaymentDetails();
+                $boletoPayment[0]['amount'] = $boletoAmount;
+
+                $cardIdValue = empty($cardId) ? null : $cardId[0];
+                $creditCardPayment = $this->getCreditCardPaymentDetails(
+                    $cardToken,
+                    $this->orderInstallments,
+                    $orderAmount,
+                    $cardIdValue
+                );
+                $creditCardPayment[0]['amount'] = $creditCardAmount;
+
+                return array_merge($boletoPayment,$creditCardPayment);
             default:
                 /** TODO: log it */
                 throw new \Exception('Unsupported payment type');

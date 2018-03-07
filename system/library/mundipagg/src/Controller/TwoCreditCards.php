@@ -18,6 +18,7 @@ class TwoCreditCards
     private $order;
 
     private $amount;
+    private $amountWithInterest;
     private $interest;
     private $installments;
     private $token;
@@ -56,7 +57,7 @@ class TwoCreditCards
                 $this->orderDetails,
                 $this->cart,
                 'twoCreditCards',
-                $this->amount,
+                $this->amountWithInterest,
                 $this->token,
                 $this->cardId
             );
@@ -89,8 +90,19 @@ class TwoCreditCards
 
     private function getAmountWithInterest()
     {
-        $firstCardAmount = intval($this->amount[0]) + (floatval($this->interest[0]) * intval($this->amount[0]));
-        $secondCardAmount = intval($this->amount[1]) + (floatval($this->interest[1]) * intval($this->amount[1]));
+        $firstCardAmount =
+            intval($this->amount[0]) +
+            (
+                (floatval($this->interest[0]) / 100) *
+                intval($this->amount[0])
+            );
+
+        $secondCardAmount =
+            intval($this->amount[1]) +
+            (
+                (floatval($this->interest[1]) / 100 ) *
+                intval($this->amount[1])
+            );
 
         return $firstCardAmount + $secondCardAmount;
     }
@@ -99,7 +111,9 @@ class TwoCreditCards
     {
         $this->setAmount();
         $this->setInterest();
+        $this->setAmountWithInterest();
         $this->setToken();
+        $this->setCardId();
         $this->setInstallments();
         $this->setSaveCreditCard();
 
@@ -108,36 +122,60 @@ class TwoCreditCards
 
     private function setAmount()
     {
-        $this->amount[] = $this->details['total-0'];
-        $this->amount[] = $this->details['total-1'];
+        $this->amount[] = $this->details['amount-1'];
+        $this->amount[] = $this->details['amount-2'];
     }
 
     private function setInterest()
     {
-        $this->interest[] = explode('|', $this->details['payment-details-0'])[1];
-        $this->interest[] = explode('|', $this->details['payment-details-1'])[1];
+        $this->interest[] = explode('|', $this->details['payment-details-1'])[2];
+        $this->interest[] = explode('|', $this->details['payment-details-2'])[2];
+    }
+
+    private function setAmountWithInterest()
+    {
+        $firstCardAmount =
+            intval($this->amount[0]) +
+            (
+                (floatval($this->interest[0]) / 100) *
+                intval($this->amount[0])
+            );
+
+        $secondCardAmount =
+            intval($this->amount[1]) +
+            (
+                (floatval($this->interest[1]) / 100 ) *
+                intval($this->amount[1])
+            );
+
+        $this->amountWithInterest[] = $firstCardAmount;
+        $this->amountWithInterest[] = $secondCardAmount;
     }
 
     private function setToken()
     {
-        $this->token[] = $this->details['munditoken-0'];
         $this->token[] = $this->details['munditoken-1'];
+        $this->token[] = $this->details['munditoken-2'];
+    }
+
+    private function setCardId()
+    {
+        $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
+        $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
     }
 
     private function setInstallments()
     {
-        $this->installments[] = explode('|', $this->details['payment-details-0'])[0];
         $this->installments[] = explode('|', $this->details['payment-details-1'])[0];
+        $this->installments[] = explode('|', $this->details['payment-details-2'])[0];
 
         $this->order->setInstallments($this->installments);
     }
 
     private function setSaveCreditCard()
     {
-//        $this->saveCreditCards[] = $this->details['save-credit-card-0'];
-        $this->saveCreditCards[] = true;
-//        $this->saveCreditCards[] = $this->details['save-credit-card-1'];
-        $this->saveCreditCards[] = true;
+        $this->saveCreditCards[] = $this->details['save-this-credit-card-1'] === 'on';
+        $this->saveCreditCards[] = $this->details['save-this-credit-card-2'] === 'on';
     }
 
     private function saveCreditCards($orderResponse)

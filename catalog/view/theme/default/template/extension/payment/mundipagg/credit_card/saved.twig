@@ -1,0 +1,8 @@
+{% if isSavedCreditcardEnabled and savedCreditcards != null %}
+        {% include savedSelectCreditcardTemplate %}
+
+        <div class="row savedCreditcard">
+            <span id="token-error-message" class="text-danger"></span>
+            <br>
+        </div>
+{% endif %}

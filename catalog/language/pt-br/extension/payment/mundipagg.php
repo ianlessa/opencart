@@ -3,6 +3,7 @@ $_['boleto'] = [
     'payment_method_name' => 'Boleto',
     'title' => 'Pagamento via boleto',
     'click_to_generate' => 'Clique aqui para gerar seu boleto.',
+    'click_to_follow' => '<a href="%s" target="_blank">Clique aqui</a> para exibir seu boleto.',
     'pending_order_status' => 'Pedido pendente - Aguardando pagamento do boleto.',
     'instructions' => "Após clicar em 'Clique aqui para gerar seu boleto' "
         . "você será redirecionado para uma nova janela "
@@ -19,7 +20,7 @@ $_['credit_card'] = [
     'no_brands_enabled' => 'Nenhuma bandeira habilitada',
     'installments' => 'Parcelas',
     'without_interest' => 'sem juros',
-    'interest' => 'huros: ',
+    'interest' => 'juros: ',
     'new_credit_card' => 'Novo cartão',
     'save_creditcard_message' => 'Salvar este cartão para compras futuras'
 ];

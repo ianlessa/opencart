@@ -31,6 +31,7 @@ $_['credit_card'] = [
     'configure_operation_type' => 'Operation type',
     'configure_is_saved_enabled' => 'Enable Saved Credit Cards',
     'configure_enable_two_credit_cards' => 'Enable two Credit Cards',
+    'configure_two_credit_cards_payment_title' => 'Two credit cards payment title',
     'configure_auth_label' => 'Auth',
     'configure_auth_capture_label' => 'Auth and capture',
     'manage_section' => 'Manage cards',
@@ -48,6 +49,17 @@ $_['credit_card'] = [
 $_['boleto'] = [
     'label' => 'Boleto',
     'configure_section' => 'Boleto configuration',
+    'configure_payment_title' => 'Payment title',
+    'configure_name' => "Name",
+    'configure_select_bank' => 'Select bank',
+    'configure_due_at' => 'Due at',
+    'configure_instructions' => 'Instructions'
+];
+// -----------------------------------------------------------------
+
+$_['boletoCreditCard'] = [
+    'label' => 'Boleto + CreditCard',
+    'configure_section' => 'Boleto + CreditCard configuration',
     'configure_payment_title' => 'Payment title',
     'configure_name' => "Name",
     'configure_select_bank' => 'Select bank',

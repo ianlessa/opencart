@@ -29,40 +29,46 @@
 ** Boleto
 **/
 
-#boletoTab.active a{
+#boletoTab.active a,
+#boletoCreditCardTab.active a{
     border-radius: 0.5em;
 }
 
-#boletoTab.tab-pane{
+#boletoTab.tab-pane,
+#boletoCreditCardTab.tab-pane {
     background-color: #F7F7F7;
     border: 0;
+    font-size:1.5em;
 }
 
-#boletoTab.tab-pane h3{
+#boletoTab.tab-pane h3,
+#boletoCreditCardTab.tab-pane h3 {
     margin:0 0 1.5em 0;
 }
 
-#boletoTab.tab-pane{
-    font-size:1.5em;
-    
-}
-
-#boletoTab.tab-pane blockquote {
+#boletoTab.tab-pane blockquote,
+#boletoCreditCardTab.tab-pane blockquote  {
     border-left: 0.3em solid #97cd76;
     font-size: 0.8em;
-    margin: 0 0 0 20px
+    margin: 0 0 0 20px;
+    color: #31708f;
 }
 
-#boletoTab.tab-pane #boletoLink>i {
+#boletoTab.tab-pane #boletoLink>i,
+#boletoCreditCardTab.tab-pane #boletoLink>i  {
     font-size:1.3em;
 }
 
-#boletoTab.tab-pane #boletoLink {
+#boletoTab.tab-pane #boletoLink,
+#boletoCreditCardTab.tab-pane #boletoLink {
 
 
 }
 
-#boletoTab.tab-pane #boletoLink:hover, #boletoTab.tab-pane #boletoLink:active {
+#boletoTab.tab-pane #boletoLink:hover,
+#boletoTab.tab-pane #boletoLink:active,
+#boletoCreditCardTab.tab-pane #boletoLink:hover,
+#boletoCreditCardTab.tab-pane #boletoLink:active {
 
 }
 
@@ -70,15 +76,15 @@
 ** Credit card
 **/
 
-#creditCardTab{
+#creditCardTab, #twoCreditCardsTab{
     background-color:#F7F7F7;
 }
 
-#creditCardTab .mundipaggBrandBox {
+#creditCardTab .mundipaggBrandBox, #twoCreditCardsTab .mundipaggBrandBox, #boletoCreditCardTab .mundipaggBrandBox {
  margin: 0 0 15px 0;
 }
 
-#creditCardTab .mundipaggBrandBox img{
+#creditCardTab .mundipaggBrandBox img, #twoCreditCardsTab .mundipaggBrandBox img, #boletoCreditCardTab .mundipaggBrandBox img{
     width: 36px;
     margin-right: 5px;
 }
