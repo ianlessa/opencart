@@ -103,8 +103,10 @@ class Installments
     {
         $installments = array();
         for ($i = $maxWithout + 1; $i < $max; $i++) {
+            $amount = $total / ($i + 1);
+            $amount = number_format($amount,2,',','.');
             $installments[] = array(
-                'amount' => $total / ($i + 1),
+                'amount' => $amount,
                 'times' => $i + 1,
                 'interest' => $interest
             );
