@@ -506,6 +506,9 @@ function buildInstallmentsOptions(brand, data) {
         html += "<option data-card-brand='" + brand.toLowerCase() + "' ";
         html += "value='" + json[k].times + "|" + json[k].amount + "|" + json[k].interest  + "'>";
         html += brand + " - " + json[k].times + " x R$" + amount + " - " + interest;
+        if (typeof json[k].total !== 'undefined') {
+           html += ' - Total: ' + json[k].total;
+        }
         html += "</option>";
     });
 
