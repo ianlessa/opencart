@@ -89,28 +89,40 @@ class Installments
 
     private function getInstallmentsWithoutInterest($total, $max)
     {
-        $installments = array();
+        $installments = [];
+
         for ($i = 0; $i < $max; $i++) {
-            $installments[] = array(
-                'amount' => $total / ($i + 1),
-                'times' => $i + 1,
-                'interest' => 0
-            );
-        }
-        return $installments;
-    }
-    private function getInstallmentsWithInterest($total, $maxWithout, $max, $interest, $increment = 0)
-    {
-        $installments = array();
-        for ($i = $maxWithout; $i < $max; $i++) {
             $amount = $total / ($i + 1);
             $amount = number_format($amount,2,'.','.');
 
-            $installments[] = array(
+            $installments[] = [
                 'amount' => floatval($amount),
                 'times' => $i + 1,
-                'interest' => number_format($interest,2,'.','.')
-            );
+                'interest' => 0
+            ];
+        }
+        return $installments;
+    }
+
+    private function getInstallmentsWithInterest($total, $maxWithout, $max, $interest, $increment = 0)
+    {
+        $installments = [];
+
+        for ($i = $maxWithout; $i < $max; $i++) {
+            $interestAmount = $total * ($interest / 100);
+
+            $amount = ($total + $interestAmount) / ($i + 1);
+            $amount = number_format($amount,2,'.','.');
+
+            $totalWithInterest = $total + $interestAmount;
+            $totalWithInterest = number_format($totalWithInterest,2,'.','.');
+
+            $installments[] = [
+                'amount' => floatval($amount),
+                'times' => $i + 1,
+                'interest' => number_format($interest,2,'.','.'),
+                'total' => $totalWithInterest
+            ];
             $interest += $increment;
         }
         return $installments;
