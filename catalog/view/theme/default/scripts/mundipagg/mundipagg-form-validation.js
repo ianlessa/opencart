@@ -390,7 +390,6 @@ MundiPagg.Form = function() {
 
 function hideElements() {
     $(".installments").each(function () {
-        $(this).val("");
         $(this).children().each(function() {
             $(this).addClass("hidden");
         });
