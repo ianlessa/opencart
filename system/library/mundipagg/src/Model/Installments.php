@@ -102,13 +102,14 @@ class Installments
     private function getInstallmentsWithInterest($total, $maxWithout, $max, $interest, $increment = 0)
     {
         $installments = array();
-        for ($i = $maxWithout + 1; $i < $max; $i++) {
+        for ($i = $maxWithout; $i < $max; $i++) {
             $amount = $total / ($i + 1);
-            $amount = number_format($amount,2,',','.');
+            $amount = number_format($amount,2,'.','.');
+
             $installments[] = array(
-                'amount' => $amount,
+                'amount' => floatval($amount),
                 'times' => $i + 1,
-                'interest' => $interest
+                'interest' => number_format($interest,2,'.','.')
             );
             $interest += $increment;
         }
