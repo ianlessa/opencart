@@ -31,6 +31,13 @@ class General
         return $this->openCart->config->get('payment_mundipagg_antifraud_status') === '1';
     }
 
+    public function isMultiBuyerEnabled()
+    {
+        $config = 'payment_mundipagg_multibuyer_enabled';
+
+        return $this->openCart->config->get($config) === '1';
+    }
+
     public function getPaymentTitle()
     {
         return $this->openCart->config->get('payment_mundipagg_title');

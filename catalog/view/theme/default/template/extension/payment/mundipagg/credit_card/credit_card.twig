@@ -17,6 +17,8 @@
                 <span id="credit-card-number-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
             </div>
 
+
+
             <div class="col-sm-4">
                 <label>{{ credit_card.installments }}</label>
                 <div>
@@ -104,4 +106,16 @@
             </div>
         {% endif %}
     </div>
+
+    {%  if isMultiBuyerEnabled %}
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="checkbox" class="float-to-left" id="multi-buyer-{{ inputId }}" name="multi-buyer-{{ inputId }}" />
+                <label for="multi-buyer-{{ inputId }}">{{ credit_card.multibuyer_message }}</label>
+            </div>
+        </div>
+
+        {% include multiBuyerFormTemplate %}
+    {% endif %}
+
 </div>

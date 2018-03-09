@@ -137,6 +137,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
         $this->data['isSavedCreditcardEnabled'] = $isSavedCreditCardEnabled;
 
+        $this->data['isMultiBuyerEnabled'] = $generalSettings->isMultiBuyerEnabled();
+
         if ($isSavedCreditCardEnabled) {
             $this->data['savedCreditcards'] =
                 $savedCreditcard->getSavedCreditcardList($this->customer->getId());
@@ -149,6 +151,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
     }
+
+
 
     private function loadUrls()
     {
@@ -178,6 +182,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
         $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
         $this->data['boletoCreditCardTemplate'] = $path . 'boleto_credit_card.twig';
+        $this->data['multiBuyerFormTemplate'] = $path . 'multi_buyer_form.twig';
     }
 
     /**
