@@ -1,3 +1,19 @@
-<div class="tab-pane alert alert-info" id="boletoTab">
-</div>
+<div id="multi-buyer-form-{{ inputId }}" style="display: none">
+    <div class="col-sm-5">
+        <label for="multi-buyer-name-{{ inputId }}">Nome</label>
+        <input
+                name="multi-buyer-name-{{ inputId }}"
+                type="text"
+                class="form-control"
+                id="multi-buyer-name-{{ inputId }}">
+    </div>
 
+    <div class="col-sm-2 multi-buyer-form">
+        <label for="cardCVV">Email</label>
+        <input
+                name="multi-buyer-email-{{ inputId }}"
+                type="text"
+                class="form-control"
+                id="multi-buyer-email-{{ inputId }}">
+    </div>
+</div>

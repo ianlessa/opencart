@@ -44,10 +44,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     private $mundipaggOrderUpdateModel;
 
-    private $onOff = [
-        'off' => false,
-        'on' => true
-    ];
+    private $onOff = ['off' => false, 'on' => true];
 
     /**
      * It loads opencart/mundipagg models

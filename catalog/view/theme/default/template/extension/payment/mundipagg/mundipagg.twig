@@ -73,4 +73,10 @@
             window.location = "{{ payment_failure_url }}";
         });
     }
+
+    $('.multi-buyer-check').on('change', function () {
+        let whichBuyerForm = this.name.split('-').slice(-1)[0];
+
+        $('#multi-buyer-form-' + whichBuyerForm).toggle();
+    })
 </script>
