@@ -16,6 +16,7 @@ class TwoCreditCards
     private $cart;
     private $cardId;
     private $order;
+    private $multiBuyer;
 
     private $amount;
     private $amountWithInterest;
@@ -24,7 +25,7 @@ class TwoCreditCards
     private $token;
     private $saveCreditCards;
 
-    public function __construct($openCart, $details, $cart)
+    public function __construct($openCart, $details, $cart, $multiBuyer = null)
     {
         $this->openCart = $openCart;
         $this->details = $details;
@@ -34,6 +35,8 @@ class TwoCreditCards
         $this->order->setCustomerModel($this->openCart->model_extension_payment_mundipagg_customer);
 
         $this->model = new OrderModel($openCart);
+
+        $this->multiBuyer = $multiBuyer;
 
         $orderId = $this->openCart->session->data['order_id'];
         $this->orderDetails = $this->openCart->model_checkout_order->getOrder($orderId);
@@ -59,7 +62,8 @@ class TwoCreditCards
                 'twoCreditCards',
                 $this->amountWithInterest,
                 $this->token,
-                $this->cardId
+                $this->cardId,
+                $this->multiBuyer
             );
         } catch (\Exception $e) {
             Log::create()

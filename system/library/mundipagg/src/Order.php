@@ -79,11 +79,17 @@ class Order
      * @param string $paymentMethod
      * @param string $cardToken
      * @param int $cardId
+     * @param null $multiBuyer
      * @return object
-     * @throws \Exception
      */
-    public function create($orderData, $cart, $paymentMethod, $cardToken = null, $cardId = null)
-    {
+    public function create(
+        $orderData,
+        $cart,
+        $paymentMethod,
+        $cardToken = null,
+        $cardId = null,
+        $multiBuyer = null
+    ) {
         $items = $this->prepareItems($cart->getProducts());
 
         $createAddressRequest = $this->createAddressRequest($orderData);
@@ -105,7 +111,7 @@ class Order
         }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
-        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId, $multiBuyer);
 
         try {
             $CreateOrderRequest = $this->createOrderRequest(
@@ -161,12 +167,13 @@ class Order
         $paymentMethod,
         $amounts,
         $tokens,
-        $cardIds
+        $cardIds,
+        $multiBuyer
     ) {
         $items = $this->prepareItems($cart->getProducts());
 
         $createAddressRequest = $this->createAddressRequest($orderData);
-        $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
+        $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest, $multiBuyer);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
 
         $totalOrderAmount = $orderData['total'];
@@ -427,10 +434,12 @@ class Order
      * @param string $paymentType
      * @param string $cardToken
      * @param float $orderAmount
-     * @throws \Exception Unsupported payment type
+     * @param array $cardId
+     * @param null $multiBuyer
      * @return array
+     * @throws \Exception Unsupported payment type
      */
-    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = [])
+    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = [], $multiBuyer = null)
     {
         switch ($paymentType) {
             case 'boleto':
@@ -442,7 +451,8 @@ class Order
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardIdValue
+                    $cardIdValue,
+                    $multiBuyer
                 );
             case 'twoCreditCards':
                 return $this->getTwoCreditCardsPaymentDetails(
@@ -506,10 +516,16 @@ class Order
      * @param int $installments
      * @param float $amount
      * @param int $cardId
+     * @param null $multiBuyer
      * @return array
      */
-    private function getCreditCardPaymentDetails($token, $installments, $amount, $cardId = null)
-    {
+    private function getCreditCardPaymentDetails(
+        $token,
+        $installments,
+        $amount,
+        $cardId = null,
+        $multiBuyer = null
+    ) {
         $amountInCents = number_format($amount, 2, '', '');
         $paymentDeatails = [
             [
@@ -524,6 +540,10 @@ class Order
 
         if ($token) {
             $paymentDeatails[0]['credit_card']['card_token'] = $token;
+        }
+
+        if ($multiBuyer) {
+            $paymentDeatails[0]['customer'] = $multiBuyer;
         }
 
         $mundiPaggCreditcardId = $this->getMundipaggCardId($cardId);
