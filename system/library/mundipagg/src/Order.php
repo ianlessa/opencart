@@ -183,7 +183,7 @@ class Order
         }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
-        $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds);
+        $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds, $multiBuyer);
 
         try {
             $createOrderRequest = $this->createOrderRequest(
@@ -459,7 +459,8 @@ class Order
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardId
+                    $cardId,
+                    $multiBuyer
                 );
             case 'boletoCreditCard':
                 $creditCardAmount = $this->creditCardAmount * 100 ;
@@ -473,7 +474,8 @@ class Order
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardIdValue
+                    $cardIdValue,
+                    $multiBuyer
                 );
                 $creditCardPayment[0]['amount'] = $creditCardAmount;
 
@@ -563,7 +565,7 @@ class Order
      *
      * @return array
      */
-    private function getTwoCreditCardsPaymentDetails($token, $installments, $amount, $cardId)
+    private function getTwoCreditCardsPaymentDetails($token, $installments, $amount, $cardId, $multiBuyer = [])
     {
         $paymentDetails = [];
 
@@ -572,7 +574,8 @@ class Order
             $token[0],
             $amount[0],
             $installments[0],
-            $cardId[0]
+            $cardId[0],
+            isset($multiBuyer[0]) ? $multiBuyer[0] : []
         );
 
         // second card
@@ -580,13 +583,14 @@ class Order
             $token[1],
             $amount[1],
             $installments[1],
-            $cardId[1]
+            $cardId[1],
+            isset($multiBuyer[1]) ? $multiBuyer[1] : []
         );
 
         return $paymentDetails;
     }
 
-    private function getSingleCardPaymentDetails($token, $amount, $installments, $cardId = null)
+    private function getSingleCardPaymentDetails($token, $amount, $installments, $cardId = null, $multiBuyer = [])
     {
         $amountInCents = number_format($amount, 2, '', '');
         $paymentDetails = [
@@ -606,6 +610,10 @@ class Order
 
         if ($mundiPaggCreditCardId) {
             $paymentDetails['credit_card']['card_id'] = $mundiPaggCreditCardId;
+        }
+
+        if ($multiBuyer) {
+            $paymentDetails['customer'] = $multiBuyer;
         }
 
         return $paymentDetails;

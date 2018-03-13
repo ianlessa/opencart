@@ -538,8 +538,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->request->post['multi-buyer-status-1'] === 'on'
         ) {
             $multiBuyerData = $this->getMultiBuyerData($this->request->post);
-            $multiBuyerCustomer[] = $this->getMultiBuyerCustomer($multiBuyerData[0]);
             $multiBuyerCustomer[] = $this->getMultiBuyerCustomer($multiBuyerData[1]);
+            $multiBuyerCustomer[] = $this->getMultiBuyerCustomer($multiBuyerData[2]);
         }
 
         if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
@@ -552,7 +552,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         try {
             $postData = $this->getPostData();
-            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart, $multiBuyerData);
+            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart, $multiBuyerCustomer);
             $response = $twoCreditCards->processPayment();
         } catch (\Exception $e) {
             Log::create()
@@ -588,6 +588,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
+        $multiBuyerCustomer = null;
+
+        if ($this->request->post['multi-buyer-status-3'] === 'on') {
+            $multiBuyerData = $this->getMultiBuyerData($this->request->post);
+            $multiBuyerCustomer = $this->getMultiBuyerCustomer($multiBuyerData[3]);
+        }
+
         $post = $this->request->post;
         $formId = $post['mundipagg-formid'];
 
@@ -615,7 +622,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
-                [$card['cardId']]
+                [$card['cardId']],
+                $multiBuyerCustomer
             );
         } catch (Exception $e) {
             Log::create()
