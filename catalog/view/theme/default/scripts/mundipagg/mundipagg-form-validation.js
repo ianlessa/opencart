@@ -2,7 +2,6 @@ var MundiPagg = {};
 
 MundiPagg.Validator = function() {
     return {
-
         skipValidation: function(ignoredForms,elementType,elementIndex)
         {
             //if the form is on the disable list, validate only saved card installments and amount;
@@ -19,7 +18,7 @@ MundiPagg.Validator = function() {
                 elementType === 'saved_installments';
         },
 
-        initValidationContext: function(form,callerObject) {
+        initValidationContext: function(form, callerObject) {
             var ignoredForms = [];
             try {
                 ignoredForms = JSON.parse(form.attr('disabled-forms'));

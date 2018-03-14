@@ -17,6 +17,7 @@ use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Settings\General as GeneralSettings;
 use MundiAPILib\Models\CreateCustomerRequest;
+use MundiAPILib\Models\CreateAddressRequest;
 
 class ControllerExtensionPaymentMundipagg extends Controller
 {
@@ -135,7 +136,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
         $this->data['isSavedCreditcardEnabled'] = $isSavedCreditCardEnabled;
 
-        $this->data['isMultiBuyerEnabled'] = $generalSettings->isMultiBuyerEnabled();
+        $isMultiBuyerEnabled = $generalSettings->isMultiBuyerEnabled();
+        if ($isMultiBuyerEnabled) {
+            $this->data['isMultiBuyerEnabled'] = $generalSettings->isMultiBuyerEnabled();
+            $this->data['countries'] = $this->getMultiBuyerFormData();
+        }
 
         if ($isSavedCreditCardEnabled) {
             $this->data['savedCreditcards'] =
@@ -148,6 +153,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
+    }
+
+    private function getMultiBuyerFormData()
+    {
+        $this->load->model('localisation/country');
+        $country = $this->model_localisation_country;
+
+        return $country->getCountries();
     }
 
 
@@ -412,10 +425,24 @@ class ControllerExtensionPaymentMundipagg extends Controller
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     private function getMultiBuyerCustomer($multiBuyerData)
     {
+        $addressRequest = new CreateAddressRequest();
+
+        $addressRequest->street = $multiBuyerData['street'];
+        $addressRequest->number = $multiBuyerData['number'];
+        $addressRequest->neighborhood = $multiBuyerData['neighborhood'];
+        $addressRequest->city = $multiBuyerData['city'];
+        $addressRequest->state = $multiBuyerData['state'];
+        $addressRequest->complement = $multiBuyerData['complement'];
+        $addressRequest->zipCode = $multiBuyerData['zipcode'];
+        $addressRequest->country = $multiBuyerData['country'];
+
         $customerRequest = new CreateCustomerRequest();
 
+        $customerRequest->type = 'individual';
         $customerRequest->name = $multiBuyerData['name'];
         $customerRequest->email = $multiBuyerData['email'];
+        $customerRequest->document = $multiBuyerData['document'];
+        $customerRequest->address = $addressRequest;
 
         return $customerRequest;
     }

@@ -17,11 +17,14 @@ class Api
     private $data;
     private $verb;
     private $model;
+    private $openCart;
 
     public function __construct($data, $verb, $openCart)
     {
         $this->data = $data;
         $this->verb = $verb;
+        $this->openCart = $openCart;
+
         $this->model = new Installments($openCart->db);
     }
 
@@ -67,6 +70,17 @@ class Api
             'status_code' => 200,
             'payload' => $installments
         ];
+    }
+
+    private function getStates($arguments)
+    {
+        $formData = [];
+
+        $this->openCart->load->model('localisation/zone');
+        $zone = $this->openCart->model_localisation_zone;
+        $formData['zones'] = $zone->getZonesByCountryId(30);
+
+        return $formData;
     }
 
     private function notFoundResponse($message)
