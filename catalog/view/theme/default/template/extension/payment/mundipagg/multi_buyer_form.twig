@@ -3,28 +3,34 @@
         <div class="col-sm-5 multi-buyer-form">
             <label for="multi-buyer-name-{{ inputId }}">Nome</label>
             <input
+                    data-mundipagg-validation-element="multi_buyer_name-{{ inputId }}"
                     name="multi-buyer-name-{{ inputId }}"
                     type="text"
                     class="form-control"
                     id="multi-buyer-name-{{ inputId }}">
+            <span id="multi-buyer-name-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-5 multi-buyer-form">
             <label for="multi-buyer-email-{{ inputId }}">Email</label>
             <input
+                    data-mundipagg-validation-element="email-{{ inputId }}"
                     name="multi-buyer-email-{{ inputId }}"
                     type="text"
                     class="form-control"
                     id="multi-buyer-email-{{ inputId }}">
+            <span id="email-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-2 multi-buyer-form">
             <label for="multi-buyer-document-{{ inputId }}">CPF</label>
             <input
+                    data-mundipagg-validation-element="cpf-{{ inputId }}"
                     name="multi-buyer-document-{{ inputId }}"
                     type="text"
                     class="form-control"
                     id="multi-buyer-document-{{ inputId }}">
+            <span id="cpf-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 
