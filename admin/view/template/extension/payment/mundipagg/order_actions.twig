@@ -48,14 +48,21 @@
             '</a></li>';
     }
 
-    jQuery('{{ cancelCapture }}').each(function(){
-        html =template('cancel',  jQuery(this).val());
-        html+=template('capture', jQuery(this).val());
-        MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
-    });
+    var cancelCapture = {{ cancelCapture }};
+    var cancel = {{ cancel }};
 
-    jQuery('{{ cancel }}').each(function(){
-        html =template('cancel', jQuery(this).val());
-        MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
-    });
+    if(cancelCapture.length > 0){
+        jQuery('{{ cancelCapture }}').each(function(){
+            html =template('cancel',  jQuery(this).val());
+            html+=template('capture', jQuery(this).val());
+            MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
+        });
+    }
+
+    if(cancel.length > 0){
+        jQuery('{{ cancel }}').each(function(){
+            html =template('cancel', jQuery(this).val());
+            MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
+        });
+    }
 </script>
