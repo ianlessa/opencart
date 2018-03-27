@@ -17,8 +17,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
 {
     public function onOrderList(string $route, $data = array(), $template = null)
     {
-        $cancel = array();
-        $cancelCapture = array();
+        $cancel = [];
+        $cancelCapture = [];
 
         $ids = array_map(function ($row) {
             return (int) $row['order_id'];
@@ -26,14 +26,14 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
 
         $Order = new Order($this);
         $orders = $Order->getOrders(
-            array(
+            [
                 'order_id' => $ids,
                 'order_status_id' => [1,15,2]
-            ),
-            array(
+            ],
+            [
                 'order_status_id',
                 'order_id'
-            )
+            ]
         );
 
         foreach ($orders->rows as $order) {
@@ -48,6 +48,7 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
                         'input[name="selected[]"][value=' . $order['order_id'] . ']';
             }
         }
+
         $templateData['cancelCapture'] = implode(',', $cancelCapture);
         $templateData['cancel'] = implode(',', $cancel);
         $templateData['httpServer'] = HTTPS_SERVER;
@@ -55,10 +56,12 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $footer  = $this->load->view('extension/payment/mundipagg/order_actions', $templateData);
 
         $data['footer'] = $footer . $data['footer'];
+
         if (isset($this->session->data['error_warning'])) {
             $data['error_warning'] = $this->session->data['error_warning'];
             unset($this->session->data['error_warning']);
         }
+
         $template = new Template($this->registry->get('config')->get('template_engine'));
 
         foreach ($data as $key => $value) {
