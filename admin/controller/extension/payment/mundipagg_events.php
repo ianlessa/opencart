@@ -48,48 +48,12 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
                         'input[name="selected[]"][value=' . $order['order_id'] . ']';
             }
         }
-        $cancelCapture = implode(',', $cancelCapture);
-        $cancel = implode(',', $cancel);
-        $httpServer = HTTPS_SERVER;
-        $footer = <<<FOOTER
-<script>
-MundiMenu = function(element, html) {
-element.prepend(
-  '<div class="btn-group" style="display: block; margin-left: 50px;">'+
-    '<a href="?route=extension/payment/mundipagg/previewChangeCharge'+
-        '&amp;user_token='+
-        getURLVar('user_token')+'&amp;order_id='+
-        $(this).find('[name="selected[]"]').val()+
-        '" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="MundiPagg">'+
-        '<img src="{$httpServer}view/image/mundipagg/mundipagg-mini.png" alt="MundiPagg" style="width: 15px;" />'+
-    '</a>'+
-    '<button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle" aria-expanded="false"><span class="caret"></span></button>'+
-    '<ul class="dropdown-menu dropdown-menu-right" style="margin-top: 39px; margin-right: 91px;">'+
-        html+
-    '</ul>'+
-  '</div>'
-);
-}
-template = function(status, order_id) {
-    return '<li><a href="?route=extension/payment/mundipagg/previewChangeCharge'+
-        '&amp;status='+status+
-        '&amp;user_token='+getURLVar('user_token')+
-        '&amp;order_id='+order_id+
-        '"><i class="fa fa-'+(status == 'cancel'?'trash':'thumbs-up')+'"></i> '+
-            (status == 'cancel'?'Cancel':'Capture')+
-        '</a></li>';
-}
-jQuery('$cancelCapture').each(function(){
-    html =template('cancel',  jQuery(this).val());
-    html+=template('capture', jQuery(this).val());
-    MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
-});
-jQuery('$cancel').each(function(){
-    html =template('cancel', jQuery(this).val());
-    MundiMenu(jQuery(this).parents('tr').find('td:last'), html)
-});
-</script>
-FOOTER;
+        $templateData['cancelCapture'] = implode(',', $cancelCapture);
+        $templateData['cancel'] = implode(',', $cancel);
+        $templateData['httpServer'] = HTTPS_SERVER;
+
+        $footer  = $this->load->view('extension/payment/mundipagg/order_actions', $templateData);
+
         $data['footer'] = $footer . $data['footer'];
         if (isset($this->session->data['error_warning'])) {
             $data['error_warning'] = $this->session->data['error_warning'];
