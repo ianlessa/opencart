@@ -64,3 +64,10 @@ $_['saved_creditcard'] = [
     'last_four_digits' => 'Últimos quatro dígitos',
     'delete' => 'Excluir'
 ];
+
+$_['order_statuses'] = [
+    'pending' => 'Pedido criado',
+    'paid' => 'Pagamento efetuado',
+    'canceled' => 'Pedido cancelado',
+    'failed' => 'Falha no pagamento'
+];

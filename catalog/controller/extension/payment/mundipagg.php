@@ -68,6 +68,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->language('extension/payment/mundipagg');
 
         $this->data['misc'] = $this->language->get('misc');
+        $this->data['order_statuses'] = $this->language->get('order_statuses');
         $this->setting = $this->model_setting_setting;
         $this->mundipaggModel = $this->model_extension_payment_mundipagg;
         $this->creditCardModel = $this->model_extension_payment_mundipagg_credit_card;
@@ -446,8 +447,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
+        $orderComment = $this->data['order_statuses'][$response->status];
+
         $newOrder = $this->getOrder();
-        $newOrder->updateOrderStatus($orderStatus);
+        $newOrder->updateOrderStatus($orderStatus, $orderComment);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
@@ -505,7 +508,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $this->getOrder()->updateOrderStatus($orderStatus);
+        $orderComment = $this->data['order_statuses'][$response->status];
+
+        $this->getOrder()->updateOrderStatus($orderStatus, $orderComment);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
@@ -593,8 +598,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
 
+        $orderComment = $this->data['order_statuses'][$response->status];
+
         $newOrder = $this->getOrder();
-        $newOrder->updateOrderStatus($orderStatus);
+        $newOrder->updateOrderStatus($orderStatus, $orderComment);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
         $this->response->redirect($this->url->link('checkout/success', '', true));
