@@ -26,11 +26,6 @@ class Settings
         return $this->openCart->config->get('payment_mundipagg_log_enabled') === '1';
     }
 
-    public function isAntiFraudEnabled()
-    {
-        return $this->openCart->config->get('payment_mundipagg_antifraud_status') === '1';
-    }
-
     public function getPaymentTitle()
     {
         return $this->openCart->config->get('payment_mundipagg_title');
@@ -108,10 +103,5 @@ class Settings
     {
         // @todo: make this customizable from module administration panel
         return 'mundipagg';
-    }
-
-    public function getAntiFraudMinVal()
-    {
-        return $this->openCart->config->get('payment_mundipagg_antifraud_minval');
     }
 }
