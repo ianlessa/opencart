@@ -88,11 +88,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load();
 
-        $theme = $this->config->get('config_theme');
-        $themeDirectory = $this->config->get('theme_' . $theme . '_directory');
-        $this->data['themeDirectory'] = 'catalog/view/theme/' . $themeDirectory;
-
-        $customizedFile = $this->data['themeDirectory'] . '/stylesheet/mundipagg/mundipagg_customized.css';
+        $this->data['themeDirectory'] = 'catalog/view/theme/default/';
+        $customizedFile = $this->data['themeDirectory'] . 'stylesheet/mundipagg/mundipagg_customized.css';
 
         if (file_exists($customizedFile)) {
             $this->data['customizedFile'] = $customizedFile;
