@@ -11,7 +11,7 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use MundiAPILib\Models\CreateShippingRequest;
 
-use Mundipagg\Settings\AntiFraud;
+use Mundipagg\Settings\AntiFraud as AntiFraudSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\General as GeneralSettings;
 
@@ -710,10 +710,10 @@ class Order
      */
     private function shouldSendAntiFraud($paymentMethod, $orderAmount)
     {
-        $antifraudSettings = new AntiFraud($this->openCart);
+        $antiFraudSettings = new AntiFraudSettings($this->openCart);
 
-        $minOrderAmount = $antifraudSettings->getOrderMinVal();
-        $antiFraudStatus = $antifraudSettings->isEnabled();
+        $minOrderAmount = $antiFraudSettings->getOrderMinVal();
+        $antiFraudStatus = $antiFraudSettings->isEnabled();
 
         if ($antiFraudStatus &&
             $paymentMethod === 'creditCard' &&
