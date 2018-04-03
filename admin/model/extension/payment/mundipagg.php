@@ -398,7 +398,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function getDefaultCerditCardPreset()
     {
         $default = new stdClass();
-        $default->brandName = "Default credit card configuration";
+        $default->brandName = "Default";
         $default->enabled = 1;
         $default->installmentsUpTo = 12;
         $default->installmentsWithoutInterest = 4;
