@@ -110,6 +110,7 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         $this->db->query(
             "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_payments` (
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `brand_name` VARCHAR(20),
                 `is_enabled` TINYINT(1),
                 `installments_up_to` TINYINT,
@@ -163,6 +164,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function populatePaymentTable()
     {
         $preset = $this->getPaymentInfo()->brands;
+        $preset->Default = $this->getDefaultCerditCardPreset();
 
         foreach ($preset as $brand => $value) {
             $this->db->query(
@@ -208,13 +210,13 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     public function getCreditCardInformation()
     {
-        $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments`";
+        $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments` order by id DESC";
         $query = $this->db->query($sql);
         $brands = $query->rows;
         $brandImages = $this->getCreditCardBrands();
         
         foreach ($brands as $index => $brand) {
-            $brands[$index]['image'] = $brandImages[$brand['brand_name']]['image'];
+            $brands[$index]['image'] = $brandImages[$brand['brand_name']]['image']?? '';
         }
         
         return $brands;
@@ -391,6 +393,19 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->db->query(
             'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_boleto_link`;'
         );
+    }
+
+    private function getDefaultCerditCardPreset()
+    {
+        $default = new stdClass();
+        $default->brandName = "Default credit card configuration";
+        $default->enabled = 1;
+        $default->installmentsUpTo = 12;
+        $default->installmentsWithoutInterest = 4;
+        $default->interest = 3;
+        $default->incrementalInterest = "0.1";
+
+        return $default;
     }
 }
 
