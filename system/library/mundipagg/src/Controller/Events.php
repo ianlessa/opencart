@@ -4,7 +4,6 @@ namespace Mundipagg\Controller;
 use Mundipagg\Model\Order;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
-require_once DIR_SYSTEM . 'library/template.php';
 
 class Events
 {
