@@ -621,10 +621,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $mundipaggEvents = new MundipaggEvents(
             $this,
-            new Template('twig'),
-            $this->registry->get('config')
+            new Template($this->registry->get('config')->get('template_engine'))
         );
-        $template  = $mundipaggEvents->addMundipaggOrderActions($data);
+
+        $template = $mundipaggEvents->addMundipaggOrderActions($data);
 
         return $template->render(
             $this->config->get('template_directory') . $route,

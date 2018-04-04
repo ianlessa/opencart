@@ -7,13 +7,11 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 class Events
 {
-    private $config;
     private $openCart;
     private $template;
 
-    public function __construct($openCart, $template, $config)
+    public function __construct($openCart, $template)
     {
-        $this->config = $config;
         $this->openCart = $openCart;
         $this->template = $template;
     }

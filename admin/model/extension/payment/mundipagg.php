@@ -55,7 +55,7 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         //Add button to order list in admin
         $this->model_setting_event->addEvent(
-            'payment_mundipagg',
+            'payment_mundipagg_add_order_actions',
             'admin/view/sale/order_list/before',
             'extension/payment/mundipagg/callEvents'
         );
