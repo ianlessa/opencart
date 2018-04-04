@@ -78,6 +78,10 @@ class ModelExtensionPaymentMundipagg extends Model
             'catalog/controller/checkout/success/before',
             'extension/payment/mundipagg_events/prepareCheckoutOrderInfo'
         );
+
+        /**
+         * @todo Add module link by event
+         */
     }
 
     /***
@@ -90,6 +94,8 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->load->model('setting/event');
         $this->model_setting_event->deleteEvent('payment_mundipagg');
         $this->model_setting_event->deleteEvent('payment_mundipagg_saved_creditcards');
+        $this->model_setting_event->deleteEvent('payment_mundipagg_show_checkout_order_info');
+        $this->model_setting_event->deleteEvent('payment_mundipagg_prepare_checkout_order_info');
     }
 
     /**

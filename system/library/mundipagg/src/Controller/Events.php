@@ -8,15 +8,23 @@ require_once DIR_SYSTEM . 'library/template.php';
 
 class Events
 {
-    private $opencart;
+    private $config;
+    private $openCart;
+    private $template;
 
-
-    public function __construct($opencart)
+    public function __construct($openCart, $template, $config)
     {
-        $this->opencart = $opencart;
+        $this->config = $config;
+        $this->openCart = $openCart;
+        $this->template = $template;
     }
 
-    public function addActionsToOrderList(string $route, $data = array(), $template = null)
+    /**
+     * Show the Mundipagg's button in order list
+     * @param array $data
+     * @return mixed
+     */
+    public function addMundipaggOrderActions($data)
     {
         $cancel = [];
         $cancelCapture = [];
@@ -25,7 +33,7 @@ class Events
             return (int) $row['order_id'];
         }, $data['orders']);
 
-        $Order = new Order($this->opencart);
+        $Order = new Order($this->openCart);
         $orders = $Order->getOrders(
             [
                 'order_id' => $ids,
@@ -54,23 +62,19 @@ class Events
         $templateData['cancel'] = implode(',', $cancel);
         $templateData['httpServer'] = HTTPS_SERVER;
 
-        $footer =  $this->opencart->load->view('extension/payment/mundipagg/order_actions', $templateData);
+        $footer  = $this->openCart->load->view('extension/payment/mundipagg/order_actions', $templateData);
 
         $data['footer'] = $footer . $data['footer'];
 
-        if (isset($this->opencart->data['error_warning'])) {
-            $data['error_warning'] = $this->opencart->session->data['error_warning'];
-            unset($this->opencart->session->data['error_warning']);
+        if (isset($this->openCart->session->data['error_warning'])) {
+            $data['error_warning'] = $this->openCart->session->data['error_warning'];
+            unset($this->openCart->session->data['error_warning']);
         }
-
-
-        $template = new \Template('‌twig');
 
         foreach ($data as $key => $value) {
-            $template->set($key, $value);
+            $this->template->set($key, $value);
         }
 
-        return $template->render('' . $route, 0);
+        return $this->template;
     }
-
 }

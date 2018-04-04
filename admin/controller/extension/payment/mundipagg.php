@@ -609,9 +609,26 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['general_custom_fields'] = $customFields;
     }
 
-    public function callEvents(string $route, $data = array(), $template = null)
+    /**
+     * @todo Improve this method to call ALL mundipagg events
+     * @param string $route
+     * @param array $data
+     * @param $template
+     * @return mixed
+     * @throws Exception
+     */
+    public function callEvents($route, $data = array(), $template = null)
     {
-        $mundipaggEvents = new MundipaggEvents($this);
-        $mundipaggEvents->addActionsToOrderList($route, $data, $template);
+        $mundipaggEvents = new MundipaggEvents(
+            $this,
+            new Template('twig'),
+            $this->registry->get('config')
+        );
+        $template  = $mundipaggEvents->addMundipaggOrderActions($data);
+
+        return $template->render(
+            $this->config->get('template_directory') . $route,
+            $this->config->get('template_cache')
+        );
     }
 }
