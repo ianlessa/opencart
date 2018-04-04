@@ -216,7 +216,11 @@ class ModelExtensionPaymentMundipagg extends Model
         $brandImages = $this->getCreditCardBrands();
         
         foreach ($brands as $index => $brand) {
-            $brands[$index]['image'] = $brandImages[$brand['brand_name']]['image']?? '';
+            $brands[$index]['image'] = '';
+
+            if (isset($brandImages[$brand['brand_name']]['image'])) {
+                $brands[$index]['image'] =  $brandImages[$brand['brand_name']]['image'];
+            }
         }
         
         return $brands;
