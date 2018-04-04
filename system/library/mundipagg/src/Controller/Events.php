@@ -1,21 +1,27 @@
 <?php
+namespace Mundipagg\Controller;
 
 use Mundipagg\Model\Order;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
-/**
- * ControllerExtensionPaymentMundipaggEvents deal with module events
- *
- * The purpose of this class is to centralize methods related to important
- * events to the module
- *
- * @package Mundipagg
- *
- */
-class ControllerExtensionPaymentMundipaggEvents extends Controller
+class Events
 {
-    public function onOrderList(string $route, $data = array(), $template = null)
+    private $openCart;
+    private $template;
+
+    public function __construct($openCart, $template)
+    {
+        $this->openCart = $openCart;
+        $this->template = $template;
+    }
+
+    /**
+     * Show the Mundipagg's button in order list
+     * @param array $data
+     * @return mixed
+     */
+    public function addMundipaggOrderActions($data)
     {
         $cancel = [];
         $cancelCapture = [];
@@ -24,7 +30,7 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
             return (int) $row['order_id'];
         }, $data['orders']);
 
-        $Order = new Order($this);
+        $Order = new Order($this->openCart);
         $orders = $Order->getOrders(
             [
                 'order_id' => $ids,
@@ -53,28 +59,19 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $templateData['cancel'] = implode(',', $cancel);
         $templateData['httpServer'] = HTTPS_SERVER;
 
-        $footer  = $this->load->view('extension/payment/mundipagg/order_actions', $templateData);
+        $footer  = $this->openCart->load->view('extension/payment/mundipagg/order_actions', $templateData);
 
         $data['footer'] = $footer . $data['footer'];
 
-        if (isset($this->session->data['error_warning'])) {
-            $data['error_warning'] = $this->session->data['error_warning'];
-            unset($this->session->data['error_warning']);
+        if (isset($this->openCart->session->data['error_warning'])) {
+            $data['error_warning'] = $this->openCart->session->data['error_warning'];
+            unset($this->openCart->session->data['error_warning']);
         }
-
-        $template = new Template($this->registry->get('config')->get('template_engine'));
 
         foreach ($data as $key => $value) {
-            $template->set($key, $value);
+            $this->template->set($key, $value);
         }
 
-        return $template->render($this->registry->get('config')->get('template_directory') . $route, $this->registry->get('config')->get('template_cache'));
-    }
-
-    public function addModuleLink() {
-        /**
-         * @todo
-         */
-        return;
+        return $this->template;
     }
 }
