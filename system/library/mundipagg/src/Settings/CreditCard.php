@@ -90,7 +90,7 @@ class CreditCard
 
         foreach ($activeCreditCards as $creditCard) {
             $brandName = $creditCard['brand_name'];
-            $cards['brandImages'][] = $brands->$brandName->image ?? '';
+            $cards['brandImages'][] = isset($brands->$brandName->image) ? $brands->$brandName->image : '';
             $cards['brandNames'][] = $brandName;
         }
 
