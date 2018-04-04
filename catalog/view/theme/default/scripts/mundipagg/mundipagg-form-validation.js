@@ -483,6 +483,7 @@ function getInstallments(brand, amount, inputId, newSaved) {
             var html = buildInstallmentsOptions(brand, data);
             $("#" + newSaved + "-creditcard-installments-" + inputId).html(html);
         }).fail(function () {
+            $("#" + newSaved + "-creditcard-installments-" + inputId).html("");
             console.log('Get installments fail');
         });
     }

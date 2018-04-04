@@ -17,7 +17,14 @@ class Installments
     public function getInstallmentsFor($brand, $total)
     {
         if (!$this->doesBrandExist($brand) || !$this->isBrandEnabled($brand)) {
-            return [];
+            return '';
+        }
+
+        if (
+            $this->doesBrandExist('default') &&
+            $this->isBrandEnabled('default')
+        ) {
+          $brand = 'Default';
         }
 
         $installmentsRules = $this->getInstallmentsRulesPerBrand($brand)[0];
