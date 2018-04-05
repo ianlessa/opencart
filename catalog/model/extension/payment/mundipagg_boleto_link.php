@@ -15,11 +15,12 @@ class ModelExtensionPaymentMundipaggBoletoLink extends Model
         return $query->rows;
     }
 
-    public function saveBoletoLink($orderId, $link)
+    public function saveBoletoLink($orderId, $chargeId,$lineCode,$dueAt,$link)
     {
         $sql = "INSERT INTO `". DB_PREFIX ."mundipagg_boleto_link`
-            (opencart_order_id, link) VALUES($orderId, '$link')
-            ";
+            (opencart_order_id,charge_id,line_code,due_at, link) 
+            VALUES($orderId,'$chargeId','$lineCode','$dueAt', '$link')"
+            ;
         try {
             $this->db->query($sql);
         } catch (Exception $e) {
