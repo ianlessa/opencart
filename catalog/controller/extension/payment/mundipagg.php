@@ -208,9 +208,19 @@ class ControllerExtensionPaymentMundipagg extends Controller
         echo $this->getBoletoUrl($response);
     }
 
+    private function getBoletoLineCode($response)
+    {
+        return $response->charges[0]->lastTransaction->line;
+    }
+
+    private function getBoletoDueAt($response)
+    {
+        return $response->charges[0]->lastTransaction->dueAt->format('d/m/Y');
+    }
+
     private function getBoletoUrl($response)
     {
-        return $response->charges[0]->lastTransaction->url;
+        return $response->charges[0]->lastTransaction->pdf;
     }
 
     /**
@@ -373,6 +383,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
                         $this->printBoletoUrl($response);
                         $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
                             $this->session->data['order_id'],
+                            $response->charges[0]->id,
+                            $this->getBoletoLineCode($response),
+                            $this->getBoletoDueAt($response),
                             $this->getBoletoUrl($response)
                         );
                         $model->setOrderStatus($orderData['order_id'], 1);
@@ -450,6 +463,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $newOrder->updateOrderStatus($orderStatus, $orderComment);
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+
+        $this->load->model('extension/payment/mundipagg_order_creditcard_info');
+        $this->model_extension_payment_mundipagg_order_creditcard_info->saveOrderCreditcardInfo(
+            $this->session->data['order_id'],
+            $response->charges[0]->id,
+            $response->charges[0]->lastTransaction->card->holderName,
+            $response->charges[0]->lastTransaction->card->brand,
+            $response->charges[0]->lastTransaction->card->lastFourDigits,
+            $response->charges[0]->lastTransaction->installments
+        );
+
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
@@ -509,6 +533,19 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $this->getOrder()->updateOrderStatus($orderStatus, $orderComment);
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
+
+        $this->load->model('extension/payment/mundipagg_order_creditcard_info');
+        foreach($response->charges as $key => $charge) {
+            $this->model_extension_payment_mundipagg_order_creditcard_info->saveOrderCreditcardInfo(
+                $this->session->data['order_id'],
+                $response->charge[$key]->id,
+                $response->charge[$key]->lastTransaction->card->holderName,
+                $response->charge[$key]->lastTransaction->card->brand,
+                $response->charge[$key]->lastTransaction->card->lastFourDigits,
+                $response->charge[$key]->lastTransaction->installments
+            );
+        }
+
         $this->response->redirect($this->url->link('checkout/success', '', true));
     }
 
@@ -571,16 +608,31 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        if (isset($response->charges[0]->lastTransaction->success)) {
-
+        if (
+            isset($response->charges[0]->lastTransaction->success) &&
+            isset($response->charges[1]->lastTransaction->success)
+        ) {
             $this->load->model('extension/payment/mundipagg_order_processing');
             $this->load->model('extension/payment/mundipagg_boleto_link');
-            $model = $this->model_extension_payment_mundipagg_order_processing;
+            $this->load->model('extension/payment/mundipagg_order_creditcard_info');
+
             $this->saveBoletoInfoInOrderHistory($response);
             $this->printBoletoUrl($response);
             $this->model_extension_payment_mundipagg_boleto_link->saveBoletoLink(
                 $this->session->data['order_id'],
+                $response->charges[0]->id,
+                $this->getBoletoLineCode($response),
+                $this->getBoletoDueAt($response),
                 $this->getBoletoUrl($response)
+            );
+
+            $this->model_extension_payment_mundipagg_order_creditcard_info->saveOrderCreditcardInfo(
+                $this->session->data['order_id'],
+                $response->charges[1]->id,
+                $response->charges[1]->lastTransaction->card->holderName,
+                $response->charges[1]->lastTransaction->card->brand,
+                $response->charges[1]->lastTransaction->card->lastFourDigits,
+                $response->charges[1]->lastTransaction->installments
             );
 
         } else{
