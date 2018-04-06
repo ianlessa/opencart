@@ -429,6 +429,13 @@ $("#mundipaggCheckout").ready(function () {
     $('.input-group-addon').bind("DOMSubtreeModified",function(){
         installments($(this));
     });
+
+    $('.mundipagg-cardNumber').on("input",function(){
+        var inputId = $(this).attr('inputid');
+        $('.input-group-addon[inputid="'+inputId+'"]').html('');
+        $(this).keypress();
+        this.dispatchEvent(new Event('keypress'));
+    });
 });
 
 
@@ -437,7 +444,7 @@ function changeInstallments() {
 }
 
 function switchNewSaved(value, formId) {
-    if(value == "new") {
+    if(value === "new") {
         $(".creditCard-" + formId).show();
         $("#saved-creditcard-installments-" + formId).parent().hide();
     } else {
@@ -447,7 +454,6 @@ function switchNewSaved(value, formId) {
 }
 
 function installments(obj) {
-
     var inputId = obj.attr("inputId");
     clearInstallments(inputId);
 
@@ -456,7 +462,7 @@ function installments(obj) {
         typeof obj.html() !== 'undefined'
     ) {
         var brandImage = obj.children("img");
-        var brand = brandImage.attr("src").split('/').pop().split('.')[0]
+        var brand = brandImage.attr("src").split('/').pop().split('.')[0];
         var amount = $("#amount-" + inputId).val();
 
         if (typeof brand !== "undefined" && amount > 0) {
