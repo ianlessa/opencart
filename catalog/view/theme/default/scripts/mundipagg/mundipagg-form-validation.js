@@ -430,9 +430,9 @@ $("#mundipaggCheckout").ready(function () {
         installments($(this));
     });
 
-    $('.mundipagg-cardNumber').on("input",function(){
+    $('.mundipagg-cardNumber').on("input", function(){
         var inputId = $(this).attr('inputid');
-        $('.input-group-addon[inputid="'+inputId+'"]').html('');
+        $('.input-group-addon[inputid="' + inputId + '"]').html('');
         $(this).keypress();
         this.dispatchEvent(new Event('keypress'));
     });
