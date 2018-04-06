@@ -298,8 +298,8 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $this->session->data['boleto_links'] = [];
         if (isset($this->session->data['order_id'])) {
             $orderId = $this->session->data['order_id'];
-            $this->load->model('extension/payment/mundipagg_boleto_link');
-            $boletoLinks = $this->model_extension_payment_mundipagg_boleto_link->getBoletoLinks($orderId);
+            $this->load->model('extension/payment/mundipagg_order_boleto_info');
+            $boletoLinks = $this->model_extension_payment_mundipagg_order_boleto_info->getBoletoLinks($orderId);
             $this->session->data['boleto_links'] = $boletoLinks;
         }
     }

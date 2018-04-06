@@ -46,9 +46,9 @@ class Order
             "       charge.status as status, \n".
             "       charge.paid_amount as paid_amount, \n".
             "       charge.amount as amount, \n".
-            "       boleto_link.link as boleto_link, \n".
-            "       boleto_link.line_code as boleto_line_code, \n".
-            "       boleto_link.due_at as boleto_due_at, \n".
+            "       boleto_info.link as boleto_link, \n".
+            "       boleto_info.line_code as boleto_line_code, \n".
+            "       boleto_info.due_at as boleto_due_at, \n".
             "       creditcard_info.holder_name as creditcard_holder_name, \n".
             "       creditcard_info.brand as creditcard_brand, \n".
             "       creditcard_info.last_four_digits as creditcard_last_four_digits, \n".
@@ -64,8 +64,8 @@ class Order
             "            ELSE 0\n".
             '             END AS can_capture'."\n".
             '  FROM `' . DB_PREFIX . "mundipagg_charge` as charge\n".
-            ' LEFT JOIN `' . DB_PREFIX . "mundipagg_boleto_link` as boleto_link\n" .
-            "ON charge.charge_id = boleto_link.charge_id\n" .
+            ' LEFT JOIN `' . DB_PREFIX . "mundipagg_order_boleto_info` as boleto_info\n" .
+            "ON charge.charge_id = boleto_info.charge_id\n" .
             ' LEFT JOIN `' . DB_PREFIX . "mundipagg_order_creditcard_info` as creditcard_info\n" .
             "ON charge.charge_id = creditcard_info.charge_id\n" .
             ' WHERE charge.opencart_id = ' . $opencart_id .
