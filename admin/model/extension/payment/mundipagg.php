@@ -68,7 +68,15 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
             'catalog/view/account/*/after',
-            'extension/payment/mundipagg_events/showSavedCreditcards'
+            'extension/payment/mundipagg_events/showSavedCreditcards',
+            1,
+            9999
+        );
+
+        $this->model_setting_event->addEvent(
+                        'payment_mundipagg_show_account_order_info',
+                        'catalog/view/account/order_info/after',
+            'extension/payment/mundipagg_events/showAccountOrderInfo'
         );
 
         $this->model_setting_event->addEvent(
