@@ -1,0 +1,53 @@
+version: 2
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: php:7.1-apache
+        environment:
+          APP_ENV: test
+    steps:
+       - checkout
+       - run:
+          name: Install system packages
+          command: apt-get update && apt-get -y install zip git zlib1g-dev wget
+       - run:
+          name: Install PHP extensions
+          command: |
+            docker-php-ext-install pdo
+            docker-php-ext-install zip
+       - run:
+          name: Install Composer
+          command: |
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('https://composer.github.io/installer.sig'))) { echo 'Installer verified'; } else { echo 'Installer invalid'; unlink('composer-setup.php'); } echo PHP_EOL;"
+            php composer-setup.php
+            php -r "unlink('composer-setup.php');"
+       - run:
+          name: Display PHP information
+          command: |
+            php -v
+            php composer.phar --version
+       - run:
+          name: Check PHP sintax
+          command: find . -name \*.php -exec php -l "{}" \;
+       - run:
+          name: Install project dependencies
+          command: |
+            cd /app
+            php composer.phar install
+       - store_artifacts:
+          path: /app
+          destination: app-artifact
+       - persist_to_workspace:
+          root: /
+          paths:
+            - app
+
+workflows:
+  version: 2
+  build_publish_deploy:
+    jobs:
+      - build
+
+      
