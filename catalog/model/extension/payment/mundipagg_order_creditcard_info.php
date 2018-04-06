@@ -4,7 +4,7 @@ use Mundipagg\LogMessages;
 
 class ModelExtensionPaymentMundipaggOrderCreditcardInfo extends Model
 {
-    public function saveOrderCreditcardInfo($orderId, $chargeId,$holderName,$brand, $lastFourDigits,$installments)
+    public function saveOrderCreditcardInfo($orderId, $chargeId, $holderName, $brand, $lastFourDigits, $installments)
     {
         $sql = "INSERT INTO `". DB_PREFIX ."mundipagg_order_creditcard_info`
             (opencart_order_id,charge_id,holder_name,brand, last_four_digits,installments)" .

@@ -74,8 +74,8 @@ class ModelExtensionPaymentMundipagg extends Model
         );
 
         $this->model_setting_event->addEvent(
-                        'payment_mundipagg_show_account_order_info',
-                        'catalog/view/account/order_info/after',
+            'payment_mundipagg_show_account_order_info',
+            'catalog/view/account/order_info/after',
             'extension/payment/mundipagg_events/showAccountOrderInfo'
         );
 

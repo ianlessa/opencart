@@ -355,7 +355,6 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         $order = new Mundipagg\Model\Order($this);
         $charges = $order->getCharge($order_id);
 
-
         setlocale(LC_MONETARY, 'pt_BR.UTF-8');
         array_walk($charges->rows,function(&$row) {
             //formatting amount

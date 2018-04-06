@@ -535,7 +535,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
 
         $this->load->model('extension/payment/mundipagg_order_creditcard_info');
-        foreach($response->charges as $charge) {
+        foreach ($response->charges as $charge) {
             $this->model_extension_payment_mundipagg_order_creditcard_info->saveOrderCreditcardInfo(
                 $this->session->data['order_id'],
                 $charge->id,
