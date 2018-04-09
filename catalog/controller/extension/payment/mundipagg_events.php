@@ -345,8 +345,25 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
     public function showAccountOrderInfo(string $route, $data = array(), $template = null)
     {
         $template = new Template($this->registry->get('config')->get('template_engine'));
-        $this->load->language('extension/payment/mundipagg');
 
+        $templateData = $this->getShowAccountOrderInfoTemplateData();
+        $view  = $this->load->view('extension/payment/mundipagg/account/order_info', $templateData);
+
+        $data['text_history'] = '</h3>' . $view . '<h3>'. $data['text_history'];
+
+        foreach ($data as $key => $value) {
+            $template->set($key, $value);
+        }
+
+        $config = $this->registry->get('config');
+        return $template->render(
+            $config->get('template_directory') . $route,
+            $config->get('template_cache')
+        );
+    }
+
+    private function getShowAccountOrderInfoTemplateData()
+    {
         $order_id ='0';
         if (isset($this->request->get['order_id'])) {
             $order_id = intval($this->request->get['order_id']);
@@ -358,50 +375,15 @@ class ControllerExtensionPaymentMundipaggEvents extends Controller
         setlocale(LC_MONETARY, 'pt_BR.UTF-8');
         array_walk($charges->rows,function(&$row) {
             //formatting amount
-           $row['amount'] = money_format('%n', $row['amount'] / 100);
-           $row['paid_amount'] = money_format('%n', $row['paid_amount'] / 100);
+            $row['amount'] = money_format('%n', $row['amount'] / 100);
+            $row['paid_amount'] = money_format('%n', $row['paid_amount'] / 100);
         });
 
-        $templateData = [
-            'text_payment_data' => 'Payment Data',
-            'column_payment_method' => 'Payment Method',
-            'column_status' => 'Status',
-            'column_paid_amount' => 'Paid amount',
-            'column_amount' => 'Amount',
+        $this->load->language('extension/payment/mundipagg');
+        $accountInfoLang = $this->language->get('account_info');
 
-            'column_boleto_link' => 'Link',
-            'column_boleto_line_code' => 'Line Code',
-            'column_boleto_due_at' => 'Due At',
+        $templateData = array_merge($accountInfoLang,['charges' => $charges->rows]);
 
-            'column_creditcard_holder_name' => 'Holder Name',
-            'column_creditcard_brand' => 'Brand',
-            'column_creditcard_number' => 'Number',
-            'column_creditcard_installments' => 'Installments',
-
-            'boleto_link_message' => 'Clique aqui para exibir seu boleto',
-            'text_no_results' => 'No results.',
-            'charges' => $charges->rows
-        ];
-
-        $view  = $this->load->view('extension/payment/mundipagg/account/order_info', $templateData);
-
-        $data['text_history'] = '</h3>' . $view . '<h3>'. $data['text_history'];
-
-        foreach ($data as $key => $value) {
-            $template->set($key, $value);
-        }
-
-        return $template
-            ->render(
-                $this->
-                registry->
-                get('config')->
-                get('template_directory') .
-                $route,
-                $this->
-                registry->
-                get('config')->
-                get('template_cache')
-            );
+        return $templateData;
     }
 }

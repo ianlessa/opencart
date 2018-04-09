@@ -457,7 +457,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $this->saveMPOrderId($response->id, $this->session->data['order_id']);
 
-
         $this->saveOrderCreditcardInfo($response->charges[0]);
 
         $this->response->redirect($this->url->link('checkout/success', '', true));
