@@ -6,6 +6,8 @@ use Mundipagg\Order;
 use Mundipagg\Model\Order as OrderModel;
 use Mundipagg\Settings\CreditCard;
 use Mundipagg\Model\Creditcard as CreditCardModel;
+use Mundipagg\Log;
+use Mundipagg\LogMessages;
 
 class TwoCreditCards
 {
