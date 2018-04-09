@@ -24,9 +24,11 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->createOrderTable();
         $this->createChargeTable();
         $this->createCreditCardTable();
-        $this->createBoletoLinkTable();
+        $this->createOrderBoletoInfoTable();
+        $this->createOrderCardInfoTable();
 
         $this->populatePaymentTable();
+
         $this->installEvents();
     }
 
@@ -42,7 +44,9 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->dropOrderTable();
         $this->dropChargeTable();
         $this->dropCreditCardTable();
-        $this->dropBoletoLinkTable();
+        $this->dropOrderBoletoInfoTable();
+        $this->dropOrderCardInfoTable();
+
         $this->uninstallEvents();
     }
 
@@ -64,7 +68,15 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
             'catalog/view/account/*/after',
-            'extension/payment/mundipagg_events/showSavedCreditcards'
+            'extension/payment/mundipagg_events/showSavedCreditcards',
+            1,
+            9999
+        );
+
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_show_account_order_info',
+            'catalog/view/account/order_info/after',
+            'extension/payment/mundipagg_events/showAccountOrderInfo'
         );
 
         $this->model_setting_event->addEvent(
@@ -380,21 +392,46 @@ class ModelExtensionPaymentMundipagg extends Model
         );
     }
 
-    private function createBoletoLinkTable()
+    private function createOrderBoletoInfoTable()
     {
         $this->db->query(
-            'CREATE TABLE IF NOT EXISTS `'. DB_PREFIX .'mundipagg_boleto_link` (
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX ."mundipagg_order_boleto_info` (
                 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `opencart_order_id` INT(11) NOT NULL,
-                `link` VARCHAR(256) NOT NULL
-                );'
+                `charge_id` VARCHAR(30) NOT NULL,
+                `line_code` VARCHAR(60) NOT NULL DEFAULT '(INVALID DATA)',
+                `due_at` VARCHAR(30) NOT NULL DEFAULT '(INVALID DATA)',
+                `link` VARCHAR(256) NOT NULL DEFAULT '(INVALID DATA)'
+                );"
         );
     }
 
-    private function dropBoletoLinkTable()
+    private function dropOrderBoletoInfoTable()
     {
         $this->db->query(
-            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_boleto_link`;'
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_order_boleto_info`;'
+        );
+    }
+
+    private function createOrderCardInfoTable()
+    {
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX ."mundipagg_order_creditcard_info` (
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `opencart_order_id` INT(11) NOT NULL,
+                `charge_id` VARCHAR(30) NOT NULL,
+                `holder_name` VARCHAR(100) NOT NULL DEFAULT '(INVALID DATA)',
+                `brand` VARCHAR(30) NOT NULL DEFAULT '(INVALID DATA)',
+                `last_four_digits` INT NOT NULL DEFAULT 0000,
+                `installments` INT NOT NULL DEFAULT 0
+                );"
+        );
+    }
+
+    private function dropOrderCardInfoTable()
+    {
+        $this->db->query(
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_order_creditcard_info`;'
         );
     }
 
