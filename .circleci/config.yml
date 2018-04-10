@@ -30,23 +30,109 @@ jobs:
        - run:
           name: Check PHP sintax
           command: find . -name \*.php -exec php -l "{}" \;
+       - store_artifacts:
+          path: /app
+          destination: app-artifact
        - run:
           name: Install project dependencies
           command: |
             cd /app
             composer install
-       - store_artifacts:
-          path: /app
-          destination: app-artifact
        - persist_to_workspace:
           root: /
           paths:
             - app
+
+  publish:
+    working_directory: /
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: /
+      - run:
+          name: Copy CI files to root
+          command: |
+             cd /app
+             cp .circleci/data/Dockerfile .
+             cp .circleci/data/wait-for-mysql.sh .
+             cp .circleci/data/opencart_module_install.sql .
+      - run:
+          name: Build image base for modifications
+          command: |
+             cd /app
+             docker build -t ${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest .
+             docker run --name newimage -d -p3306:3306 -p80:80 ${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest
+             docker cp /app/. newimage:app/.modman/opencart
+             docker exec -it newimage ls
+      - run:
+          name: Wait for MySQL Service
+          command: |
+             docker exec -it newimage sh /app/.modman/opencart/wait-for-mysql.sh
+             docker exec -it newimage rm /app/.modman/opencart/wait-for-mysql.sh
+      - run:
+          name: Activate and setup Plugin
+          command: |
+             docker exec -it newimage /bin/sh -c "sed -i 's|http://localhost|https://${STG_URL}|g' config.php"
+             docker exec -it newimage /bin/sh -c "sed -i 's|http://localhost|https://${STG_URL}|g' admin/config.php"
+             docker exec -it newimage /bin/sh -c \
+             "echo \"define('HTTP_SERVER', 'http://${STG_URL}/');\" >> /app/config.php && \
+             echo \"define('HTTPS_SERVER', 'https://${STG_URL}/');\" >> /app/config.php && \
+             echo \"define('HTTP_SERVER', 'http://${STG_URL}/admin/');\" >> /app/admin/config.php && \
+             echo \"define('HTTPS_SERVER', 'https://${STG_URL}/admin/');\" >> /app/admin/config.php && \
+             echo \"define('HTTP_CATALOG', 'http://${STG_URL}/');\" >> /app/admin/config.php && \
+             echo \"define('HTTPs_CATALOG', 'https://${STG_URL}/');\" >> /app/admin/config.php \
+             "
+             docker exec -it newimage /root/bin/modman repair
+             docker exec -it newimage /bin/sh -c \
+                "mysql opencart < /app/.modman/opencart/opencart_module_install.sql"
+             docker exec -it newimage mysql opencart -e \
+               "INSERT INTO opencart.oc_setting (store_id, code, \`key\`, value, serialized) VALUES \
+                 (0, 'payment_mundipagg', 'payment_mundipagg_test_secret_key', '${API_TEST_SECRET_KEY}', 0), \
+                 (0, 'payment_mundipagg', 'payment_mundipagg_test_public_key', '${API_TEST_PUBLIC_KEY}', 0);"
+      - run:
+          name: Clear useless files
+          command: |
+             docker exec -i newimage sh -c \
+               "cd /app/.modman/opencart && \
+               rm -rf .github .circleci .git .gitignore && \
+               rm -rf Dockerfile wait-for-mysql.sh \
+               opencart_module_install.sql LICENSE *.MD"
+      - deploy:
+          name: Commit and push Docker image
+          command: |
+             sleep 5 && docker stop newimage
+             docker login ${DOCKER_ACCOUNT} -u ${DOCKER_USER} -p ${DOCKER_PASS}
+             docker commit newimage ${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest
+             docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest"
+             docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:${CIRCLE_BRANCH}"
+             docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:${CIRCLE_SHA1:0:8}"
+             docker push "${DOCKER_ACCOUNT}/${PROJECT_NAME}"
+
+  deploy_staging:
+     machine: true
+     steps:
+       - run:
+           name: Send deployment webhook to Rancher
+           command: |
+             BODY='{"push_data":{"tag":"'"${CIRCLE_BRANCH}"'"},"repository":{"repo_name":"'"${DOCKER_ACCOUNT}/${PROJECT_NAME}"'"}}'
+             curl -X POST ${RANCHER_STG_DEPLOY_URL} -H 'Content-Type: application/json' -d "${BODY}"
 
 workflows:
   version: 2
   build_publish_deploy:
     jobs:
       - build
-
-      
+      - publish:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_staging:
+          requires:
+            - publish
+          filters:
+            branches:
+              only: master
