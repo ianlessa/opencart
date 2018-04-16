@@ -106,6 +106,7 @@ jobs:
              docker login ${DOCKER_ACCOUNT} -u ${DOCKER_USER} -p ${DOCKER_PASS}
              docker commit newimage ${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest
              docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest"
+             docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:${CIRCLE_BRANCH}"
              docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:${CIRCLE_SHA1:0:8}"
              docker push "${DOCKER_ACCOUNT}/${PROJECT_NAME}"
 
@@ -126,6 +127,12 @@ workflows:
       - publish:
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - deploy_staging:
           requires:
             - publish
+          filters:
+            branches:
+              only: master
