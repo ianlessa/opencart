@@ -116,9 +116,4 @@ class General
         // @todo: make this customizable from module administration panel
         return 'mundipagg';
     }
-
-    public function getAntiFraudMinVal()
-    {
-        return $this->openCart->config->get('payment_mundipagg_antifraud_minval');
-    }
 }

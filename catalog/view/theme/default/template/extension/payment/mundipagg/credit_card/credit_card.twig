@@ -11,7 +11,9 @@
                             class="form-control col-sm-12 mundipagg-cardNumber"
                             maxlength="19" id="cardNumber"
                             data-mundipagg-validation-element="number-{{ inputId }}"
-                            data-mundicheckout-element="number-{{ inputId }}">
+                            data-mundicheckout-element="number-{{ inputId }}"
+                            inputId="{{ inputId }}"
+                    >
                     <span class="input-group-addon" inputId="{{ inputId }}" data-mundicheckout-element="brand-{{ inputId }}" data-mundicheckout-brand data-mundicheckout-brand-image></span>
                 </div>
                 <span id="credit-card-number-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>

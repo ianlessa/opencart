@@ -527,78 +527,97 @@
                                     {{ credit_card.incremental_interest }}
                                 </label>
                             </div>
-                            {% for cC in creditCard %}
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label" for="CC-{{ cC['brand_name'] }}">
-                                        <img src="{{ cC['image'] }}" width="30" title="{{ cC['brand_name'] }}" alt="{{ cC['brand_name'] }}"/>
-                                    </label>
-                                    <div class="col-sm-2">
-                                        <select
-                                            class="form-control"
-                                            id="CC-{{ cC['brand_name'] }}"
-                                            name="creditCard[{{ cC['brand_name'] }}][is_enabled]">
-                                            {% if cC['is_enabled'] %}
-                                                <option value="1" selected="selected">Enabled</option>
-                                                <option value="0">Disabled</option>
-                                            {% else %}
-                                                <option value="1">Enabled</option>
-                                                <option value="0" selected="selected">Disabled</option>
+
+                            <div class="credit-card-configuration-by-brand">
+                                {% for cC in creditCard %}
+
+                                    {% if cC['brand_name'] != "Default" %}
+                                        {% set class = "optionByFlag" %}
+                                        {% set onchange = "" %}
+                                    {% else %}
+                                        {% set class = "optionByDefault" %}
+                                        {% set onchange = "onchange='defaultInstallments()'" %}
+                                    {% endif %}
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="CC-{{ cC['brand_name'] }}" >
+                                            {%  if cC['brand_name'] == "Default" %}
+                                                One configuration for all brands
                                             {% endif %}
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="col-sm-2">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="12"
-                                            step="1"
-                                            name="creditCard[{{ cC['brand_name'] }}][installments_up_to]"
-                                            id="installments_up_to_{{ cC['brand_name'] }}"
-                                            placeholder="Installments up to"
-                                            class="form-control"
-                                            value="{{ cC['installments_up_to'] }}"
-                                            onchange="checkInstallments('{{ cC['brand_name'] }}')"
+
+                                            {% if cC['image'] %}
+                                                <img src="{{ cC['image'] }}" width="30" title="{{ cC['brand_name'] }}" alt="{{ cC['brand_name'] }}"/>
+                                            {% endif %}
+                                        </label>
+                                        <div class="col-sm-2">
+                                            <select
+                                                class="form-control"
+                                                id="credit-card-enabled"
+                                                name="creditCard[{{ cC['brand_name'] }}][is_enabled]"
+                                                {{ onchange }}>
+                                                {% if cC['is_enabled'] %}
+                                                    <option value="1" selected="selected">Enabled</option>
+                                                    <option value="0">Disabled</option>
+                                                {% else %}
+                                                    <option value="1">Enabled</option>
+                                                    <option value="0" selected="selected">Disabled</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="12"
+                                                step="1"
+                                                name="creditCard[{{ cC['brand_name'] }}][installments_up_to]"
+                                                id="installments_up_to_{{ cC['brand_name'] }}"
+                                                placeholder="Installments up to"
+                                                class="form-control {{ class }}"
+                                                value="{{ cC['installments_up_to'] }}"
+                                                onchange="checkInstallments('{{ cC['brand_name'] }}')"
+                                                >
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="12"
+                                                step="1"
+                                                name="creditCard[{{ cC['brand_name'] }}][installments_without_interest]"
+                                                id="installments_without_interest_{{ cC['brand_name'] }}"
+                                                placeholder="Installments without interest"
+                                                class="form-control {{ class }}"
+                                                value="{{ cC['installments_without_interest'] }}"
                                             >
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                name="creditCard[{{ cC['brand_name'] }}][interest]"
+                                                placeholder="Interest"
+                                                class="form-control {{ class }}"
+                                                value="{{ cC['interest'] }}">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
+                                                placeholder="Incremental interest"
+                                                id="incremental-interest"
+                                                class="form-control {{ class }}"
+                                                value="{{ cC['incremental_interest'] }}"
+                                            >
+                                        </div>
                                     </div>
-                                    
-                                    <div class="col-sm-2">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="12"
-                                            step="1"
-                                            name="creditCard[{{ cC['brand_name'] }}][installments_without_interest]"
-                                            id="installments_without_interest_{{ cC['brand_name'] }}"
-                                            placeholder="Installments without interest"
-                                            class="form-control"
-                                            value="{{ cC['installments_without_interest'] }}"
-                                        >
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            name="creditCard[{{ cC['brand_name'] }}][interest]"
-                                            placeholder="Interest"
-                                            class="form-control"
-                                            value="{{ cC['interest'] }}">
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            name="creditCard[{{ cC['brand_name'] }}][incremental_interest]"
-                                            placeholder="Incremental interest"
-                                            id="incremental-interest"
-                                            class="form-control"
-                                            value="{{ cC['incremental_interest'] }}"
-                                        >
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
 		                </div> <!-- tab-credit-card -->
 
 		                <div class="tab-pane" id="tab-boleto">
@@ -746,4 +765,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        defaultInstallments();
+    });
+
+    function defaultInstallments() {
+        if ($("select[name='creditCard[Default][is_enabled]']").val() == 1) {
+            $(".optionByFlag").prop('readonly', true);
+            $(".optionByDefault").removeAttr("readonly");
+        } else {
+            $(".optionByFlag").removeAttr("readonly");
+            $(".optionByDefault").prop('readonly', true);
+        }
+    }
+</script>
+
 {{ footer }}

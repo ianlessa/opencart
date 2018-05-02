@@ -5,6 +5,7 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
+use Mundipagg\Controller\Events as MundipaggEvents;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -605,5 +606,28 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->model('customer/custom_field');
         $customFields = $this->model_customer_custom_field->getCustomFields();
         $this->data['general_custom_fields'] = $customFields;
+    }
+
+    /**
+     * @todo Improve this method to call ALL mundipagg events
+     * @param string $route
+     * @param array $data
+     * @param $template
+     * @return mixed
+     * @throws Exception
+     */
+    public function callEvents($route, $data = array(), $template = null)
+    {
+        $mundipaggEvents = new MundipaggEvents(
+            $this,
+            new Template($this->registry->get('config')->get('template_engine'))
+        );
+
+        $template = $mundipaggEvents->addMundipaggOrderActions($data);
+
+        return $template->render(
+            $this->config->get('template_directory') . $route,
+            $this->config->get('template_cache')
+        );
     }
 }

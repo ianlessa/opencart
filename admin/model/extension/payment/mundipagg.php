@@ -24,9 +24,11 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->createOrderTable();
         $this->createChargeTable();
         $this->createCreditCardTable();
-        $this->createBoletoLinkTable();
+        $this->createOrderBoletoInfoTable();
+        $this->createOrderCardInfoTable();
 
         $this->populatePaymentTable();
+
         $this->installEvents();
     }
 
@@ -42,7 +44,9 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->dropOrderTable();
         $this->dropChargeTable();
         $this->dropCreditCardTable();
-        $this->dropBoletoLinkTable();
+        $this->dropOrderBoletoInfoTable();
+        $this->dropOrderCardInfoTable();
+
         $this->uninstallEvents();
     }
 
@@ -55,23 +59,24 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         //Add button to order list in admin
         $this->model_setting_event->addEvent(
-            'payment_mundipagg',
+            'payment_mundipagg_add_order_actions',
             'admin/view/sale/order_list/before',
-            'extension/payment/mundipagg_events/onOrderList'
-        );
-
-        //Add module link to main menu
-        $this->model_setting_event->addEvent(
-            'payment_mundipagg',
-            'admin/view/common/column_let/before',
-            'extension/payment/mundipagg_events/addModuleLink'
+            'extension/payment/mundipagg/callEvents'
         );
 
         //Add saved credit card list
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
             'catalog/view/account/*/after',
-            'extension/payment/mundipagg_events/showSavedCreditcards'
+            'extension/payment/mundipagg_events/showSavedCreditcards',
+            1,
+            9999
+        );
+
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_show_account_order_info',
+            'catalog/view/account/order_info/after',
+            'extension/payment/mundipagg_events/showAccountOrderInfo'
         );
 
         $this->model_setting_event->addEvent(
@@ -85,6 +90,10 @@ class ModelExtensionPaymentMundipagg extends Model
             'catalog/controller/checkout/success/before',
             'extension/payment/mundipagg_events/prepareCheckoutOrderInfo'
         );
+
+        /**
+         * @todo Add module link by event
+         */
     }
 
     /***
@@ -97,6 +106,8 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->load->model('setting/event');
         $this->model_setting_event->deleteEvent('payment_mundipagg');
         $this->model_setting_event->deleteEvent('payment_mundipagg_saved_creditcards');
+        $this->model_setting_event->deleteEvent('payment_mundipagg_show_checkout_order_info');
+        $this->model_setting_event->deleteEvent('payment_mundipagg_prepare_checkout_order_info');
     }
 
     /**
@@ -110,6 +121,7 @@ class ModelExtensionPaymentMundipagg extends Model
     {
         $this->db->query(
             "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_payments` (
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `brand_name` VARCHAR(20),
                 `is_enabled` TINYINT(1),
                 `installments_up_to` TINYINT,
@@ -163,6 +175,7 @@ class ModelExtensionPaymentMundipagg extends Model
     private function populatePaymentTable()
     {
         $preset = $this->getPaymentInfo()->brands;
+        $preset->Default = $this->getDefaultCerditCardPreset();
 
         foreach ($preset as $brand => $value) {
             $this->db->query(
@@ -208,13 +221,17 @@ class ModelExtensionPaymentMundipagg extends Model
      */
     public function getCreditCardInformation()
     {
-        $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments`";
+        $sql = "SELECT * from `". DB_PREFIX ."mundipagg_payments` order by id DESC";
         $query = $this->db->query($sql);
         $brands = $query->rows;
         $brandImages = $this->getCreditCardBrands();
         
         foreach ($brands as $index => $brand) {
-            $brands[$index]['image'] = $brandImages[$brand['brand_name']]['image'];
+            $brands[$index]['image'] = '';
+
+            if (isset($brandImages[$brand['brand_name']]['image'])) {
+                $brands[$index]['image'] =  $brandImages[$brand['brand_name']]['image'];
+            }
         }
         
         return $brands;
@@ -375,22 +392,60 @@ class ModelExtensionPaymentMundipagg extends Model
         );
     }
 
-    private function createBoletoLinkTable()
+    private function createOrderBoletoInfoTable()
     {
         $this->db->query(
-            'CREATE TABLE IF NOT EXISTS `'. DB_PREFIX .'mundipagg_boleto_link` (
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX ."mundipagg_order_boleto_info` (
                 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `opencart_order_id` INT(11) NOT NULL,
-                `link` VARCHAR(256) NOT NULL
-                );'
+                `charge_id` VARCHAR(30) NOT NULL,
+                `line_code` VARCHAR(60) NOT NULL DEFAULT '(INVALID DATA)',
+                `due_at` VARCHAR(30) NOT NULL DEFAULT '(INVALID DATA)',
+                `link` VARCHAR(256) NOT NULL DEFAULT '(INVALID DATA)'
+                );"
         );
     }
 
-    private function dropBoletoLinkTable()
+    private function dropOrderBoletoInfoTable()
     {
         $this->db->query(
-            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_boleto_link`;'
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_order_boleto_info`;'
         );
+    }
+
+    private function createOrderCardInfoTable()
+    {
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX ."mundipagg_order_creditcard_info` (
+                `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `opencart_order_id` INT(11) NOT NULL,
+                `charge_id` VARCHAR(30) NOT NULL,
+                `holder_name` VARCHAR(100) NOT NULL DEFAULT '(INVALID DATA)',
+                `brand` VARCHAR(30) NOT NULL DEFAULT '(INVALID DATA)',
+                `last_four_digits` INT NOT NULL DEFAULT 0000,
+                `installments` INT NOT NULL DEFAULT 0
+                );"
+        );
+    }
+
+    private function dropOrderCardInfoTable()
+    {
+        $this->db->query(
+            'DROP TABLE IF EXISTS `' . DB_PREFIX . 'mundipagg_order_creditcard_info`;'
+        );
+    }
+
+    private function getDefaultCerditCardPreset()
+    {
+        $default = new stdClass();
+        $default->brandName = "Default";
+        $default->enabled = 1;
+        $default->installmentsUpTo = 12;
+        $default->installmentsWithoutInterest = 4;
+        $default->interest = 3;
+        $default->incrementalInterest = "0.1";
+
+        return $default;
     }
 }
 

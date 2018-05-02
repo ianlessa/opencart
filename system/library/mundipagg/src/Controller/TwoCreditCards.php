@@ -6,6 +6,8 @@ use Mundipagg\Order;
 use Mundipagg\Model\Order as OrderModel;
 use Mundipagg\Settings\CreditCard;
 use Mundipagg\Model\Creditcard as CreditCardModel;
+use Mundipagg\Log;
+use Mundipagg\LogMessages;
 
 class TwoCreditCards
 {
@@ -178,8 +180,12 @@ class TwoCreditCards
 
     private function setSaveCreditCard()
     {
-        $this->saveCreditCards[] = $this->details['save-this-credit-card-1'] === 'on';
-        $this->saveCreditCards[] = $this->details['save-this-credit-card-2'] === 'on';
+        if (isset($this->details['save-this-credit-card-1'])) {
+            $this->saveCreditCards[] = $this->details['save-this-credit-card-1'] === 'on';
+        }
+        if (isset($this->details['save-this-credit-card-2'])) {
+            $this->saveCreditCards[] = $this->details['save-this-credit-card-2'] === 'on';
+        }
     }
 
     private function saveCreditCards($orderResponse)

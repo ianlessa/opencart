@@ -11,6 +11,7 @@ use MundiAPILib\Models\CreateAddressRequest;
 use MundiAPILib\Models\CreateCustomerRequest;
 use MundiAPILib\Models\CreateShippingRequest;
 
+use Mundipagg\Settings\AntiFraud as AntiFraudSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\General as GeneralSettings;
 
@@ -669,9 +670,10 @@ class Order
      * Update opencart order status with the mundipagg translated status
      *
      * @param mixed $orderStatus
+     * @param string $comment
      * @return void
      */
-    public function updateOrderStatus($orderStatus)
+    public function updateOrderStatus($orderStatus, $comment = '')
     {
         $this->openCart->load->model('extension/payment/mundipagg_order_processing');
         $model = $this->openCart->model_extension_payment_mundipagg_order_processing;
@@ -679,7 +681,7 @@ class Order
         $model->addOrderHistory(
             $this->openCart->session->data['order_id'],
             $orderStatus,
-            '',
+            $comment,
             true
         );
 
@@ -736,8 +738,10 @@ class Order
      */
     private function shouldSendAntiFraud($paymentMethod, $orderAmount)
     {
-        $minOrderAmount = $this->generalSettings->getAntiFraudMinVal();
-        $antiFraudStatus = $this->generalSettings->isAntiFraudEnabled();
+        $antiFraudSettings = new AntiFraudSettings($this->openCart);
+
+        $minOrderAmount = $antiFraudSettings->getOrderMinVal();
+        $antiFraudStatus = $antiFraudSettings->isEnabled();
 
         if ($antiFraudStatus &&
             $paymentMethod === 'creditCard' &&

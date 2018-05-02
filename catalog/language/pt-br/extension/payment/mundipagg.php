@@ -64,3 +64,30 @@ $_['saved_creditcard'] = [
     'last_four_digits' => 'Últimos quatro dígitos',
     'delete' => 'Excluir'
 ];
+
+$_['order_statuses'] = [
+    'pending' => 'Pedido criado',
+    'paid' => 'Pagamento efetuado',
+    'canceled' => 'Pedido cancelado',
+    'failed' => 'Falha no pagamento'
+];
+
+$_['account_info'] = [
+    'text_payment_data' => 'Dados de Pagamento',
+    'column_payment_method' => 'Método de pagamento',
+    'column_status' => 'Status',
+    'column_paid_amount' => 'Quantia paga',
+    'column_amount' => 'Quantia Total',
+
+    'column_boleto_link' => 'Link',
+    'column_boleto_line_code' => 'Código de barras',
+    'column_boleto_due_at' => 'Vencimento',
+
+    'column_creditcard_holder_name' => 'Nome do titular',
+    'column_creditcard_brand' => 'Bandeira',
+    'column_creditcard_number' => 'Numero do cartão',
+    'column_creditcard_installments' => 'Parcelas',
+
+    'boleto_link_message' => 'Clique aqui para exibir seu boleto',
+    'text_no_results' => 'Sem resultados.'
+];
