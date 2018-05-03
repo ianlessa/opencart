@@ -22,7 +22,8 @@ $_['credit_card'] = [
     'without_interest' => 'without interest',
     'interest' => 'interest: ',
     'new_credit_card' => 'New Card',
-    'save_creditcard_message' => 'Save this card to future orders'
+    'save_creditcard_message' => 'Save this card to future orders',
+    'multibuyer_message' => 'Fill other buyer data'
 ];
 
 $_['order'] = [

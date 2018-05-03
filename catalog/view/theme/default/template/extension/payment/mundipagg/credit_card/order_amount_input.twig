@@ -2,9 +2,7 @@
     <div class="col-sm-2" id="holdername-field">
         <label for="amount-{{ inputId }}">Valor</label>
         <input name="amount-{{ inputId }}"
-               type="number"
-               min="0"
-               step=".01"
+               type="text"
                class="form-control mundipagg-amount"
                maxlength="9"
                inputId="{{ inputId }}"
@@ -15,4 +13,3 @@
         <span id="amount-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
     </div>
 </div>
-

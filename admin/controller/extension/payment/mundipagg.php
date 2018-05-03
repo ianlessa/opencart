@@ -381,11 +381,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
         unset($postRequest['creditCard']);
 
         // save module settings
-        $modules = array(
-            'payment_mundipagg' => '/^payment_mundipagg/'
-        );
+        $modules = ['payment_mundipagg' => '/^payment_mundipagg/'];
 
-        // use array_walk
         foreach ($modules as $module => $pattern) {
             $this->model_setting_setting->editSetting(
                 $module,
@@ -440,6 +437,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['boletoCreditCard'] = $this->language->get('boletoCreditCard');
         $this->data['antifraud'] = $this->language->get('antifraud');
         $this->data['misc'] = $this->language->get('misc');
+        $this->data['extra'] = $this->language->get('extra');
     }
 
     /**
@@ -517,6 +515,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             'general_test_mode'          => $this->config->get('payment_mundipagg_test_mode'),
             'general_log_enabled'        => $this->config->get('payment_mundipagg_log_enabled'),
             'general_payment_title'      => $this->config->get('payment_mundipagg_title'),
+            'extra_multibuyer_enabled'   => $this->config->get('payment_mundipagg_multibuyer_enabled'),
             'antifraud_status'           => $this->config->get('payment_mundipagg_antifraud_status'),
             'antifraud_minval'           => $this->config->get('payment_mundipagg_antifraud_minval'),
         );

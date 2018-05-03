@@ -80,11 +80,17 @@ class Order
      * @param string $paymentMethod
      * @param string $cardToken
      * @param int $cardId
+     * @param null $multiBuyer
      * @return object
-     * @throws \Exception
      */
-    public function create($orderData, $cart, $paymentMethod, $cardToken = null, $cardId = null)
-    {
+    public function create(
+        $orderData,
+        $cart,
+        $paymentMethod,
+        $cardToken = null,
+        $cardId = null,
+        $multiBuyer = null
+    ) {
         $items = $this->prepareItems($cart->getProducts());
 
         $createAddressRequest = $this->createAddressRequest($orderData);
@@ -106,7 +112,7 @@ class Order
         }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
-        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId);
+        $payments = $this->preparePayments($paymentMethod, $cardToken, $totalOrderAmount, $cardId, $multiBuyer);
 
         try {
             $CreateOrderRequest = $this->createOrderRequest(
@@ -162,12 +168,13 @@ class Order
         $paymentMethod,
         $amounts,
         $tokens,
-        $cardIds
+        $cardIds,
+        $multiBuyer
     ) {
         $items = $this->prepareItems($cart->getProducts());
 
         $createAddressRequest = $this->createAddressRequest($orderData);
-        $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest);
+        $createCustomerRequest = $this->createCustomerRequest($orderData, $createAddressRequest, $multiBuyer);
         $createShippingRequest = $this->createShippingRequest($orderData, $createAddressRequest, $cart);
 
         $totalOrderAmount = $orderData['total'];
@@ -177,7 +184,7 @@ class Order
         }
 
         $isAntiFraudEnabled = $this->shouldSendAntiFraud($paymentMethod, $totalOrderAmount);
-        $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds);
+        $payments = $this->preparePayments($paymentMethod, $tokens, $amounts, $cardIds, $multiBuyer);
 
         try {
             $createOrderRequest = $this->createOrderRequest(
@@ -428,10 +435,12 @@ class Order
      * @param string $paymentType
      * @param string $cardToken
      * @param float $orderAmount
-     * @throws \Exception Unsupported payment type
+     * @param array $cardId
+     * @param null $multiBuyer
      * @return array
+     * @throws \Exception Unsupported payment type
      */
-    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = [])
+    private function preparePayments($paymentType, $cardToken, $orderAmount, $cardId = [], $multiBuyer = null)
     {
         switch ($paymentType) {
             case 'boleto':
@@ -443,14 +452,16 @@ class Order
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardIdValue
+                    $cardIdValue,
+                    $multiBuyer
                 );
             case 'twoCreditCards':
                 return $this->getTwoCreditCardsPaymentDetails(
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardId
+                    $cardId,
+                    $multiBuyer
                 );
             case 'boletoCreditCard':
                 $creditCardAmount = $this->creditCardAmount * 100 ;
@@ -464,7 +475,8 @@ class Order
                     $cardToken,
                     $this->orderInstallments,
                     $orderAmount,
-                    $cardIdValue
+                    $cardIdValue,
+                    $multiBuyer
                 );
                 $creditCardPayment[0]['amount'] = $creditCardAmount;
 
@@ -507,10 +519,16 @@ class Order
      * @param int $installments
      * @param float $amount
      * @param int $cardId
+     * @param null $multiBuyer
      * @return array
      */
-    private function getCreditCardPaymentDetails($token, $installments, $amount, $cardId = null)
-    {
+    private function getCreditCardPaymentDetails(
+        $token,
+        $installments,
+        $amount,
+        $cardId = null,
+        $multiBuyer = null
+    ) {
         $amountInCents = number_format($amount, 2, '', '');
         $paymentDeatails = [
             [
@@ -525,6 +543,10 @@ class Order
 
         if ($token) {
             $paymentDeatails[0]['credit_card']['card_token'] = $token;
+        }
+
+        if ($multiBuyer) {
+            $paymentDeatails[0]['customer'] = $multiBuyer;
         }
 
         $mundiPaggCreditcardId = $this->getMundipaggCardId($cardId);
@@ -544,7 +566,7 @@ class Order
      *
      * @return array
      */
-    private function getTwoCreditCardsPaymentDetails($token, $installments, $amount, $cardId)
+    private function getTwoCreditCardsPaymentDetails($token, $installments, $amount, $cardId, $multiBuyer = [])
     {
         $paymentDetails = [];
 
@@ -553,7 +575,8 @@ class Order
             $token[0],
             $amount[0],
             $installments[0],
-            $cardId[0]
+            $cardId[0],
+            isset($multiBuyer[0]) ? $multiBuyer[0] : []
         );
 
         // second card
@@ -561,13 +584,14 @@ class Order
             $token[1],
             $amount[1],
             $installments[1],
-            $cardId[1]
+            $cardId[1],
+            isset($multiBuyer[1]) ? $multiBuyer[1] : []
         );
 
         return $paymentDetails;
     }
 
-    private function getSingleCardPaymentDetails($token, $amount, $installments, $cardId = null)
+    private function getSingleCardPaymentDetails($token, $amount, $installments, $cardId = null, $multiBuyer = [])
     {
         $amountInCents = number_format($amount, 2, '', '');
         $paymentDetails = [
@@ -587,6 +611,10 @@ class Order
 
         if ($mundiPaggCreditCardId) {
             $paymentDetails['credit_card']['card_id'] = $mundiPaggCreditCardId;
+        }
+
+        if ($multiBuyer) {
+            $paymentDetails['customer'] = $multiBuyer;
         }
 
         return $paymentDetails;

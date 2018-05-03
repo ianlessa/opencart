@@ -2,7 +2,6 @@ var MundiPagg = {};
 
 MundiPagg.Validator = function() {
     return {
-
         skipValidation: function(ignoredForms,elementType,elementIndex)
         {
             //if the form is on the disable list, validate only saved card installments and amount;
@@ -19,7 +18,7 @@ MundiPagg.Validator = function() {
                 elementType === 'saved_installments';
         },
 
-        initValidationContext: function(form,callerObject) {
+        initValidationContext: function(form, callerObject) {
             var ignoredForms = [];
             try {
                 ignoredForms = JSON.parse(form.attr('disabled-forms'));
@@ -35,7 +34,10 @@ MundiPagg.Validator = function() {
                     'cvv' : {},
                     'new_installments': {},
                     'saved_installments': {},
-                    'amount': {}
+                    'amount': {},
+                    'cpf': {},
+                    'email': {},
+                    'multi-buyer-name': {}
                 },
                 validationFunction: {
                     'number': callerObject.validateCardNumber,
@@ -45,7 +47,10 @@ MundiPagg.Validator = function() {
                     'cvv' : callerObject.validateCVV,
                     'new_installments': callerObject.validateInstallments,
                     'saved_installments': callerObject.validateInstallments,
-                    'amount': callerObject.validateAmount
+                    'amount': callerObject.validateAmount,
+                    'cpf': callerObject.validateCpf,
+                    'email': callerObject.validateEmail,
+                    'multi_buyer_name': callerObject.validateMultiBuyerName
                 },
                 validationErrorType: {
                     'number': 'credit-card-number',
@@ -55,7 +60,10 @@ MundiPagg.Validator = function() {
                     'cvv' : 'cvv',
                     'new_installments': 'new_installments',
                     'saved_installments': 'saved_installments',
-                    'amount': 'amount'
+                    'amount': 'amount',
+                    'cpf': 'cpf',
+                    'email': 'email',
+                    'multi_buyer_name': 'multi-buyer-name'
                 },
                 inputsToValidate: form.find('[data-mundipagg-validation-element]'),
                 ignoredForms: ignoredForms
@@ -64,15 +72,15 @@ MundiPagg.Validator = function() {
 
         validateForm: function (form)
         {
-            var validationContext = this.initValidationContext(form,this);
+            let validationContext = this.initValidationContext(form, this);
 
-            validationContext.inputsToValidate.each(function(index,element){
+            validationContext.inputsToValidate.each(function(index, element) {
                 var checkoutElement = $(element).attr('data-mundipagg-validation-element').split("-");
                 var elementIndex = checkoutElement[1];
                 var elementType = checkoutElement[0];
                 var elementValue = $(element).val();
 
-                if(this.skipValidation(validationContext.ignoredForms,elementType,elementIndex)) {
+                if (this.skipValidation(validationContext.ignoredForms,elementType,elementIndex)) {
                     return;
                 }
 
@@ -80,6 +88,7 @@ MundiPagg.Validator = function() {
                 var arg1 = elementValue;
                 var arg2 = null;
                 var arg3 = null;
+
                 switch(elementType) {
                     case 'exp_month':
                     case 'exp_year':
@@ -92,7 +101,7 @@ MundiPagg.Validator = function() {
                         break;
                 }
 
-                var error = validationFunction(arg1,arg2,arg3);
+                var error = validationFunction(arg1, arg2, arg3);
                 if (typeof error !== 'undefined') {
                     validationContext.hasErrors = true;
                     validationContext.errors[
@@ -174,6 +183,70 @@ MundiPagg.Validator = function() {
             return undefined;
         },
 
+        validateMultiBuyerName: function (name) {
+            if (!name || 0 === name.length || name.trim().length === 0) {
+                return 'O campo nome não pode estar vazio';
+            }
+
+            return undefined;
+        },
+
+        validateEmail: function (email) {
+            if (!email || 0 === email.length || email.trim().length === 0) {
+                return 'O campo email não pode estar vazio';
+            }
+
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+                return undefined;
+            }
+
+            return 'Endereço de email inválido';
+        },
+
+        validateCpf: function (cpf) {
+            let sum;
+            let rest;
+            let errorMessage = 'CPF inválido';
+
+            sum = 0;
+
+            if (cpf === '00000000000') {
+                return errorMessage;
+            }
+
+            for (i = 1; i <= 9; i++) {
+                sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+            }
+
+            rest = (sum * 10) % 11;
+
+            if ((rest === 10) || (rest === 11)) {
+                rest = 0;
+            }
+
+            if (rest !== parseInt(cpf.substring(9, 10))){
+                return errorMessage;
+            }
+
+            sum = 0;
+
+            for (i = 1; i <= 10; i++) {
+                sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+            }
+
+            rest = (sum * 10) % 11;
+
+            if ((rest === 10) || (rest === 11)) {
+                rest = 0;
+            }
+
+            if (rest !== parseInt(cpf.substring(10, 11))) {
+                return errorMessage;
+            }
+
+            return undefined;
+        },
+
         validateInstallments: function (number) {
             var errorMsg = "Por favor, selecione as parcelas.";
             return number === '' ? errorMsg : undefined;
@@ -222,7 +295,10 @@ MundiPagg.Form = function() {
                 'cvv' : 'cvv-message',
                 'new_installments': 'new_installments-message',
                 'saved_installments': 'saved_installments-message',
-                'amount': 'amount-message'
+                'amount': 'amount-message',
+                'cpf': 'cpf-message',
+                'email': 'email-message',
+                'multi-buyer-name': 'multi-buyer-name-message'
             };
 
             Object.keys(errorIndexes).forEach(function(property){
@@ -436,8 +512,47 @@ $("#mundipaggCheckout").ready(function () {
         $(this).keypress();
         this.dispatchEvent(new Event('keypress'));
     });
+
+    $('.multi-buyer-check').on('change', function () {
+        getCountries($(this));
+    })
+
 });
 
+function toogleMultiBuyerForm(inputId) {
+  $('#multi-buyer-form-' + inputId).toggle();
+}
+
+function getCountries(obj) {
+    let whichBuyerForm = obj.context.name.split('-').slice(-1)[0];
+    let url = "index.php?route=extension/payment/mundipagg/api/countries";
+
+    $.get(url)
+    .done(function( data ) {
+        var html = buildCountriesOptions(data);
+        $("#multi-buyer-country-" + whichBuyerForm).html(html);
+    }).fail(function (err) {
+        $("#multi-buyer-country-" + whichBuyerForm).html("");
+        console.log(err);
+    });
+}
+
+function getState(obj) {
+    let country_id = obj.selectedOptions["0"].getAttribute('country_id');
+    let whichBuyerForm = obj.name.split('-').slice(-1)[0];
+    let url = "index.php?route=extension/payment/mundipagg/api/statesByCountry";
+    url += "&country_id=" + country_id;
+
+    $.get(url)
+    .done(function( data ) {
+        var html = buildStatesOptions(data);
+        $("#multi-buyer-state-" + whichBuyerForm).html(html);
+        $("#multi-buyer-state-" + whichBuyerForm).prop("disabled", false);
+    }).fail(function (err) {
+        $("#multi-buyer-state-" + whichBuyerForm).html("");
+        console.log(err);
+    });
+}
 
 function changeInstallments() {
     return;
@@ -495,6 +610,34 @@ function getInstallments(brand, amount, inputId, newSaved) {
     }
 }
 
+function buildCountriesOptions(data) {
+    var json = $.parseJSON(data);
+    var html = "<option value=''> Selecione </option>";
+
+    Object.keys(json).forEach(function(k){
+        html += "<option ";
+        html += "country_id='" + json[k].country_id + "'";
+        html += "value='" + json[k].iso_code_2 + "'>";
+        html += " " + json[k].name + " ";
+        html += "</option>";
+    });
+
+    return html;
+}
+
+function buildStatesOptions(data) {
+    var json = $.parseJSON(data);
+    var html = "<option value=''> Selecione </option>";
+
+    Object.keys(json).forEach(function(k){
+        html += "<option ";
+        html += "value='" + json[k].code + "'>";
+        html += " " + json[k].name + " ";
+        html += "</option>";
+    });
+
+    return html;
+}
 
 function buildInstallmentsOptions(brand, data) {
     var json = $.parseJSON(data);

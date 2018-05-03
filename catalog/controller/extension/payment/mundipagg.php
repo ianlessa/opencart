@@ -4,7 +4,7 @@
  *
  * @package Mundipagg
  */
-require_once DIR_SYSTEM.'library/mundipagg/vendor/autoload.php';
+require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
 use Mundipagg\Controller\Api;
 use Mundipagg\Controller\SavedCreditCard;
@@ -16,6 +16,8 @@ use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Settings\General as GeneralSettings;
+use MundiAPILib\Models\CreateCustomerRequest;
+use MundiAPILib\Models\CreateAddressRequest;
 
 class ControllerExtensionPaymentMundipagg extends Controller
 {
@@ -44,10 +46,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     private $mundipaggOrderUpdateModel;
 
-    private $onOff = [
-        'off' => false,
-        'on' => true
-    ];
+    private $onOff = ['off' => false, 'on' => true];
 
     /**
      * It loads opencart/mundipagg models
@@ -135,6 +134,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $isSavedCreditCardEnabled = $creditCardSettings->isSavedCreditcardEnabled();
         $this->data['isSavedCreditcardEnabled'] = $isSavedCreditCardEnabled;
 
+        $isMultiBuyerEnabled = $generalSettings->isMultiBuyerEnabled();
+        if ($isMultiBuyerEnabled) {
+            $this->data['isMultiBuyerEnabled'] = $isMultiBuyerEnabled;
+            $this->data['countries'] = $this->getMultiBuyerFormData();
+        }
+
         if ($isSavedCreditCardEnabled) {
             $this->data['savedCreditcards'] =
                 $savedCreditcard->getSavedCreditcardList($this->customer->getId());
@@ -146,6 +151,14 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->loadPaymentTemplates();
 
         return $this->load->view('extension/payment/mundipagg/mundipagg', $this->data);
+    }
+
+    private function getMultiBuyerFormData()
+    {
+        $this->load->model('localisation/country');
+        $country = $this->model_localisation_country;
+
+        return $country->getCountries();
     }
 
     private function loadUrls()
@@ -176,6 +189,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['orderAmountInput'] = $path . 'credit_card/order_amount_input.twig';
         $this->data['submitTemplate'] = $path . 'credit_card/submit.twig';
         $this->data['boletoCreditCardTemplate'] = $path . 'boleto_credit_card.twig';
+        $this->data['multiBuyerFormTemplate'] = $path . 'multi_buyer_form.twig';
     }
 
     /**
@@ -306,10 +320,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
      * @param $orderData
      * @param $cardToken
      * @param $cardId
+     * @param $multiBuyer
      * @return mixed
      */
-    private function createCreditCardOrder($interest, $installments, $orderData, $cardToken, $cardId)
-    {
+    private function createCreditCardOrder(
+        $interest,
+        $installments,
+        $orderData,
+        $cardToken,
+        $cardId,
+        $multiBuyer
+    ) {
         $this->load();
         
         $order = $this->getOrder();
@@ -325,7 +346,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         if (isset($orderData['boletoCreditCard'])) {
            $paymentMethod = 'boletoCreditCard';
         }
-        return $order->create($orderData, $this->cart, $paymentMethod, $cardToken, $cardId);
+        return $order->create($orderData, $this->cart, $paymentMethod, $cardToken, $cardId, $multiBuyer);
     }
     
     private function getOrder()
@@ -403,6 +424,56 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/cart'));
     }
 
+    private function getMultiBuyerCustomer($multiBuyerData)
+    {
+        $addressRequest = new CreateAddressRequest();
+
+        $addressRequest->street = $multiBuyerData['street'];
+        $addressRequest->number = $multiBuyerData['number'];
+        $addressRequest->neighborhood = $multiBuyerData['neighborhood'];
+        $addressRequest->city = $multiBuyerData['city'];
+        $addressRequest->state = $multiBuyerData['state'];
+        $addressRequest->complement = $multiBuyerData['complement'];
+        $addressRequest->zipCode = $multiBuyerData['zipcode'];
+        $addressRequest->country = $multiBuyerData['country'];
+
+        $customerRequest = new CreateCustomerRequest();
+
+        $customerRequest->type = 'individual';
+        $customerRequest->name = $multiBuyerData['name'];
+        $customerRequest->email = $multiBuyerData['email'];
+        $customerRequest->document = $multiBuyerData['document'];
+        $customerRequest->address = $addressRequest;
+
+        return $customerRequest;
+    }
+
+    private function getMultiBuyerData($postData)
+    {
+        $result = [];
+
+        foreach ($postData as $key => $value) {
+            if (preg_match('/^multi-buyer/', $key)) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $this->formatMultiBuyerData($result);
+    }
+
+    private function formatMultiBuyerData($data)
+    {
+        $result = [];
+
+        foreach ($data as $key => $value) {
+            $keys = explode('multi-buyer-', $key)[1];
+            $keys = explode('-', $keys);
+            $result[$keys[1]][$keys[0]] = $value;
+        }
+
+        return $result;
+    }
+
     /**
      * This method process the credit card transaction
      *
@@ -411,6 +482,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function processCreditCard()
     {
         $this->load();
+
+        $multiBuyerCustomer = null;
+
+        if ($this->request->post['multi-buyer-status-0'] === 'on') {
+            $multiBuyerData = $this->getMultiBuyerData($this->request->post);
+            $multiBuyerCustomer = $this->getMultiBuyerCustomer($multiBuyerData[0]);
+        }
 
         if (!$this->isValidateCreditCardRequest()) {
             Log::create()
@@ -429,7 +507,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
-                [$card['cardId']]
+                [$card['cardId']],
+                $multiBuyerCustomer
             );
         } catch (Exception $e) {
             Log::create()
@@ -484,6 +563,17 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load();
 
+        $multiBuyerData = [];
+
+        if (
+            $this->request->post['multi-buyer-status-0'] === 'on' ||
+            $this->request->post['multi-buyer-status-1'] === 'on'
+        ) {
+            $multiBuyerData = $this->getMultiBuyerData($this->request->post);
+            $multiBuyerCustomer[] = $this->getMultiBuyerCustomer($multiBuyerData[1]);
+            $multiBuyerCustomer[] = $this->getMultiBuyerCustomer($multiBuyerData[2]);
+        }
+
         if (!$this->isValidTwoCreditCardsRequest($this->request->post)) {
             Log::create()
                 ->error(LogMessages::INVALID_CREDIT_CARD_REQUEST, __METHOD__)
@@ -494,7 +584,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         try {
             $postData = $this->getPostData();
-            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart);
+            $twoCreditCards = new TwoCreditCards($this, $postData, $this->cart, $multiBuyerCustomer);
             $response = $twoCreditCards->processPayment();
         } catch (\Exception $e) {
             Log::create()
@@ -537,6 +627,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
+        $multiBuyerCustomer = null;
+
+        if ($this->request->post['multi-buyer-status-3'] === 'on') {
+            $multiBuyerData = $this->getMultiBuyerData($this->request->post);
+            $multiBuyerCustomer = $this->getMultiBuyerCustomer($multiBuyerData[3]);
+        }
+
         $post = $this->request->post;
         $formId = $post['mundipagg-formid'];
 
@@ -564,7 +661,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $card['paymentDetails'][0],
                 $orderData,
                 $card['cardToken'],
-                [$card['cardId']]
+                [$card['cardId']],
+                $multiBuyerCustomer
             );
         } catch (Exception $e) {
             Log::create()

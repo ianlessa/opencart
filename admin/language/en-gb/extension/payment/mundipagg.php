@@ -19,7 +19,8 @@ $_['general'] = [
     'api_test_mode' => 'Test mode',
     'module_section' => 'Module',
     'log_section' => 'Log',
-    'select' => 'Select'
+    'select' => 'Select',
+    'extra_section' => 'Extra'
 ];
 // -----------------------------------------------------------------
 
@@ -80,6 +81,11 @@ $_['antifraud'] = [
 $_['logs'] = [
     'label' => 'Logs',
     'title' => 'Logs'
+];
+// -----------------------------------------------------------------
+
+$_['extra'] = [
+    'enable_multibuyer' => 'Enable multi buyer'
 ];
 // -----------------------------------------------------------------
 
