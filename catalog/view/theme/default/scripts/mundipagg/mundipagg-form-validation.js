@@ -512,8 +512,47 @@ $("#mundipaggCheckout").ready(function () {
         $(this).keypress();
         this.dispatchEvent(new Event('keypress'));
     });
+
+    $('.multi-buyer-check').on('change', function () {
+        getCountries($(this));
+    })
+
 });
 
+function toogleMultiBuyerForm(inputId) {
+  $('#multi-buyer-form-' + inputId).toggle();
+}
+
+function getCountries(obj) {
+    let whichBuyerForm = obj.context.name.split('-').slice(-1)[0];
+    let url = "index.php?route=extension/payment/mundipagg/api/countries";
+
+    $.get(url)
+    .done(function( data ) {
+        var html = buildCountriesOptions(data);
+        $("#multi-buyer-country-" + whichBuyerForm).html(html);
+    }).fail(function (err) {
+        $("#multi-buyer-country-" + whichBuyerForm).html("");
+        console.log(err);
+    });
+}
+
+function getState(obj) {
+    let country_id = obj.selectedOptions["0"].getAttribute('country_id');
+    let whichBuyerForm = obj.name.split('-').slice(-1)[0];
+    let url = "index.php?route=extension/payment/mundipagg/api/statesByCountry";
+    url += "&country_id=" + country_id;
+
+    $.get(url)
+    .done(function( data ) {
+        var html = buildStatesOptions(data);
+        $("#multi-buyer-state-" + whichBuyerForm).html(html);
+        $("#multi-buyer-state-" + whichBuyerForm).prop("disabled", false);
+    }).fail(function (err) {
+        $("#multi-buyer-state-" + whichBuyerForm).html("");
+        console.log(err);
+    });
+}
 
 function changeInstallments() {
     return;
@@ -571,6 +610,34 @@ function getInstallments(brand, amount, inputId, newSaved) {
     }
 }
 
+function buildCountriesOptions(data) {
+    var json = $.parseJSON(data);
+    var html = "<option value=''> Selecione </option>";
+
+    Object.keys(json).forEach(function(k){
+        html += "<option ";
+        html += "country_id='" + json[k].country_id + "'";
+        html += "value='" + json[k].iso_code_2 + "'>";
+        html += " " + json[k].name + " ";
+        html += "</option>";
+    });
+
+    return html;
+}
+
+function buildStatesOptions(data) {
+    var json = $.parseJSON(data);
+    var html = "<option value=''> Selecione </option>";
+
+    Object.keys(json).forEach(function(k){
+        html += "<option ";
+        html += "value='" + json[k].code + "'>";
+        html += " " + json[k].name + " ";
+        html += "</option>";
+    });
+
+    return html;
+}
 
 function buildInstallmentsOptions(brand, data) {
     var json = $.parseJSON(data);

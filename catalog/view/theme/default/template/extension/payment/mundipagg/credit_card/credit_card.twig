@@ -112,7 +112,7 @@
     {%  if isMultiBuyerEnabled %}
         <div class="row">
             <div class="col-sm-12">
-                <input type="checkbox" class="float-to-left multi-buyer-check" id="multi-buyer-{{ inputId }}" name="multi-buyer-status-{{ inputId }}" />
+                <input type="checkbox" class="float-to-left multi-buyer-check" id="multi-buyer-{{ inputId }}" name="multi-buyer-status-{{ inputId }}" onChange="toogleMultiBuyerForm({{inputId}})"/>
                 <label for="multi-buyer-{{ inputId }}">{{ credit_card.multibuyer_message }}</label>
             </div>
         </div>

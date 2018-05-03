@@ -72,6 +72,37 @@ class Api
         ];
     }
 
+    private function getCountries()
+    {
+        $this->openCart->load->model('localisation/country');
+        $modelCountry = $this->openCart->model_localisation_country;
+
+        return [
+            'status_code' => 200,
+            'payload' => $modelCountry->getCountries()
+        ];
+    }
+
+    private function getStatesByCountry($arguments)
+    {
+        $formData = [];
+
+        $countryId = 0;
+        if (isset($arguments['country_id'])) {
+            $countryId = $arguments['country_id'];
+        }
+
+        $this->openCart->load->model('localisation/zone');
+        $zone = $this->openCart->model_localisation_zone;
+
+        return [
+            'status_code' => 200,
+            'payload' => $zone->getZonesByCountryId($countryId)
+        ];
+
+    }
+
+
     private function getStates($arguments)
     {
         $formData = [];

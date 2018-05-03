@@ -55,7 +55,7 @@
                     id="multi-buyer-number-{{ inputId }}">
         </div>
 
-        <div class="col-sm-2 multi-buyer-form">
+        <div class="col-sm-3 multi-buyer-form">
             <label for="multi-buyer-zipcode-{{ inputId }}">CEP</label>
             <input
                     name="multi-buyer-zipcode-{{ inputId }}"
@@ -84,27 +84,33 @@
                     id="multi-buyer-city-{{ inputId }}">
         </div>
 
-        <div class="col-sm-2 multi-buyer-form">
-            <label for="multi-buyer-state-{{ inputId }}">Estado</label>
-            <input
-                    name="multi-buyer-state-{{ inputId }}"
-                    type="text"
-                    class="form-control"
-                    id="multi-buyer-state-{{ inputId }}">
-        </div>
-
-        <div class="col-sm-2 multi-buyer-form">
+        <div class="col-sm-3 multi-buyer-form">
             <label for="multi-buyer-country-{{ inputId }}">País</label>
-            <input
+            <select
                     name="multi-buyer-country-{{ inputId }}"
                     type="text"
                     class="form-control"
+                    onChange="getState(this)"
                     id="multi-buyer-country-{{ inputId }}">
+                <option value="">Selecione</option>
+            </select>
+        </div>
+
+        <div class="col-sm-3 multi-buyer-form">
+            <label for="multi-buyer-state-{{ inputId }}">Estado</label>
+            <select
+                    name="multi-buyer-state-{{ inputId }}"
+                    type="text"
+                    class="form-control"
+                    id="multi-buyer-state-{{ inputId }}"
+                    disabled>
+                <option value="">Selecione o Pais</option>
+            </select>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-sm-6 multi-buyer-form">
+        <div class="col-sm-12 multi-buyer-form">
             <label for="multi-buyer-complement-{{ inputId }}">Complemento</label>
             <input
                     name="multi-buyer-complement-{{ inputId }}"
