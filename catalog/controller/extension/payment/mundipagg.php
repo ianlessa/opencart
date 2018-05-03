@@ -136,7 +136,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $isMultiBuyerEnabled = $generalSettings->isMultiBuyerEnabled();
         if ($isMultiBuyerEnabled) {
-            $this->data['isMultiBuyerEnabled'] = $generalSettings->isMultiBuyerEnabled();
+            $this->data['isMultiBuyerEnabled'] = $isMultiBuyerEnabled;
             $this->data['countries'] = $this->getMultiBuyerFormData();
         }
 
@@ -160,8 +160,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         return $country->getCountries();
     }
-
-
 
     private function loadUrls()
     {
@@ -426,7 +424,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->response->redirect($this->url->link('checkout/cart'));
     }
 
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     private function getMultiBuyerCustomer($multiBuyerData)
     {
         $addressRequest = new CreateAddressRequest();
@@ -476,7 +473,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         return $result;
     }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     /**
      * This method process the credit card transaction
