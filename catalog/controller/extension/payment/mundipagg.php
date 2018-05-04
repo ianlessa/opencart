@@ -485,7 +485,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         $multiBuyerCustomer = null;
 
-        if ($this->request->post['multi-buyer-status-0'] === 'on') {
+        if (isset($this->request->post['multi-buyer-status-0']) &&
+            $this->request->post['multi-buyer-status-0'] === 'on'
+        ) {
             $multiBuyerData = $this->getMultiBuyerData($this->request->post);
             $multiBuyerCustomer = $this->getMultiBuyerCustomer($multiBuyerData[0]);
         }

@@ -35,9 +35,13 @@ MundiPagg.Validator = function() {
                     'new_installments': {},
                     'saved_installments': {},
                     'amount': {},
-                    'cpf': {},
-                    'email': {},
-                    'multi-buyer-name': {}
+                    'multi-buyer-document': {},
+                    'multi-buyer-email': {},
+                    'multi-buyer-name': {},
+                    'multi-buyer-street': {},
+                    'multi-buyer-zipcode': {},
+                    'multi-buyer-city': {},
+                    'multi-buyer-country': {},
                 },
                 validationFunction: {
                     'number': callerObject.validateCardNumber,
@@ -48,9 +52,13 @@ MundiPagg.Validator = function() {
                     'new_installments': callerObject.validateInstallments,
                     'saved_installments': callerObject.validateInstallments,
                     'amount': callerObject.validateAmount,
-                    'cpf': callerObject.validateCpf,
-                    'email': callerObject.validateEmail,
-                    'multi_buyer_name': callerObject.validateMultiBuyerName
+                    'multi_buyer_document': callerObject.validateCpf,
+                    'multi_buyer_email': callerObject.validateEmail,
+                    'multi_buyer_name': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "nome"),
+                    'multi_buyer_street': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "rua"),
+                    'multi_buyer_zipcode': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "cep"),
+                    'multi_buyer_city': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "cidade"),
+                    'multi_buyer_country': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "país"),
                 },
                 validationErrorType: {
                     'number': 'credit-card-number',
@@ -61,9 +69,13 @@ MundiPagg.Validator = function() {
                     'new_installments': 'new_installments',
                     'saved_installments': 'saved_installments',
                     'amount': 'amount',
-                    'cpf': 'cpf',
-                    'email': 'email',
-                    'multi_buyer_name': 'multi-buyer-name'
+                    'multi_buyer_document': 'multi-buyer-document',
+                    'multi_buyer_email': 'multi-buyer-email',
+                    'multi_buyer_name': 'multi-buyer-name',
+                    'multi_buyer_street': 'multi-buyer-street',
+                    'multi_buyer_zipcode': 'multi-buyer-zipcode',
+                    'multi_buyer_city': 'multi-buyer-city',
+                    'multi_buyer_country': 'multi-buyer-country',
                 },
                 inputsToValidate: form.find('[data-mundipagg-validation-element]'),
                 ignoredForms: ignoredForms
@@ -191,6 +203,14 @@ MundiPagg.Validator = function() {
             return undefined;
         },
 
+        validateMultiBuyerIssetAttrubute: function (attr, value) {
+            if (!value || 0 === value.length || value.trim().length === 0) {
+                return 'O campo ' + attr + ' não pode estar vazio';
+            }
+
+            return undefined;
+        },
+
         validateEmail: function (email) {
             if (!email || 0 === email.length || email.trim().length === 0) {
                 return 'O campo email não pode estar vazio';
@@ -296,9 +316,13 @@ MundiPagg.Form = function() {
                 'new_installments': 'new_installments-message',
                 'saved_installments': 'saved_installments-message',
                 'amount': 'amount-message',
-                'cpf': 'cpf-message',
-                'email': 'email-message',
-                'multi-buyer-name': 'multi-buyer-name-message'
+                'multi-buyer-document': 'multi-buyer-document-message',
+                'multi-buyer-email': 'multi-buyer-email-message',
+                'multi-buyer-name': 'multi-buyer-name-message',
+                'multi-buyer-street': 'multi-buyer-street-message',
+                'multi-buyer-zipcode': 'multi-buyer-zipcode-message',
+                'multi-buyer-city': 'multi-buyer-city-message',
+                'multi-buyer-country': 'multi-buyer-country-message',
             };
 
             Object.keys(errorIndexes).forEach(function(property){
@@ -514,13 +538,46 @@ $("#mundipaggCheckout").ready(function () {
     });
 
     $('.multi-buyer-check').on('change', function () {
+        var inputId = $(this).context.name.split('-').slice(-1)[0];
         getCountries($(this));
+        if ($("#multi-buyer-form-" + inputId).css("display") == "block") {
+            return validationsMultiBuyer(inputId, addDataValidation);
+        }
+        return validationsMultiBuyer(inputId, removeDataValidation);
     })
 
 });
 
 function toogleMultiBuyerForm(inputId) {
   $('#multi-buyer-form-' + inputId).toggle();
+}
+
+function getFieldsMultiBuyer() {
+    return [
+        'multi-buyer-document',
+        'multi-buyer-email',
+        'multi-buyer-name',
+        'multi-buyer-street',
+        'multi-buyer-zipcode',
+        'multi-buyer-city',
+        'multi-buyer-country',
+    ];
+}
+
+function validationsMultiBuyer(inputId, method) {
+    var fields = getFieldsMultiBuyer();
+    fields.forEach(method.bind(this, inputId));
+}
+
+function removeDataValidation(inputId, field) {
+    var id = "#" + field + '-' + inputId;
+    $(id).removeAttr("data-mundipagg-validation-element");
+}
+
+function addDataValidation(inputId, field) {
+    var id = "#" + field + '-' + inputId;
+    var data = field.replace(/-/g, "_") + "-" + inputId;
+    $(id).attr("data-mundipagg-validation-element", data);
 }
 
 function getCountries(obj) {
