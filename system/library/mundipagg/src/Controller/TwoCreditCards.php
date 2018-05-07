@@ -160,14 +160,18 @@ class TwoCreditCards
 
     private function setToken()
     {
-        $this->token[] = $this->details['munditoken-1'];
-        $this->token[] = $this->details['munditoken-2'];
+        $this->token[] =
+            isset($this->details['munditoken-1']) ? $this->details['munditoken-1'] : null;
+        $this->token[] =
+            isset($this->details['munditoken-2']) ? $this->details['munditoken-2'] : null;
     }
 
     private function setCardId()
     {
-        $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
-        $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
+        $this->cardId[] =
+            isset($this->details['mundipaggSavedCreditCard-1']) ? $this->details['mundipaggSavedCreditCard-1'] : null;
+        $this->cardId[] =
+            isset($this->details['mundipaggSavedCreditCard-2']) ? $this->details['mundipaggSavedCreditCard-2'] : null;
     }
 
     private function setInstallments()
