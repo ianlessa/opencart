@@ -3,7 +3,6 @@
         <div class="col-sm-5 multi-buyer-form">
             <label for="multi-buyer-name-{{ inputId }}">Nome</label>
             <input
-                    data-mundipagg-validation-element="multi_buyer_name-{{ inputId }}"
                     name="multi-buyer-name-{{ inputId }}"
                     type="text"
                     class="form-control"
@@ -14,23 +13,21 @@
         <div class="col-sm-5 multi-buyer-form">
             <label for="multi-buyer-email-{{ inputId }}">Email</label>
             <input
-                    data-mundipagg-validation-element="email-{{ inputId }}"
                     name="multi-buyer-email-{{ inputId }}"
                     type="text"
                     class="form-control"
                     id="multi-buyer-email-{{ inputId }}">
-            <span id="email-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
+            <span id="multi-buyer-email-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-2 multi-buyer-form">
             <label for="multi-buyer-document-{{ inputId }}">CPF</label>
             <input
-                    data-mundipagg-validation-element="cpf-{{ inputId }}"
                     name="multi-buyer-document-{{ inputId }}"
                     type="text"
                     class="form-control"
                     id="multi-buyer-document-{{ inputId }}">
-            <span id="cpf-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
+            <span id="multi-buyer-document-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 
@@ -44,6 +41,7 @@
                     type="text"
                     class="form-control"
                     id="multi-buyer-street-{{ inputId }}">
+            <span id="multi-buyer-street-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-2 multi-buyer-form">
@@ -62,6 +60,7 @@
                     type="text"
                     class="form-control"
                     id="multi-buyer-zipcode-{{ inputId }}">
+            <span id="multi-buyer-zipcode-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
     </div>
 
@@ -82,6 +81,7 @@
                     type="text"
                     class="form-control"
                     id="multi-buyer-city-{{ inputId }}">
+            <span id="multi-buyer-city-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-3 multi-buyer-form">
@@ -94,6 +94,7 @@
                     id="multi-buyer-country-{{ inputId }}">
                 <option value="">Selecione</option>
             </select>
+            <span id="multi-buyer-country-message-{{ inputId }}" class="text-danger form-validation-error-message"></span>
         </div>
 
         <div class="col-sm-3 multi-buyer-form">
