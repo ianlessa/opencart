@@ -501,7 +501,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         for ($index = 1; $index <= 2; $index++) {
 
             $paymentDetailsKey = 'new-creditcard-installments-' . $index;
-            $savedCard = $postData['mundipaggSavedCreditCard-' . $index] ?? null;
+            $savedCard = null;
+            if (isset($postData['mundipaggSavedCreditCard-' . $index])) {
+                $savedCard = $postData['mundipaggSavedCreditCard-' . $index];
+            }
 
             if (!empty($savedCard) && $savedCard !== 'new') {
                 $paymentDetailsKey = 'saved-creditcard-installments-' . $index;
