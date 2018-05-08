@@ -49,12 +49,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     private $onOff = ['off' => false, 'on' => true];
 
-    const INDEX_SIMPLE_CARD = "0";
+    const INDEX_CREDIT_CARD = "0";
     const INDEX_TWO_CARD_ONE = "1";
     const INDEX_TWO_CARD_TWO = "2";
-    const INDEX_BILLET_CARD_CART = "3";
-    const INDEX_BILLET_CARD_BILLET = "4";
-    const INDEX_SIMPLE_BILLET = "5";
+    const INDEX_BOLETO_CARD_CARD = "3";
+    const INDEX_BOLETO_CARD_BOLETO = "4";
+    const INDEX_BOLETO = "5";
 
     /**
      * It loads opencart/mundipagg models
@@ -441,7 +441,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load();
 
-        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_SIMPLE_CARD]);
+        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_CREDIT_CARD]);
         $multiBuyerCustomer = $multiBuyer->createCustomers();
 
         if (!$this->isValidateCreditCardRequest()) {
@@ -590,7 +590,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_BILLET_CARD_CART]);
+        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_BOLETO_CARD_CARD]);
         $multiBuyerCustomer = $multiBuyer->createCustomers();
 
         $post = $this->request->post;

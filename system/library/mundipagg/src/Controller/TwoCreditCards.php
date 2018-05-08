@@ -168,10 +168,13 @@ class TwoCreditCards
 
     private function setCardId()
     {
-        $this->cardId[] =
-            isset($this->details['mundipaggSavedCreditCard-1']) ? $this->details['mundipaggSavedCreditCard-1'] : null;
-        $this->cardId[] =
-            isset($this->details['mundipaggSavedCreditCard-2']) ? $this->details['mundipaggSavedCreditCard-2'] : null;
+        if (isset($this->details['mundipaggSavedCreditCard-1'])) {
+            $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
+        }
+
+        if (isset($this->details['mundipaggSavedCreditCard-2'])) {
+            $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
+        }
     }
 
     private function setInstallments()

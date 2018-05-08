@@ -95,6 +95,4 @@ class MultiBuyer
 
         return $customerRequest;
     }
-
-
 }
