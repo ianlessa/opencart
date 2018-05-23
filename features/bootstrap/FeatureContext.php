@@ -52,7 +52,6 @@ class FeatureContext extends MinkContext
         }
         $lastUpdate = $currentTime;
 
-        $frame = '|';
         switch($frameId) {
             default: $frameId = 0;
             case 0: $frame = '|'; break;
@@ -249,5 +248,26 @@ class FeatureContext extends MinkContext
             }
             return false;
         });
+    }
+
+
+    /**
+     * @When /^(?:|I )wait for text "(?P<text>(?:[^"]|\\")*)" to appear, for (?P<wait>(?:\d+)*) seconds$/
+     * @param $text
+     * @param $wait
+     * @throws \Exception
+     */
+    public function iWaitForTextToAppearForNSeconds($text,$wait)
+    {
+        $this->spin(function(FeatureContext $context) use ($text) {
+            try {
+                $context->assertPageContainsText($text);
+                return true;
+            }
+            catch(ResponseTextException $e) {
+                // NOOP
+            }
+            return false;
+        },$wait);
     }
 }
