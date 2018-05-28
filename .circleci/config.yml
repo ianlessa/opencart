@@ -148,7 +148,6 @@ jobs:
       - deploy:
           name: Load and push Docker image
           command: |
-             ls docker-cache/docker-cache
              sleep 5 && docker image load -q -i docker-cache/docker-cache/image.tar
              docker login ${DOCKER_ACCOUNT} -u ${DOCKER_USER} -p ${DOCKER_PASS}
              docker tag ${DOCKER_ACCOUNT}/${PROJECT_NAME} "${DOCKER_ACCOUNT}/${PROJECT_NAME}:latest"
@@ -173,12 +172,18 @@ workflows:
       - test:
           requires:
             - build
+          filters:
+             branches:
+               only: release
       - publish:
           requires:
             - test
+          filters:
+            branches:
+              only: release
       - deploy_staging:
           requires:
             - publish
           filters:
             branches:
-              only: master
+              only: release
