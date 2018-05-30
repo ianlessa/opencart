@@ -140,11 +140,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
         foreach ($vouchers as $voucher) {
             $data[] = [
                 'description' => $voucher['description'],
-                'amount'      => $this->currencyFormat(
+                'amount' => $this->currencyFormat(
                     $voucher['amount'],
                     $order_info
                 ),
-                'href'        => $this->url->link(
+                'href' => $this->url->link(
                     'sale/voucher/edit', 'user_token=' .
                     $this->session->data['user_token'] .
                     '&voucher_id=' . $voucher['voucher_id'],
@@ -177,12 +177,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     $order_info,
                     $product['tax']
                 ),
-                'total'            => $this->currencyFormat(
+                'total' => $this->currencyFormat(
                     $product['total'],
                     $order_info,
                     $product['tax'] * $product['quantity']
                 ),
-                'href'             => $this->url->link(
+                'href' => $this->url->link(
                     'catalog/product/edit', 'user_token=' .
                     $this->session->data['user_token'] .
                     '&product_id=' . $product['product_id'],
