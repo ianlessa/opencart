@@ -237,6 +237,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function currencyFormat($price, $orderInfo, $productTax = 0)
     {
         $tax = $this->config->get('config_tax') ? $productTax : 0;
+
         return $this->currency->format(
             $price + $tax,
             $orderInfo['currency_code'],
@@ -304,13 +305,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $themeDirectory = $this->config->get('theme_' . $theme . '_directory');
         $this->data['themeDirectory'] = '../catalog/view/theme/' . $themeDirectory;
         $this->data['heading_title'] = 'Confirm value';
-
         $this->data['cancel']   = 'javascript:history.go(-1);';
         $chargeId   = $this->request->get['charge'];
         $orderId = $this->request->get['order_id'];
-
         $orderInfo = $this->getOrderInfo($orderId);
-
         $order = new Mundipagg\Order($this);
         $charge = $order->getCharge(
             $orderId,
@@ -322,7 +320,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['charge_amount'] = $amountInCents;
         $this->data['currency_code'] =
             $this->currency->getSymbolLeft($orderInfo['currency_code']);
-
         $this->data['form_action'] =  $this->url->link(
             'extension/payment/mundipagg/updateCharge',
             'user_token=' . $this->session->data['user_token'] .
@@ -342,8 +339,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function getOrderInfo($orderId)
     {
         $this->load->model('sale/order');
-        return $this->model_sale_order->getOrder($orderId);
 
+        return $this->model_sale_order->getOrder($orderId);
     }
 
     public function updateCharge()
