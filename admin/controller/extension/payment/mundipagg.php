@@ -134,12 +134,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function getVoucherData($order_info)
     {
         $data = [];
-        $vouchers = $this->model_sale_order->getOrderVouchers($this->request->get['order_id']);
+        $vouchers = $this->model_sale_order
+            ->getOrderVouchers($this->request->get['order_id']);
 
         foreach ($vouchers as $voucher) {
             $data[] = [
                 'description' => $voucher['description'],
-                'amount'      => $this->currencyFormat($voucher['amount'], $order_info),
+                'amount'      => $this->currencyFormat(
+                    $voucher['amount'],
+                    $order_info
+                ),
                 'href'        => $this->url->link(
                     'sale/voucher/edit', 'user_token=' .
                     $this->session->data['user_token'] .
@@ -153,13 +157,15 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     public function getDataProducts($order_info)
     {
-        $products = $this->model_sale_order->getOrderProducts($this->request->get['order_id']);
+        $products = $this->model_sale_order
+                        ->getOrderProducts($this->request->get['order_id']);
 
         $data = [];
         foreach ($products as $product) {
-            $option_data = $this->getProductOptionsData($product['order_product_id']);
+            $option_data =
+                $this->getProductOptionsData($product['order_product_id']);
 
-            $data[] = array(
+            $data[] = [
                 'order_product_id' => $product['order_product_id'],
                 'product_id'       => $product['product_id'],
                 'name'             => $product['name'],
@@ -181,7 +187,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                     $this->session->data['user_token'] .
                     '&product_id=' . $product['product_id'],
                 true)
-            );
+            ];
         }
 
         return $data;
@@ -198,11 +204,11 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
         foreach ($options as $option) {
             if ($option['type'] != 'file') {
-                $data[] = array(
+                $data[] = [
                     'name'  => $option['name'],
                     'value' => $option['value'],
                     'type'  => $option['type']
-                );
+                ];
                 continue;
             }
 
@@ -212,7 +218,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                                 ->getUploadByCode($option['value']);
 
             if ($upload_info) {
-                $data[] = array(
+                $data[] = [
                     'name'  => $option['name'],
                     'value' => $upload_info['name'],
                     'type'  => $option['type'],
@@ -221,7 +227,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                         $this->session->data['user_token'] .
                         '&code=' . $upload_info['code'],
                         true)
-                );
+                ];
             }
         }
 
