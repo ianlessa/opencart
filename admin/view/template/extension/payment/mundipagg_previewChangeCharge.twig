@@ -92,7 +92,7 @@
                             <td class="text-center">
                               {% if charge.actions %}
                                   {% for action in charge.actions %}
-                                      <a href="{{ action.url }}">{{ action.name }}</a>
+                                      <a href="{{ action.url }}" class="btn btn-primary">{{ action.name }}</a>
                                   {% endfor %}
                               {% endif %}
                             </td>

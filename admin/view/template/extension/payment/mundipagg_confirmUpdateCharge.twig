@@ -19,10 +19,17 @@
         <div class="panel-heading">
           <h3 class="panel-title"><i class="fa fa-info-circle"></i> {{ text_order }}</h3>
         </div>
-        <form action="{{ form_action }}" method="post">
-          <input type="text" value="{{ charge_amount }}" name="charge_amount" class="moedaReal">
-          <input type="submit">
-        </form>
+        <div class="panel-body">
+            <form action="{{ form_action }}" method="post" >
+                <div class="form-group required">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{ currency_code }}</span>
+                        <input type="text" value="{{ charge_amount }}" name="charge_amount" class="moedaReal form-control">
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-primary">
+            </form>
+        </div>
       </div>
     </div>
 </div>
