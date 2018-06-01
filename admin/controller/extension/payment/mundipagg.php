@@ -29,6 +29,13 @@ class ControllerExtensionPaymentMundipagg extends Controller
     private $data = array();
 
     /**
+     * This method creates a route to module settings
+     */
+    public function settings() {
+        $this->index();
+    }
+
+    /**
      * Load basic data and call postRequest or getRequest methods accordingly
      *
      * @return void

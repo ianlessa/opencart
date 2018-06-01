@@ -86,24 +86,54 @@ class Events
 
     public function columnLeftEntry($data)
     {
-        $mundipagg =
-            $this
-                ->openCart
-                ->load
-                ->view('extension/payment/mundipagg/menu/mundipagg');
+        $mundipaggMenu = $this->getMundipaggMenu();
 
-
-        array_unshift($data['menus'], [
-            'id'       => 'menu-dashboardaaa',
-            'name'	   => $mundipagg,
-            'href'     => '#',
-            'children' => array()
-        ]);
+        array_unshift($data['menus'], $mundipaggMenu);
 
         foreach ($data as $key => $value) {
             $this->template->set($key, $value);
         }
 
         return $this->template;
+    }
+
+    private function getMundipaggMenu()
+    {
+        $htmlLogo =
+            $this
+                ->openCart
+                ->load
+                ->view('extension/payment/mundipagg/menu/mundipagg');
+
+        $children[] = $this->getMenuChildren('Settings');
+        $children[] = $this->getMenuChildren('Subscriptions');
+        $children[] = $this->getMenuChildren('Plans');
+
+        $mundipaggMenu = [
+            'id'       => 'menu-mundipagg',
+            'name'	   => $htmlLogo,
+            'children' => $children
+        ];
+
+        return $mundipaggMenu;
+    }
+
+    private function getMenuChildren($name)
+    {
+        $path = 'extension/payment/mundipagg/' . strtolower($name);
+
+        return [
+            'name'  => $name,
+            'href'  => $this->getLink($path)
+        ];
+    }
+
+    private function getLink($path)
+    {
+        return $this->openCart->url->link(
+            $path,
+            'user_token=' . $this->openCart->session->data['user_token'],
+            true
+        );
     }
 }
