@@ -6,6 +6,7 @@ use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
+use Mundipagg\Helper\Common as MundipaggHelperCommon;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -696,7 +697,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
     }
 
     /**
-     * @todo Improve this method to call ALL mundipagg events
      * @param string $route
      * @param array $data
      * @param $template
@@ -710,11 +710,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
             new Template($this->registry->get('config')->get('template_engine'))
         );
 
-        $template = $mundipaggEvents->addMundipaggOrderActions($data);
+        $helper = new MundipaggHelperCommon();
+        $method =
+            $helper->fromSnakeToCamel(explode('/', $route)[1]) . "Entry";
+        $template = $mundipaggEvents->$method($data);
 
-        return $template->render(
-            $this->config->get('template_directory') . $route,
-            $this->config->get('template_cache')
-        );
+        if ($template) {
+            return $template->render(
+                $this->config->get('template_directory') . $route,
+                $this->config->get('template_cache')
+            );
+        }
     }
 }

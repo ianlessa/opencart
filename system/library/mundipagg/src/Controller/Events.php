@@ -16,12 +16,21 @@ class Events
         $this->template = $template;
     }
 
+    public function __call($name, array $arguments)
+    {
+        if (method_exists($this, $name)) {
+            return call_user_func_array([$this, $name], $arguments);
+        }
+
+        return false;
+    }
+
     /**
      * Show the Mundipagg's button in order list
      * @param array $data
      * @return mixed
      */
-    public function addMundipaggOrderActions($data)
+    public function orderListEntry($data)
     {
         $cancel = [];
         $cancelCapture = [];
@@ -67,6 +76,29 @@ class Events
             $data['error_warning'] = $this->openCart->session->data['error_warning'];
             unset($this->openCart->session->data['error_warning']);
         }
+
+        foreach ($data as $key => $value) {
+            $this->template->set($key, $value);
+        }
+
+        return $this->template;
+    }
+
+    public function columnLeftEntry($data)
+    {
+        $mundipagg =
+            $this
+                ->openCart
+                ->load
+                ->view('extension/payment/mundipagg/menu/mundipagg');
+
+
+        array_unshift($data['menus'], [
+            'id'       => 'menu-dashboardaaa',
+            'name'	   => $mundipagg,
+            'href'     => '#',
+            'children' => array()
+        ]);
 
         foreach ($data as $key => $value) {
             $this->template->set($key, $value);
