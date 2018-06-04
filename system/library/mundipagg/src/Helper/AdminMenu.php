@@ -34,9 +34,10 @@ class AdminMenu
     private function getMenuChildren($name)
     {
         $path = 'extension/payment/mundipagg/' . strtolower($name);
+        $this->openCart->load->language('extension/payment/mundipagg');
 
         return [
-            'name'  => $name,
+            'name'  => $this->openCart->language->get($name),
             'href'  => $this->getLink($path)
         ];
     }
