@@ -160,14 +160,26 @@ class TwoCreditCards
 
     private function setToken()
     {
-        $this->token[] = $this->details['munditoken-1'];
-        $this->token[] = $this->details['munditoken-2'];
+        $this->token[0] = null;
+        if (isset($this->details['munditoken-1'])) {
+            $this->token[0] = $this->details['munditoken-1'];
+        }
+
+        $this->token[1] = null;
+        if (isset($this->details['munditoken-2'])) {
+            $this->token[1] = $this->details['munditoken-2'];
+        }
     }
 
     private function setCardId()
     {
-        $this->cardId[] = $this->details['mundipaggSavedCreditCard-1'];
-        $this->cardId[] = $this->details['mundipaggSavedCreditCard-2'];
+        if (isset($this->details['mundipaggSavedCreditCard-1'])) {
+            $this->cardId[0] = $this->details['mundipaggSavedCreditCard-1'];
+        }
+
+        if (isset($this->details['mundipaggSavedCreditCard-2'])) {
+            $this->cardId[1] = $this->details['mundipaggSavedCreditCard-2'];
+        }
     }
 
     private function setInstallments()
@@ -181,10 +193,10 @@ class TwoCreditCards
     private function setSaveCreditCard()
     {
         if (isset($this->details['save-this-credit-card-1'])) {
-            $this->saveCreditCards[] = $this->details['save-this-credit-card-1'] === 'on';
+            $this->saveCreditCards[0] = $this->details['save-this-credit-card-1'] === 'on';
         }
         if (isset($this->details['save-this-credit-card-2'])) {
-            $this->saveCreditCards[] = $this->details['save-this-credit-card-2'] === 'on';
+            $this->saveCreditCards[1] = $this->details['save-this-credit-card-2'] === 'on';
         }
     }
 
@@ -193,7 +205,7 @@ class TwoCreditCards
         $chargeFirstCard = $orderResponse->charges[0];
         $chargeSecondCard = $orderResponse->charges[1];
 
-        if ($this->saveCreditCards[0]) {
+        if (!empty($this->saveCreditCards[0]) && $this->saveCreditCards[0]) {
             $this->saveCard(
                 $orderResponse->customer->id,
                 $chargeFirstCard->lastTransaction->card,
@@ -202,7 +214,8 @@ class TwoCreditCards
             );
         }
 
-        if ($this->saveCreditCards[1]) {
+        if (!empty($this->saveCreditCards[1]) && $this->saveCreditCards[1]) {
+
             $this->saveCard(
                 $orderResponse->customer->id,
                 $chargeSecondCard->lastTransaction->card,

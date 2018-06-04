@@ -41,6 +41,7 @@ MundiPagg.Validator = function() {
                     'multi-buyer-street': {},
                     'multi-buyer-zipcode': {},
                     'multi-buyer-city': {},
+                    'multi-buyer-state': {},
                     'multi-buyer-country': {},
                 },
                 validationFunction: {
@@ -58,6 +59,7 @@ MundiPagg.Validator = function() {
                     'multi_buyer_street': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "rua"),
                     'multi_buyer_zipcode': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "cep"),
                     'multi_buyer_city': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "cidade"),
+                    'multi_buyer_state': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "estado"),
                     'multi_buyer_country': callerObject.validateMultiBuyerIssetAttrubute.bind(this, "país"),
                 },
                 validationErrorType: {
@@ -75,6 +77,7 @@ MundiPagg.Validator = function() {
                     'multi_buyer_street': 'multi-buyer-street',
                     'multi_buyer_zipcode': 'multi-buyer-zipcode',
                     'multi_buyer_city': 'multi-buyer-city',
+                    'multi_buyer_state': 'multi-buyer-state',
                     'multi_buyer_country': 'multi-buyer-country',
                 },
                 inputsToValidate: form.find('[data-mundipagg-validation-element]'),
@@ -322,6 +325,7 @@ MundiPagg.Form = function() {
                 'multi-buyer-street': 'multi-buyer-street-message',
                 'multi-buyer-zipcode': 'multi-buyer-zipcode-message',
                 'multi-buyer-city': 'multi-buyer-city-message',
+                'multi-buyer-state': 'multi-buyer-state-message',
                 'multi-buyer-country': 'multi-buyer-country-message',
             };
 
@@ -560,6 +564,7 @@ function getFieldsMultiBuyer() {
         'multi-buyer-street',
         'multi-buyer-zipcode',
         'multi-buyer-city',
+        'multi-buyer-state',
         'multi-buyer-country',
     ];
 }
