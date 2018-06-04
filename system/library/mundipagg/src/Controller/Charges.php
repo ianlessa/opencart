@@ -2,6 +2,9 @@
 
 namespace Mundipagg\Controller;
 
+use Mundipagg\Model\Order as MundipaggOrder;
+use Mundipagg\Helper\Common as CommonHelper;
+
 class Charges
 {
     private $openCart;
@@ -11,7 +14,10 @@ class Charges
         $this->openCart = $openCart;
     }
 
-    public function preview()
+    /**
+     * @return mixed
+     */
+    public function getPreviewHtml()
     {
         if (empty($this->openCart->request->get['order_id'])) {
             return $this->openCart->redirect('sale/order');
@@ -47,9 +53,52 @@ class Charges
         $data['footer'] = $this->openCart->load->controller('common/footer');
         $data['heading_title'] = "Preview $status charge";
 
-        $this->openCart->response->setOutput($this->openCart->load->view(
+        return $this->openCart->load->view(
             'extension/payment/mundipagg_previewChangeCharge',
             $data
-        ));
+        );
+    }
+
+    public function getData($order_info, $status)
+    {
+        $data = [];
+        $orderId = $this->openCart->request->get['order_id'];
+        $order = new MundipaggOrder($this->openCart);
+        $helper = new CommonHelper($this->openCart);
+        $charges = $order->getCharge($orderId);
+
+        foreach ($charges->rows as $key => $charge) {
+            $charge['amount'] =
+                $helper->currencyFormat($charge['amount'] / 100, $order_info);
+
+            $data[$key] = $charge;
+            $data[$key]['actions'][] = $this->getAction(
+                $charge,
+                $status,
+                $orderId
+            );
+        }
+
+        return $data;
+    }
+
+    private function getAction($charge, $status, $orderId)
+    {
+        if (isset($charge['can_' . $status]) && $charge['can_' . $status]) {
+
+            $link = $this->openCart->url->link(
+                'extension/payment/mundipagg/confirmUpdateCharge',
+                'user_token=' . $this->openCart->session->data['user_token'] .
+                '&order_id='. $orderId .
+                '&charge=' . $charge['charge_id'] .
+                '&status='. $status,
+                true
+            );
+
+            return [
+                'name' => ucfirst($status),
+                'url'  => $link
+            ];
+        }
     }
 }

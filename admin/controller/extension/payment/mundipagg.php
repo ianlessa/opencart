@@ -86,7 +86,9 @@ class ControllerExtensionPaymentMundipagg extends Controller
     public function previewChangeCharge()
     {
         $charges = new MundipaggCharges($this);
-        $charges->preview();
+
+        $previewHtml = $charges->getPreviewHtml();
+        $this->response->setOutput($previewHtml);
     }
 
     public function getTotalsData($order_info)
@@ -221,43 +223,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     public function getChargesData($order_info, $status)
     {
-        $data = [];
-        $order_id = $this->request->get['order_id'];
-        $order = new Mundipagg\Model\Order($this);
-        $charges = $order->getCharge($order_id);
-        foreach ($charges->rows as $key => $row) {
-            $row['amount'] =
-                $this->currencyFormat($row['amount'] / 100, $order_info);
-            $data[$key] = $row;
-            if ($row['can_cancel'] && ($status == 'cancel' || !$status)) {
-                $data[$key]['actions'][] = [
-                        'name' => 'Cancel',
-                        'url'  => $this->url->link(
-                            'extension/payment/mundipagg/confirmUpdateCharge',
-                            'user_token=' . $this->session->data['user_token'].
-                                      '&order_id='.$order_id.
-                                      '&charge=' . $row['charge_id'].
-                                      '&status=cancel',
-                            true
-                        )
-                    ];
-            }
-            if ($row['can_capture'] && ($status == 'capture' || !$status)) {
-                $data[$key]['actions'][] = [
-                    'name' => 'Capture',
-                    'url'  => $this->url->link(
-                        'extension/payment/mundipagg/confirmUpdateCharge',
-                        'user_token=' . $this->session->data['user_token'].
-                                  '&order_id='.$order_id.
-                                  '&charge=' . $row['charge_id'].
-                                  '&status=capture',
-                        true
-                    )
-                ];
-            }
-        }
-
-        return $data;
+        $charges = new MundipaggCharges($this);
+        return $charges->getData($order_info, $status);
     }
 
     private function validateUpdateCharge()
@@ -683,7 +650,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             new Template($this->registry->get('config')->get('template_engine'))
         );
 
-        $helper = new MundipaggHelperCommon();
+        $helper = new MundipaggHelperCommon($this);
         $method =
             $helper->fromSnakeToCamel(explode('/', $route)[1]) . "Entry";
         $template = $mundipaggEvents->$method($data);
