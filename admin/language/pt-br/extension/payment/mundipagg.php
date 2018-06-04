@@ -94,3 +94,11 @@ $_['misc'] = [
     'button_cancel' => 'Cancelar',
     'success' => 'Mundipagg options saved!'
 ];
+
+// Mundipagg Admin Menu
+$_['admin_menu'] = [
+    'Settings' => 'Configurações',
+    'Subscriptions' => 'Assinaturas',
+    'Plans' => 'Planos'
+];
+// -----------------------------------------------------------------
