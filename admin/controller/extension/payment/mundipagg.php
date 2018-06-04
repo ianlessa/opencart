@@ -31,7 +31,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
     /**
      * This method creates a route to module settings
      */
-    public function settings() {
+    public function settings()
+    {
         $this->index();
     }
 
