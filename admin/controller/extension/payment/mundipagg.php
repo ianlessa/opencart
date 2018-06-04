@@ -8,6 +8,7 @@ use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
 use Mundipagg\Controller\Charges as MundipaggCharges;
+use Mundipagg\Controller\Recurrence\Plans as MundipaggPlans;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -81,6 +82,24 @@ class ControllerExtensionPaymentMundipagg extends Controller
     {
         $this->load->model('extension/payment/mundipagg');
         $this->model_extension_payment_mundipagg->uninstall();
+    }
+
+    public function subscriptions()
+    {
+
+    }
+
+    public function plans()
+    {
+        $plans = new MundipaggPlans($this);
+
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $plans->$action();
+            return;
+        }
+
+        $plans->index();
     }
 
     public function previewChangeCharge()
