@@ -85,6 +85,11 @@ class Events
         return $this->template;
     }
 
+    /**
+     * Adds the Mundipagg menu on the Opencart admin menu
+     * @param array $data
+     * @return mixed
+     */
     public function columnLeftEntry($data)
     {
         $mundipaggMenuHelper = new MundipaggHelperAdminMenu($this->openCart);
@@ -98,6 +103,4 @@ class Events
 
         return $this->template;
     }
-
-
 }
