@@ -7,6 +7,7 @@ use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
+use Mundipagg\Controller\Charges as MundipaggCharges;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -84,44 +85,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     public function previewChangeCharge()
     {
-        if (empty($this->request->get['order_id'])) {
-            return $this->redirect('sale/order');
-        }
-
-        $this->load->model('sale/order');
-        $order_id = $this->request->get['order_id'];
-        $order_info = $this->model_sale_order->getOrder($order_id);
-
-        $status = '';
-        if (isset($this->request->get['status'])) {
-            $status = $this->request->get['status'];
-        }
-
-        $data['cancel'] = $this->url->link(
-                'sale/order',
-                'user_token=' . $this->session->data['user_token'] .
-                '&route=sale/order',
-                true);
-
-        $data['text_order'] = sprintf('Order (#%s)', $order_id);
-        $data['column_product'] = 'Product';
-        $data['column_model'] = 'Model';
-        $data['column_quantity'] = 'Quantity';
-        $data['column_price'] = 'Unit Price';
-        $data['column_total'] = 'Total';
-        $data['charges'] = $this->getChargesData($order_info, $status);
-        $data['products'] = $this->getDataProducts($order_info);
-        $data['vouchers'] = $this->getVoucherData($order_info);
-        $data['totals'] = $this->getTotalsData($order_info);
-        $data['header'] = $this->load->controller('common/header');
-        $data['column_left'] = $this->load->controller('common/column_left');
-        $data['footer'] = $this->load->controller('common/footer');
-        $data['heading_title'] = "Preview $status charge";
-
-        $this->response->setOutput($this->load->view(
-            'extension/payment/mundipagg_previewChangeCharge',
-            $data
-        ));
+        $charges = new MundipaggCharges($this);
+        $charges->preview();
     }
 
     public function getTotalsData($order_info)

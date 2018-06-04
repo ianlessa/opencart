@@ -1,6 +1,11 @@
 <?php
 namespace Mundipagg\Helper;
 
+/**
+ * Class Common
+ * Helpfull functions
+ * @package Mundipagg\Helper
+ */
 class Common
 {
     /**
