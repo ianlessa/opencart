@@ -51,7 +51,7 @@ class Order
         $this->apiClient = new MundiAPIClient($this->generalSettings->getSecretKey(), $this->generalSettings->getPassword());
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call($name, array $arguments)
     {
         if (method_exists($this->apiClient, $name)) {
             return call_user_func_array([$this->apiClient, $name], $arguments);

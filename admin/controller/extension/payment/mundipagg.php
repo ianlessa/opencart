@@ -96,6 +96,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         if (isset($this->request->get['action'])) {
             $action = $this->request->get['action'];
             $plans->$action();
+
             return;
         }
 

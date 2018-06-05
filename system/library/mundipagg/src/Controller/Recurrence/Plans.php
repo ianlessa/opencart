@@ -2,15 +2,8 @@
 
 namespace Mundipagg\Controller\Recurrence;
 
-class Plans
+class Plans extends Recurrence
 {
-    private $openCart;
-
-    public function __construct($openCart)
-    {
-        $this->openCart = $openCart;
-    }
-
     public function __call($name, array $arguments)
     {
         if (method_exists($this, $name)) {
@@ -22,6 +15,8 @@ class Plans
 
     public function index()
     {
+        $this->data['heading_title'] = $this->language['Plans'];
+        $this->render();
     }
 
     protected function edit()
@@ -35,4 +30,6 @@ class Plans
     protected function create()
     {
     }
+
+
 }

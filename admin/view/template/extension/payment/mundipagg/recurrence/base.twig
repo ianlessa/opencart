@@ -1,0 +1,83 @@
+{{ header }}
+<link href="view/stylesheet/mundipagg/mundipagg.css" type="text/css" rel="stylesheet" />
+
+{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" id="submit-form" form="form-mundipagg" data-toggle="tooltip" title="{{ misc.button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ misc.button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1><i class="fa fa-credit-card"></i> {{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+            <div class="well well-lg">Cras nulla lectus, lacinia in consequat a, tristique eu diam. Curabitur dapibus ante vitae nisi fringilla vulputate. Donec luctus, nibh eget faucibus bibendum, sapien lorem efficitur lectus, a iaculis nunc ipsum ac odio. Morbi turpis augue, viverra ac euismod eu, aliquam vel nunc. Quisque justo diam, pulvinar non mattis ut, malesuada id augue. Praesent justo ipsum, sagittis tincidunt finibus eu, tempor ut tortor. Sed et porttitor enim. Ut dignissim laoreet porttitor. Aenean arcu libero, pharetra in pulvinar in, </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <button class="btn btn-default active" type="button">
+                    <i class="fa fa-th"></i>
+                </button>
+                <button class="btn btn-default" type="button">
+                    <i class="fa fa fa-list"></i>
+                </button>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td style="width: 1px;" class="text-center">
+                                    <input type="checkbox">
+                                </td>
+                                <td class="text-left"><a href="#" class="asc">Planos</a></td>
+                                <td class="text-left">Capa</td>
+                                <td class="text-left"><a href="#">Descrição</a></td>
+                                <td class="text-center" colspan="2">Itens</td>
+                                <td class="text-right">Ações</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" name="selected[]" value="33">
+                                </td>
+                                <td class="text-left"><a href="#">Plano Gold</a></td>
+                                <td class="text-center"><img height="100" src="https://www.agenciah2o.com.br/images/planos/loja-virtual/loja-virtual-plano-gold.png"></td>
+                                <td class="text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pharetra, massa eget cursus viverra, nunc ligula finibus purus, sit amet bibendum erat nulla quis risus</td>
+                                <td class="text-left">
+                                    <a href="#">Cueca <span class="badge">2</span></a>
+                                    <a href="#">Meia <span class="badge">4</span><a>
+                                    <a href="#">Barbeador <span class="badge">12</span></a>
+                                    <a href="#">Gel <span class="badge">1</span></a>
+                                    <a href="#">Pós barba <span class="badge">1</span></a>
+                                </td>
+                                <td class="text-left">
+                                    <img class="plan-item-img" src="http://opencart.localhost/image/cache/catalog/demo/apple_cinema_30-40x40.jpg">
+                                    <img class="plan-item-img" src="http://opencart.localhost/image/cache/catalog/demo/canon_eos_5d_1-40x40.jpg">
+                                    <img class="plan-item-img" src="http://opencart.localhost/image/cache/catalog/demo/hp_1-40x40.jpg">
+                                    <img class="plan-item-img" src="http://opencart.localhost/image/cache/catalog/demo/htc_touch_hd_1-40x40.jpg">
+
+                                </td>
+                                <td class="text-right"><a href="#" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 text-left"><ul class="pagination"><li class="active"><span>1</span></li><li><a href="#">2</a></li><li><a href="#">&gt;</a></li><li><a href="http://opencart.localhost/admin/index.php?route=catalog/category&amp;user_token=ajZoZd2ECVe6bLWJu4D4uvaGIHhWnj57&amp;page=2">&gt;|</a></li></ul></div>
+                    <div class="col-sm-6 text-right">Showing 1 to 20 of 38 (2 Pages)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ footer }}
