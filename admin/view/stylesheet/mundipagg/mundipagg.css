@@ -1,6 +1,18 @@
-.plan-item-img {
+.plan-grid{
+    list-style: none;
+}
+
+.plan-grid li {
+    float: left;
+}
+
+.plan-item-img{
     border: 1px solid #ddd;
     border-radius: 6px;
     width: 40px;
     padding: 5px;
+}
+
+.plan-item-img-thumbnail {
+    width: 80%;
 }
