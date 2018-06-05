@@ -6,10 +6,11 @@
     <div class="page-header">
         <div class="container-fluid">
             <div class="pull-right">
-                <button type="submit" id="submit-form" form="form-mundipagg" data-toggle="tooltip" title="{{ misc.button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
-                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ misc.button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+                <button type="submit" class="btn btn-primary" title="Adicionar"><i class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-danger" title="Desabilitar"><i class="fa fa-ban"></i></button>
+                <button type="button" class="btn btn-success" title="Habilitar"><i class="fa fa-check-circle"></i></button>
             </div>
-            <h1><i class="fa fa-credit-card"></i> {{ heading_title }}</h1>
+            <h1><i class="fa fa-book"></i> {{ heading_title }}</h1>
             <ul class="breadcrumb">
                 {% for breadcrumb in breadcrumbs %}
                     <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
