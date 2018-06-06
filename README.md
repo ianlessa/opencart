@@ -1,7 +1,6 @@
 [![CircleCI](https://circleci.com/gh/mundipagg/opencart.svg?style=svg)](https://circleci.com/gh/mundipagg/opencart)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d08ac419d81479696812fc4baa56c7d)](https://www.codacy.com/app/mundipagg/opencart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mundipagg/opencart&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d08ac419d81479696812fc4baa56c7d)](https://www.codacy.com/app/mundipagg/opencart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mundipagg/opencart&amp;utm_campaign=Badge_Grade)
-<!-- [![Maintainability](https://api.codeclimate.com/v1/badges/6b6afaf79c86cdf5487e/maintainability)](https://codeclimate.com/github/mundipagg/opencart/maintainability) -->
+[![Maintainability](https://api.codeclimate.com/v1/badges/6b6afaf79c86cdf5487e/maintainability)](https://codeclimate.com/github/mundipagg/opencart/maintainability)
 
 # Opencart/Mundipagg Integration module
 This is the official Opencart module for Mundipagg integration
