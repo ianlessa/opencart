@@ -9,6 +9,7 @@ use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
 use Mundipagg\Controller\Charges as MundipaggCharges;
 use Mundipagg\Controller\Recurrence\Plans as MundipaggPlans;
+use Mundipagg\Controller\Recurrence\Subscriptions as MundipaggSubscriptions;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -86,7 +87,16 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     public function subscriptions()
     {
+        $subscriptions = new MundipaggSubscriptions($this);
 
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $subscriptions->$action();
+
+            return;
+        }
+
+        $subscriptions->index();
     }
 
     public function plans()

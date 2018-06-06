@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Controller\Recurrence;
 
-class Plans extends Recurrence
+class Subscriptions extends Recurrence
 {
     public function __call($name, array $arguments)
     {
@@ -15,8 +15,8 @@ class Plans extends Recurrence
 
     public function index()
     {
-        $this->data['heading_title'] = $this->language['Plans'];
-        $this->render('plans');
+        $this->data['heading_title'] = $this->language['Subscriptions'];
+        $this->render('subscriptions');
     }
 
     protected function edit()

@@ -33,11 +33,11 @@ class Recurrence
         $this->data['footer'] = $this->openCart->load->controller('common/footer');
     }
 
-    public function render()
+    public function render($path)
     {
         $this->openCart->response->setOutput(
             $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/base',
+                'extension/payment/mundipagg/recurrence/' . $path,
                 $this->data
             )
         );
