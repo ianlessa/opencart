@@ -16,7 +16,7 @@ class Subscriptions extends Recurrence
     public function index()
     {
         $this->data['heading_title'] = $this->language['Subscriptions'];
-        $this->render('subscriptions');
+        $this->render('subscriptions/base');
     }
 
     protected function edit()

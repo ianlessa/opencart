@@ -10,13 +10,24 @@ class Plans extends Recurrence
             return call_user_func_array([$this, $name], $arguments);
         }
 
+        $this->loadTemplates();
+
         return $this->index();
     }
 
     public function index()
     {
         $this->data['heading_title'] = $this->language['Plans'];
-        $this->render('plans');
+
+        $this->data['actionsTemplate'] =
+            $this->openCart->load->view($this->templateDir . 'actions');
+        $this->data['breadCrumbTemplate'] =
+            $this->openCart->load->view($this->templateDir . 'breadcrumb');
+        $this->data['content'] =
+            $this->openCart->load->view($this->templateDir . 'plans/grid') .
+            $this->openCart->load->view($this->templateDir . 'plans/list');
+
+        $this->render('plans/base');
     }
 
     protected function edit()
@@ -29,6 +40,7 @@ class Plans extends Recurrence
 
     protected function create()
     {
+        
     }
 
 

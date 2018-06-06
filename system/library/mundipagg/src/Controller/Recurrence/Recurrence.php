@@ -7,6 +7,7 @@ class Recurrence
     public $data;
     public $openCart;
     public $language;
+    public $templateDir = 'extension/payment/mundipagg/recurrence/';
 
     public function __construct($openCart)
     {
@@ -37,7 +38,7 @@ class Recurrence
     {
         $this->openCart->response->setOutput(
             $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/' . $path,
+                $this->templateDir . $path,
                 $this->data
             )
         );

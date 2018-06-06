@@ -99,6 +99,7 @@ $_['misc'] = [
 $_['admin_menu'] = [
     'Settings' => 'Configurações',
     'Subscriptions' => 'Assinaturas',
-    'Plans' => 'Planos'
+    'Plans' => 'Planos',
+    'create' => 'adcionar'
 ];
 // -----------------------------------------------------------------
