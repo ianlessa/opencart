@@ -10,38 +10,32 @@ class Plans extends Recurrence
             return call_user_func_array([$this, $name], $arguments);
         }
 
-        $this->loadTemplates();
-
         return $this->index();
     }
 
     public function index()
     {
         $this->data['heading_title'] = $this->language['Plans'];
+        $this->data['addLink'] =
+            'index.php?route=catalog/product/edit&user_token=' .
+            $this->openCart->request->get['user_token'] .
+            '&mundipagg_plan';
 
         $this->data['actionsTemplate'] =
-            $this->openCart->load->view($this->templateDir . 'actions');
+            $this->openCart->load->view(
+                $this->templateDir . 'actions', $this->data
+            );
         $this->data['breadCrumbTemplate'] =
-            $this->openCart->load->view($this->templateDir . 'breadcrumb');
+            $this->openCart->load->view(
+                $this->templateDir . 'breadcrumb', $this->data
+            );
+
+        $this->data['panelIconsTemplate'] =
+            $this->openCart->load->view($this->templateDir . 'panelIcons');
         $this->data['content'] =
             $this->openCart->load->view($this->templateDir . 'plans/grid') .
             $this->openCart->load->view($this->templateDir . 'plans/list');
 
         $this->render('plans/base');
     }
-
-    protected function edit()
-    {
-    }
-
-    protected function delete()
-    {
-    }
-
-    protected function create()
-    {
-        
-    }
-
-
 }

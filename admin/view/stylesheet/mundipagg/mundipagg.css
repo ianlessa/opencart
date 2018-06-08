@@ -16,3 +16,13 @@
 .plan-item-img-thumbnail {
     width: 80%;
 }
+.plan-cover {
+    text-align: center;
+}
+
+.plan-cover img{
+    padding: 5px;
+    width: 222px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}

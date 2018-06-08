@@ -3,6 +3,7 @@ namespace Mundipagg\Controller;
 
 use Mundipagg\Model\Order;
 use Mundipagg\Helper\AdminMenu as MundipaggHelperAdminMenu;
+use Mundipagg\Helper\ProductPageChanges as MundipaggHelperProductPageChanges;
 
 require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 
@@ -10,11 +11,14 @@ class Events
 {
     private $openCart;
     private $template;
+    private $load;
 
-    public function __construct($openCart, $template)
+    public function __construct($openCart, $template, $load = null)
     {
+
         $this->openCart = $openCart;
         $this->template = $template;
+        $this->load = $load;
     }
 
     public function __call($name, array $arguments)
@@ -102,5 +106,35 @@ class Events
         }
 
         return $this->template;
+    }
+
+    public function productFormEntry($data)
+    {
+        if (isset($this->openCart->request->get['mundipagg_plan'])) {
+
+            $productFormTemplate = $this->openCart->load->view(
+                'extension/payment/mundipagg/recurrence/plans/productFormTabHeader'
+            );
+
+            $productFormTabContentTemplate = $this->openCart->load->view(
+                'extension/payment/mundipagg/recurrence/plans/productFormTabContent'
+            );
+
+            $helper = new MundipaggHelperProductPageChanges($this->openCart);
+            $data['heading_title'] = 'Plano';
+            $data['text_form'] = 'Criar plano';
+
+            $data['tab_design'] = $data['tab_design'] . $productFormTemplate;
+            $data['footer'] = $data['footer'] . $productFormTabContentTemplate;
+
+
+
+            foreach ($data as $key => $value) {
+                $this->template->set($key, $value);
+            }
+
+
+            return $this->template;
+        }
     }
 }
