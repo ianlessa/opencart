@@ -1,25 +1,319 @@
 <script>
     $(document).ready(function () {
-
-        var infoBlock = jQuery('#tab-mundipagg-plan-products');
-        infoBlock.insertAfter('#tab-design');
-        infoBlock.show();
-    })
-
-
-
+        var infoBlock = $(".tab-mundipagg-plan");
+        infoBlock.insertAfter('#tab-design').removeClass('hidden');
+    });
 </script>
 
-<div class="tab-pane" id="tab-mundipagg-plan-products" style="display: none;">
-    <div class="form-group">
-        <label class="col-sm-2 control-label" for="input-related"><span data-toggle="tooltip" title="{{ help_related }}">{{ entry_related }}</span></label>
-        <div class="col-sm-10">
-            <input type="text" name="related" value="" placeholder="{{ entry_related }}" id="input-related" class="form-control" />
-            <div id="product-related" class="well well-sm" style="height: 150px; overflow: auto;"> {% for product_related in product_relateds %}
-                    <div id="product-related{{ product_related.product_id }}"><i class="fa fa-minus-circle"></i> {{ product_related.name }}
-                        <input type="hidden" name="product_related[]" value="{{ product_related.product_id }}" />
-                    </div>
-                {% endfor %}</div>
+<div class="tab-pane hidden tab-mundipagg-plan" id="tab-mundipagg-plan-products" >
+    <div class="panel-heading">
+        <h3>Adicionar produtos ao plano</h3>
+    </div>
+        <br>
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="">Nome do produto</label>
+        <div class="col-sm-8">
+            <input type="text" name="" value="" placeholder="Digite o nome do produto" id="" class="form-control">
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Save"><i class="fa fa-plus-circle"></i></button>
+        </div>
+    </div>
+    <hr>
+    <div class="table-responsive">
+        <table id="images" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <td class="text-left">Produto</td>
+                <td colspan="3" class="text-center">Ciclo</td>
+                <td colspan="2">Quantidade</td>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lâmina de barbear</td>
+                    <td>
+                        <input type="text" name="" placeholder="Quantidade" value="3" id="" class="form-control">
+                    <td>
+                        <button type="button" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                        <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                    </td>
+                    <td>
+                        <select name="" id="" class="form-control" title="Number">
+                            <option value=""> Mensal </option>
+                            <option value=""> Semanal </option>
+                        </select>
+                    </td>
+                    <td class="text-left">
+                        <input type="text" name="" placeholder="Quantidade" value="3" id="" class="form-control">
+                    </td>
+                    <td>
+                        <button type="button" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                        <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Meia</td>
+                    <td>
+                        <input type="text" name="" placeholder="Quantidade" value="1" id="" class="form-control">
+                    <td>
+                        <button type="button" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                        <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                    </td>
+                    <td>
+                        <select name="" id="" class="form-control" title="Number">
+                            <option value=""> Mensal </option>
+                            <option value=""> Semanal </option>
+                        </select>
+                    </td>
+                    <td class="text-left">
+                        <input type="text" name="" placeholder="Quantidade" value="1" id="" class="form-control">
+                    </td>
+                    <td>
+                        <button type="button" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                        <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                    </td>
+                </tr>
+        </table>
+    </div>
+</div>
+
+<div class="tab-pane hidden tab-mundipagg-plan" id="tab-mundipagg-plan-subscriptions">
+    <label class="col-sm-12 form-group">Escolha uma assinatura</label>
+    <div class="col-sm-8">
+        <div class="form-group required">
+            <div class="col-sm-10">
+                <select name="" id="" class="form-control">
+                    <optgroup label="Configurações pré definidas">
+                        <option value="" title="Paga em 6 meses à vista"> Assinatura 6 meses </option>
+                        <option value="" title="Paga em 12 meses parcelado"> Assinatura 12 meses </option>
+                    </optgroup>
+                    <optgroup label="Configurações por plano">
+                        <option value="" title="Paga em 12 meses parcelado"> Criar configuração específica para este plano </option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Add"><i class="fa fa-pencil"></i></button>
+                <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Add"><i class="fa fa-plus-circle"></i></button>
+            </div>
+        </div>
+
+        <label class="col-sm-12 form-group">Nome</label>
+        <div class="form-group required">
+            <div class="col-sm-10">
+                <input type="text" name="" value="" placeholder="" id="" class="form-control">
+            </div>
+        </div>
+        <label class="col-sm-12 form-group">Descrição</label>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <textarea type="text" name="" value="" placeholder="" id="" class="form-control"></textarea>
+            </div>
+        </div>
+        <label class="col-sm-12 form-group">Métodos de pagamento</label>
+        <div class="form-group required">
+            <div class="col-sm-10">
+                <input type="text" name="" value="" placeholder="" id="" class="form-control">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label class="col-sm-5">Vencimento</label>
+            <label class="col-sm-5">Dia</label>
+
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>Dia exato</option>
+                    <option>Dia útil</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>01</option>
+                    <option>02</option>
+                    <option>03</option>
+                    <option>04</option>
+                    <option>05</option>
+                    <option>06</option>
+                    <option>07</option>
+                    <option>08</option>
+                    <option>09</option>
+                    <option>10</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label class="col-sm-5">Repetições</label>
+            <label class="col-sm-5">Intervalo</label>
+
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>01</option>
+                    <option>02</option>
+                    <option>03</option>
+                    <option>04</option>
+                    <option>05</option>
+                    <option>06</option>
+                    <option>07</option>
+                    <option>08</option>
+                    <option>09</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>Mensal</option>
+                    <option>Semestral</option>
+                </select>
+            </div>
+        </div>
+        <label class="col-sm-12 form-group">Permite parcelamento</label>
+        <div class="form-group required">
+            <div class="col-sm-10">
+                <select name="" id="" class="form-control">
+                    <option value=""> Sim </option>
+                    <option value=""> Não </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group required">
+            <label class="col-sm-5">Ciclo</label>
+            <label class="col-sm-5">Desconto</label>
+
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>01</option>
+                    <option>02</option>
+                    <option>03</option>
+                    <option>04</option>
+                    <option>05</option>
+                    <option>06</option>
+                    <option>07</option>
+                    <option>08</option>
+                    <option>09</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">% <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">R$</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    <input type="text" class="form-control" aria-label="...">
+                </div><!-- /input-group -->
+            </div>
+            <div class="col-sm-5">
+                <select name="" id="" class="form-control">
+                    <option>01</option>
+                    <option>03</option>
+                    <option>04</option>
+                    <option>05</option>
+                    <option>06</option>
+                    <option>07</option>
+                    <option>08</option>
+                    <option>09</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">% <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">R$</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    <input type="text" class="form-control" aria-label="...">
+                </div><!-- /input-group -->
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Save"><i class="fa fa-plus-circle"></i> </button>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="col-sm-10">
+                <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Save">Adicionar a esse plano</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <hr>
+        <label>Assinaturas deste plano<br></label>
+        <div class="table-responsive">
+            <table id="images" class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <td class="text-left">Nome</td>
+                    <td class="text-left">Descrição</td>
+                    <td class="text-center">Métodos de pagamento</td>
+                    <td class="text-center">Data de vencimento</td>
+                    <td class="text-center">Repetições/intervalo</td>
+                    <td class="text-center">Descontos</td>
+                    <td class="text-center">Parcelamento</td>
+                    <td>Remover</td>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Assinatura de 6 meses <span class="label label-success">Global</span></td>
+                        <td>Mauris commodo arcu a ipsum tincidunt lacinia. In vel volutpat sapien. Nam consectetur justo et pharetra tincidunt. Curabitur quis libero eu nisi ultrices malesuada. Cras varius a risus sit amet sollicitudin</td>
+                        <td>
+                            <span class="label label-default">Cartão de crédito</span>
+                            <span class="label label-default">Boleto</span>
+                            <span class="label label-default">Boleto + cartão</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">Todo dia 5</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">6 repetições</span> /
+                            <span class="label label-default">Mensal</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">Não</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">Não</span>
+                        </td>
+                        <td>
+                            <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Assinatura de 12 meses <span class="label label-info">Por plano</span></td>
+                        <td>Mauris commodo arcu a ipsum tincidunt lacinia. In vel volutpat sapien. Nam consectetur justo et pharetra tincidunt. Curabitur quis libero eu nisi ultrices malesuada. Cras varius a risus sit amet sollicitudin</td>
+                        <td>
+                            <span class="label label-default">Cartão de crédito</span>
+                            <span class="label label-default">Boleto</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">Todo 5° dia útil</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">6 repetições</span> /
+                            <span class="label label-default">Mensal</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">5% 1 mês</span>
+                            <span class="label label-default">3% 2 meses</span>
+                            <span class="label label-default">1% 3 meses</span>
+                        </td>
+                        <td>
+                            <span class="label label-default">Não</span>
+                        </td>
+                        <td>
+                            <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
