@@ -7,6 +7,9 @@ use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
+use Mundipagg\Controller\Charges as MundipaggCharges;
+use Mundipagg\Controller\Recurrence\Plans as MundipaggPlans;
+use Mundipagg\Controller\Recurrence\Subscriptions as MundipaggSubscriptions;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -82,46 +85,40 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->model_extension_payment_mundipagg->uninstall();
     }
 
+    public function subscriptions()
+    {
+        $subscriptions = new MundipaggSubscriptions($this);
+
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $subscriptions->$action();
+
+            return;
+        }
+
+        $subscriptions->index();
+    }
+
+    public function plans()
+    {
+        $plans = new MundipaggPlans($this);
+
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $plans->$action();
+
+            return;
+        }
+
+        $plans->index();
+    }
+
     public function previewChangeCharge()
     {
-        if (empty($this->request->get['order_id'])) {
-            return $this->redirect('sale/order');
-        }
+        $charges = new MundipaggCharges($this);
 
-        $this->load->model('sale/order');
-        $order_id = $this->request->get['order_id'];
-        $order_info = $this->model_sale_order->getOrder($order_id);
-
-        $status = '';
-        if (isset($this->request->get['status'])) {
-            $status = $this->request->get['status'];
-        }
-
-        $data['cancel'] = $this->url->link(
-                'sale/order',
-                'user_token=' . $this->session->data['user_token'] .
-                '&route=sale/order',
-                true);
-
-        $data['text_order'] = sprintf('Order (#%s)', $order_id);
-        $data['column_product'] = 'Product';
-        $data['column_model'] = 'Model';
-        $data['column_quantity'] = 'Quantity';
-        $data['column_price'] = 'Unit Price';
-        $data['column_total'] = 'Total';
-        $data['charges'] = $this->getChargesData($order_info, $status);
-        $data['products'] = $this->getDataProducts($order_info);
-        $data['vouchers'] = $this->getVoucherData($order_info);
-        $data['totals'] = $this->getTotalsData($order_info);
-        $data['header'] = $this->load->controller('common/header');
-        $data['column_left'] = $this->load->controller('common/column_left');
-        $data['footer'] = $this->load->controller('common/footer');
-        $data['heading_title'] = "Preview $status charge";
-
-        $this->response->setOutput($this->load->view(
-            'extension/payment/mundipagg_previewChangeCharge',
-            $data
-        ));
+        $previewHtml = $charges->getPreviewHtml();
+        $this->response->setOutput($previewHtml);
     }
 
     public function getTotalsData($order_info)
@@ -256,43 +253,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
 
     public function getChargesData($order_info, $status)
     {
-        $data = [];
-        $order_id = $this->request->get['order_id'];
-        $order = new Mundipagg\Model\Order($this);
-        $charges = $order->getCharge($order_id);
-        foreach ($charges->rows as $key => $row) {
-            $row['amount'] =
-                $this->currencyFormat($row['amount'] / 100, $order_info);
-            $data[$key] = $row;
-            if ($row['can_cancel'] && ($status == 'cancel' || !$status)) {
-                $data[$key]['actions'][] = [
-                        'name' => 'Cancel',
-                        'url'  => $this->url->link(
-                            'extension/payment/mundipagg/confirmUpdateCharge',
-                            'user_token=' . $this->session->data['user_token'].
-                                      '&order_id='.$order_id.
-                                      '&charge=' . $row['charge_id'].
-                                      '&status=cancel',
-                            true
-                        )
-                    ];
-            }
-            if ($row['can_capture'] && ($status == 'capture' || !$status)) {
-                $data[$key]['actions'][] = [
-                    'name' => 'Capture',
-                    'url'  => $this->url->link(
-                        'extension/payment/mundipagg/confirmUpdateCharge',
-                        'user_token=' . $this->session->data['user_token'].
-                                  '&order_id='.$order_id.
-                                  '&charge=' . $row['charge_id'].
-                                  '&status=capture',
-                        true
-                    )
-                ];
-            }
-        }
-
-        return $data;
+        $charges = new MundipaggCharges($this);
+        return $charges->getData($order_info, $status);
     }
 
     private function validateUpdateCharge()
@@ -718,7 +680,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
             new Template($this->registry->get('config')->get('template_engine'))
         );
 
-        $helper = new MundipaggHelperCommon();
+        $helper = new MundipaggHelperCommon($this);
         $method =
             $helper->fromSnakeToCamel(explode('/', $route)[1]) . "Entry";
         $template = $mundipaggEvents->$method($data);

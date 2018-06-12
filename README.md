@@ -12,7 +12,7 @@ Refer to [module documentation](https://github.com/mundipagg/opencart/wiki)
 This module supports OpenCart version 3.0+
 
 # Dependencies
-* ```PHP``` Version 5.5+
+* ```PHP``` Version 5.6+
 
 # Install
 There are two different ways to install our module

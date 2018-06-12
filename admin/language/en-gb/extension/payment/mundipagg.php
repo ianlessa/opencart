@@ -107,3 +107,12 @@ $_['admin_menu'] = [
     'Plans' => 'Plans'
 ];
 // -----------------------------------------------------------------
+
+// Recurrence
+$_['recurrence'] = [
+    'Settings' => 'Settings',
+    'Subscriptions' => 'Subscriptions',
+    'Plans' => 'Plans',
+    'create' => 'create'
+];
+// -----------------------------------------------------------------

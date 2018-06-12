@@ -71,6 +71,13 @@ class ModelExtensionPaymentMundipagg extends Model
             'extension/payment/mundipagg/callEvents'
         );
 
+        //Add plan options in product page
+        $this->model_setting_event->addEvent(
+            'payment_mundipagg_add_product_plan_tab',
+            'admin/view/catalog/product_form/before',
+            'extension/payment/mundipagg/callEvents'
+        );
+
         //Add saved credit card list
         $this->model_setting_event->addEvent(
             'payment_mundipagg_saved_creditcards',
