@@ -29,7 +29,7 @@ class Subscriptions extends Recurrence
 
     protected function create()
     {
+        $this->data['heading_title'] = $this->language['Subscriptions'];
+        $this->render('subscriptions/create');
     }
-
-
 }
