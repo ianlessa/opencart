@@ -101,6 +101,8 @@ INSERT INTO opencart.oc_custom_field_customer_group (custom_field_id, customer_g
 
 INSERT INTO opencart.oc_event (code, `trigger`, action, status, sort_order) VALUES
 ('payment_mundipagg_add_order_actions', 'admin/view/sale/order_list/before', 'extension/payment/mundipagg/callEvents', 1, 0),
+('payment_mundipagg_add_mundipagg_menu', 'admin/view/common/column_left/before', 'extension/payment/mundipagg/callEvents', 1, 0),
+('payment_mundipagg_add_product_plan_tab', 'admin/view/catalog/product_form/before', 'extension/payment/mundipagg/callEvents', 1, 0),
 ('payment_mundipagg_saved_creditcards', 'catalog/view/account/*/after', 'extension/payment/mundipagg_events/showSavedCreditcards', 1, 9999),
 ('payment_mundipagg_show_account_order_info', 'catalog/view/account/order_info/after', 'extension/payment/mundipagg_events/showAccountOrderInfo', 1, 0),
 ('payment_mundipagg_show_checkout_order_info', 'catalog/view/common/success/after', 'extension/payment/mundipagg_events/showCheckoutOrderInfo', 1, 0),
