@@ -402,13 +402,12 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 if ($orderData['payment_code'] === 'mundipagg') {
                     $cart = $this->cart;
                     $response = $this->getOrder()->create($orderData, $cart, 'boleto');
-
                     if (isset($response->charges[0]->lastTransaction->success)) {
 
                         $this->load->model('extension/payment/mundipagg_order_processing');
                         $model = $this->model_extension_payment_mundipagg_order_processing;
                         $this->saveBoletoInfoInOrderHistory($response);
-                        $this->printBoletoUrl($response->charge[0]);
+                        $this->printBoletoUrl($response->charges[0]);
                         $this->saveOrderBoletoInfo($response->charges[0]);
                         $model->setOrderStatus($orderData['order_id'], 1);
                         return;
