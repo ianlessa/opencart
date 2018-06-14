@@ -414,8 +414,14 @@ MundiPagg.Form = function() {
                 if(amountInputs.length > 1) {
                     var distributedAmount = parseFloat($('#mundipagg-order-total').val());
                     distributedAmount /= amountInputs.length;
+
+                    var diff = (distributedAmount.toFixed(2) * 2) - parseFloat($('#mundipagg-order-total').val());
+
                     $(amountInputs).each(function(index,element) {
-                        $(element).val(distributedAmount);
+                        if (index == 1) {
+                            distributedAmount = distributedAmount.toFixed(2) - diff.toFixed(2);
+                        }
+                        $(element).val(distributedAmount.toFixed(2));
                     });
                 }
 
@@ -429,14 +435,18 @@ MundiPagg.Form = function() {
                         $(element).on('input',function(){
                             var elementValue = parseFloat($(element).val());
 
-                            if (elementValue > max) {
-                                elementValue = max;
+                            if ($(element).val() == '' || $(element).val() <= 0) {
+                                elementValue = 1;
+                            }
+
+                            if (elementValue >= max) {
+                                elementValue = max - 1;
                             }
 
                             var oppositeValue = max - elementValue;
 
-                            $(oppositeInput).val(oppositeValue);
-                            $(element).val(elementValue);
+                            $(oppositeInput).val(oppositeValue.toFixed(2));
+                            $(element).val(elementValue.toFixed(2));
                         });
                     });
                 }
