@@ -444,7 +444,7 @@ class Order
     {
         switch ($paymentType) {
             case 'boleto':
-                return $this->getBoletoPaymentDetails();
+                return $this->getBoletoPaymentDetails($multiBuyer);
             case 'creditCard':
                 $cardIdValue = empty($cardId) ? null : $cardId[0];
 
@@ -467,7 +467,9 @@ class Order
                 $creditCardAmount = $this->creditCardAmount * 100 ;
                 $boletoAmount = ceil($this->boletoAmount * 100);
 
-                $boletoPayment = $this->getBoletoPaymentDetails();
+                $boletoPayment = $this->getBoletoPaymentDetails(
+                    isset($multiBuyer[4]) ? $multiBuyer[4] : null
+                );
                 $boletoPayment[0]['amount'] = $boletoAmount;
 
                 $cardIdValue = empty($cardId) ? null : $cardId[0];
@@ -476,7 +478,7 @@ class Order
                     $this->orderInstallments,
                     $orderAmount,
                     $cardIdValue,
-                    $multiBuyer
+                    isset($multiBuyer[3]) ? $multiBuyer[3] : null
                 );
                 $creditCardPayment[0]['amount'] = $creditCardAmount;
 
@@ -487,20 +489,27 @@ class Order
         }
     }
 
-    private function getBoletoPaymentDetails()
+    private function getBoletoPaymentDetails($multiBuyer = null)
     {
         $boletoSettings = new BoletoSettings($this->openCart);
 
-        return array(
-            array(
+        $paymentDetails = [
+            [
                 'payment_method' => 'boleto',
-                'boleto' => array(
+                'boleto' => [
                     'bank'         => $boletoSettings->getBank(),
                     'instructions' => $boletoSettings->getInstructions(),
                     'due_at'       => $boletoSettings->getDueDate()
-                )
-            )
-        );
+                ]
+            ]
+        ];
+
+        if ($multiBuyer) {
+            $paymentDetails[0]['customer'] = $multiBuyer;
+        }
+
+        return $paymentDetails;
+
     }
 
     /**
@@ -576,7 +585,7 @@ class Order
             $amount[0],
             $installments[0],
             $cardId[0],
-            isset($multiBuyer[0]) ? $multiBuyer[0] : []
+            isset($multiBuyer[1]) ? $multiBuyer[1] : []
         );
 
         // second card
@@ -585,7 +594,7 @@ class Order
             $amount[1],
             $installments[1],
             $cardId[1],
-            isset($multiBuyer[1]) ? $multiBuyer[1] : []
+            isset($multiBuyer[2]) ? $multiBuyer[2] : []
         );
 
         return $paymentDetails;
