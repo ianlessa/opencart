@@ -389,7 +389,6 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     public function generateBoleto()
     {
-
         if (!$this->customer->isLogged()) {
             $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
@@ -403,10 +402,20 @@ class ControllerExtensionPaymentMundipagg extends Controller
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
                     $cart = $this->cart;
+                    $multiBuyerBoleto = null;
+                    if (isset($multiBuyerCustomer[5])) {
+                        $multiBuyerBoleto = $multiBuyerCustomer[5];
+                    }
+
                     $response = $this->getOrder()->create(
-                        $orderData, $cart, 'boleto', null, null,
-                        isset($multiBuyerCustomer[5]) ? $multiBuyerCustomer[5] : null
+                        $orderData,
+                        $cart,
+                        'boleto',
+                        null,
+                        null,
+                        $multiBuyerBoleto
                     );
+
                     if (isset($response->charges[0]->lastTransaction->success)) {
 
                         $this->load->model('extension/payment/mundipagg_order_processing');
