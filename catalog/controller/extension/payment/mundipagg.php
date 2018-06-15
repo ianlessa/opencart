@@ -389,29 +389,32 @@ class ControllerExtensionPaymentMundipagg extends Controller
      */
     public function generateBoleto()
     {
+
         if (!$this->customer->isLogged()) {
             $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
 
         $this->load();
+        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_BOLETO]);
+        $multiBuyerCustomer = $multiBuyer->createCustomers();
 
         if (isset($this->session->data['order_id'])) {
             $orderData = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
             if ($this->validate($orderData)) {
                 if ($orderData['payment_code'] === 'mundipagg') {
                     $cart = $this->cart;
-                    $response = $this->getOrder()->create($orderData, $cart, 'boleto');
+                    $response = $this->getOrder()->create(
+                        $orderData, $cart, 'boleto', null, null,
+                        isset($multiBuyerCustomer[5]) ? $multiBuyerCustomer[5] : null
+                    );
                     if (isset($response->charges[0]->lastTransaction->success)) {
 
                         $this->load->model('extension/payment/mundipagg_order_processing');
                         $model = $this->model_extension_payment_mundipagg_order_processing;
                         $this->saveBoletoInfoInOrderHistory($response);
-                        $this->printBoletoUrl($response->charges[0]);
                         $this->saveOrderBoletoInfo($response->charges[0]);
                         $model->setOrderStatus($orderData['order_id'], 1);
-                        return;
-
+                        $this->response->redirect($this->url->link('checkout/success', '', true));
                     } else{
                         Log::create()
                             ->error(LogMessages::API_REQUEST_FAIL, __METHOD__)
@@ -585,7 +588,10 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->response->redirect($this->url->link('checkout/failure'));
         }
 
-        $multiBuyer = new MultiBuyer($this->request, [self::INDEX_BOLETO_CARD_CARD]);
+        $multiBuyer = new MultiBuyer($this->request, [
+            self::INDEX_BOLETO_CARD_CARD,
+            self::INDEX_BOLETO_CARD_BOLETO
+        ]);
         $multiBuyerCustomer = $multiBuyer->createCustomers();
 
         $post = $this->request->post;
@@ -616,7 +622,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
                 $orderData,
                 $card['cardToken'],
                 [$card['cardId']],
-                isset($multiBuyerCustomer[3]) ? $multiBuyerCustomer[3] : null
+                $multiBuyerCustomer
             );
         } catch (Exception $e) {
             Log::create()
