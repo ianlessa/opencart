@@ -5,6 +5,7 @@ require_once DIR_SYSTEM . 'library/mundipagg/vendor/autoload.php';
 use Mundipagg\Settings\CreditCard as CreditCardSettings;
 use Mundipagg\Settings\Boleto as BoletoSettings;
 use Mundipagg\Settings\BoletoCreditCard as BoletoCreditCardSettings;
+use Mundipagg\Settings\Recurrence as RecurrenceSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
 use Mundipagg\Controller\Charges as MundipaggCharges;
@@ -49,12 +50,20 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->load->language('extension/payment/mundipagg');
         $this->document->setTitle($this->language->get('heading_title'));
         $this->load->model('setting/setting');
+        $this->loadPaymentTemplates();
 
         if ($this->request->server['REQUEST_METHOD'] == 'POST') {
             $this->postRequest();
         } else {
             $this->getRequest();
         }
+    }
+
+    private function loadPaymentTemplates()
+    {
+        $path = 'extension/payment/mundipagg/';
+
+        $this->data['recurrenceSettings'] = $path . 'recurrence/settings.twig';
     }
 
     /**
@@ -496,6 +505,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $this->data['antifraud'] = $this->language->get('antifraud');
         $this->data['misc'] = $this->language->get('misc');
         $this->data['extra'] = $this->language->get('extra');
+        $this->data['recurrence'] = $this->language->get('recurrence');
     }
 
     /**
@@ -561,6 +571,7 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $creditCardSettings = new CreditCardSettings($this);
         $boletoSettings = new BoletoSettings($this);
         $boletoCreditCardSettings = new BoletoCreditCardSettings($this);
+        $recurrenceSettings = new RecurrenceSettings($this);
 
         $this->data['settings'] = array(
             'general_status'             => $this->config->get('payment_mundipagg_status'),
@@ -582,7 +593,8 @@ class ControllerExtensionPaymentMundipagg extends Controller
             $this->data['settings'],
             $creditCardSettings->getAllSettings(),
             $boletoSettings->getAllSettings(),
-            $boletoCreditCardSettings->getAllSettings()
+            $boletoCreditCardSettings->getAllSettings(),
+            $recurrenceSettings->getAllSettings()
         );
 
         $this->load->model('extension/payment/mundipagg');

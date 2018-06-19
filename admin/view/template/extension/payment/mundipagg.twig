@@ -30,6 +30,7 @@
                         <li><a href="#tab-boletoCreditCard" data-toggle="tab" title="{{ boletoCreditCard.label }}">{{ boletoCreditCard.label }}</a></li>
                         <li><a href="#tab-antifraud" data-toggle="tab" title="{{ antifraud.label }}">{{ antifraud.label }}</a></li>
                         <li><a href="#tab-logs" data-toggle="tab" title="{{ logs.label }}">{{ logs.label }}</a></li>
+                        <li><a href="#tab-recurrence" data-toggle="tab" title="{{ recurrence.title }}">{{ recurrence.title }}</a></li>
                     </ul>
 
 		            <div class="tab-content">
@@ -736,6 +737,10 @@
                                 </div>
                             </div>
                         </div> <!-- tab-antifraud -->
+
+                        <div class="tab-pane" id="tab-recurrence">
+                            {% include recurrenceSettings  %}
+                        </div> <!-- tab-recurrence -->
 
                         <div class="tab-pane" id="tab-logs">
                             <div class="panel-heading">
