@@ -9,8 +9,10 @@ use Mundipagg\Settings\Recurrence as RecurrenceSettings;
 use Mundipagg\Controller\Events as MundipaggEvents;
 use Mundipagg\Helper\Common as MundipaggHelperCommon;
 use Mundipagg\Controller\Charges as MundipaggCharges;
-use Mundipagg\Controller\Recurrence\Plans as MundipaggPlans;
+use Mundipagg\Controller\Recurrence\Plans as MundipaggRecurrencePlans;
 use Mundipagg\Controller\Recurrence\Subscriptions as MundipaggSubscriptions;
+use Mundipagg\Controller\Recurrence\Single as MundipaggRecurrenceSingle;
+use Mundipagg\Controller\Recurrence\Templates as MundipaggRecurrenceTemplates;
 
 use MundiAPILib\MundiAPIClient;
 use Mundipagg\Order;
@@ -108,9 +110,37 @@ class ControllerExtensionPaymentMundipagg extends Controller
         $subscriptions->index();
     }
 
+    public function templates()
+    {
+        $templates = new MundipaggRecurrenceTemplates($this);
+
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $templates->$action();
+
+            return;
+        }
+
+        $templates->index();
+    }
+
+    public function single()
+    {
+        $single = new MundipaggRecurrenceSingle($this);
+
+        if (isset($this->request->get['action'])) {
+            $action = $this->request->get['action'];
+            $single->$action();
+
+            return;
+        }
+
+        $single->index();
+    }
+
     public function plans()
     {
-        $plans = new MundipaggPlans($this);
+        $plans = new MundipaggRecurrencePlans($this);
 
         if (isset($this->request->get['action'])) {
             $action = $this->request->get['action'];

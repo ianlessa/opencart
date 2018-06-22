@@ -112,12 +112,19 @@ class Events
     {
         if (isset($this->openCart->request->get['mundipagg_plan'])) {
 
+            $path = 'extension/payment/mundipagg/recurrence/';
+
             $productFormTemplate = $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/plans/productFormTabHeader'
+                $path . 'plans/productFormTabHeader'
             );
 
+            $planform['formPlan'] = $path . 'templates/form_plan.twig';
+            $planform['panelPlanFrequency'] = $path . 'templates/panelPlanFrequency.twig';
+            $planform['formBase'] = $path . 'templates/form_base.twig';
+
             $productFormTabContentTemplate = $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/plans/productFormTabContent'
+                $path . 'plans/productFormTabContent',
+                $planform
             );
 
             $helper = new MundipaggHelperProductPageChanges($this->openCart);
@@ -127,12 +134,9 @@ class Events
             $data['tab_design'] = $data['tab_design'] . $productFormTemplate;
             $data['footer'] = $data['footer'] . $productFormTabContentTemplate;
 
-
-
             foreach ($data as $key => $value) {
                 $this->template->set($key, $value);
             }
-
 
             return $this->template;
         }

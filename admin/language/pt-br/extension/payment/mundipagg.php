@@ -116,5 +116,6 @@ $_['recurrence'] = [
     'paymentUpdateCustomer_title' => 'Enable payment method update by customer',
     'subscriptionByPlan_title' => 'Enable Subscription by plan',
     'singleSubscription_title' => 'Enable Single Subscription',
+    'checkoutConflictMessage_title' => 'Checkout Conflict Message',
 ];
 // -----------------------------------------------------------------

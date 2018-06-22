@@ -36,6 +36,11 @@ class Recurrence
         return $this->openCart->config->get('payment_mundipagg_recurrence_subscriptionInstallment_status');
     }
 
+    public function getCheckoutConflictMessage()
+    {
+        return $this->openCart->config->get('payment_mundipagg_recurrence_checkoutconflictmessage');
+    }
+
     public function getAllSettings()
     {
         return [
@@ -43,7 +48,18 @@ class Recurrence
             'recurrence_subscriptionByPlan' => $this->getSubscritionByPlanEnable(),
             'recurrence_paymentUpdateCustomer' => $this->getPaymentUpdateCustomerEnable(),
             'recurrence_creditcardUpdateCustomer' => $this->getCreditCardUpdateCustomerEnable(),
-            'recurrence_subscriptionInstallment' => $this->getSubscritionInstallmentEnable()
+            'recurrence_subscriptionInstallment' => $this->getSubscritionInstallmentEnable(),
+            'recurrence_checkoutConflictMessage' => $this->getCheckoutConflictMessage()
         ];
+    }
+
+    public function isSingleRecurrenceEnable()
+    {
+       return $this->getSingleSubscritionEnable() == '1'; 
+    }
+
+    public function isSubscriptionByPlanEnable()
+    {
+        return $this->getSubscritionByPlanEnable() == '1';
     }
 }
