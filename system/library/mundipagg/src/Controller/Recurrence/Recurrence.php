@@ -2,12 +2,15 @@
 
 namespace Mundipagg\Controller\Recurrence;
 
+use Mundipagg\Settings\Recurrence as RecurrenceSettings;
+
 class Recurrence
 {
     public $data;
     public $openCart;
     public $language;
     public $templateDir = 'extension/payment/mundipagg/recurrence/';
+    protected $recurrenceSettings;
 
     public function __construct($openCart)
     {
@@ -15,6 +18,7 @@ class Recurrence
         $lang = $this->openCart->load->language('extension/payment/mundipagg');
         $this->language = $lang['recurrence'];
 
+        $this->chargeRecurrenceSettings();
         $this->setLayoutComponents();
     }
 
@@ -42,5 +46,11 @@ class Recurrence
                 $this->data
             )
         );
+    }
+
+    protected function chargeRecurrenceSettings()
+    {
+        $this->recurrenceSettings = new RecurrenceSettings($this->openCart);
+        $this->data['recurrenceSettings'] = $this->recurrenceSettings->getAllSettings();
     }
 }

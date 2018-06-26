@@ -1,6 +1,8 @@
 <?php
 namespace Mundipagg\Helper;
 
+use Mundipagg\Settings\Recurrence as RecurrenceSettings;
+
 class AdminMenu
 {
     private $openCart;
@@ -8,6 +10,18 @@ class AdminMenu
     public function __construct($openCart)
     {
         $this->openCart = $openCart;
+        $this->chargeRecurrenceSettings();
+    }
+
+    protected function chargeRecurrenceSettings()
+    {
+        $this->recurrenceSettings = new RecurrenceSettings($this->openCart);
+    }
+
+    protected function isSomeRecurrenceEnable()
+    {
+        return $this->recurrenceSettings->isSingleRecurrenceEnable() ||
+            $this->recurrenceSettings->isSubscriptionByPlanEnable();
     }
 
     public function getMenu()
@@ -19,8 +33,9 @@ class AdminMenu
                 ->view('extension/payment/mundipagg/menu/mundipagg');
 
         $children[] = $this->getMenuChildren('Settings');
-        $children[] = $this->getMenuChildren('Subscriptions');
-        $children[] = $this->getMenuChildren('Plans');
+        if ($this->isSomeRecurrenceEnable()) {
+            $children[] = $this->addRecurrenceMenu();
+        }
 
         $mundipaggMenu = [
             'id'       => 'menu-mundipagg',
@@ -29,6 +44,27 @@ class AdminMenu
         ];
 
         return $mundipaggMenu;
+    }
+
+    private function addRecurrenceMenu()
+    {
+        $result = [
+            'name' => $this->openCart->language->get('Recurrence'),
+            'children' => [
+                $this->getMenuChildren('Templates'),
+                //$this->getMenuChildren('Subscriptions')
+            ]
+        ];
+
+        if ($this->recurrenceSettings->isSingleRecurrenceEnable()) {
+            $result['children'][] = $this->getMenuChildren('Single');
+        }
+
+        if ($this->recurrenceSettings->isSubscriptionByPlanEnable()) {
+            $result['children'][] = $this->getMenuChildren('Plans');
+        }
+
+        return $result;
     }
 
     private function getMenuChildren($name)

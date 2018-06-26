@@ -112,7 +112,15 @@ $_['admin_menu'] = [
 $_['recurrence'] = [
     'Settings' => 'Settings',
     'Subscriptions' => 'Subscriptions',
+    'Templates' => 'Templates',
     'Plans' => 'Plans',
-    'create' => 'create'
+    'create' => 'create',
+    'title' => 'Recurrence',
+    'subscriptionInstallment_title' => 'Enable Subscription Installment',
+    'creditcardUpdateCustomer_title' => 'Enable Credit Card update by customer',
+    'paymentUpdateCustomer_title' => 'Enable payment method update by customer',
+    'subscriptionByPlan_title' => 'Enable Subscription by plan',
+    'singleSubscription_title' => 'Enable Single Subscription',
+    'checkoutConflictMessage_title' => 'Checkout Conflict Message',
 ];
 // -----------------------------------------------------------------

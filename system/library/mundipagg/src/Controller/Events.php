@@ -111,30 +111,74 @@ class Events
     public function productFormEntry($data)
     {
         if (isset($this->openCart->request->get['mundipagg_plan'])) {
-
-            $productFormTemplate = $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/plans/productFormTabHeader'
-            );
-
-            $productFormTabContentTemplate = $this->openCart->load->view(
-                'extension/payment/mundipagg/recurrence/plans/productFormTabContent'
-            );
-
-            $helper = new MundipaggHelperProductPageChanges($this->openCart);
-            $data['heading_title'] = 'Plano';
-            $data['text_form'] = 'Criar plano';
-
-            $data['tab_design'] = $data['tab_design'] . $productFormTemplate;
-            $data['footer'] = $data['footer'] . $productFormTabContentTemplate;
-
-
-
-            foreach ($data as $key => $value) {
-                $this->template->set($key, $value);
-            }
-
-
-            return $this->template;
+            return $this->handleRecurrencePlanTab($data);
         }
+
+        if (isset($this->openCart->request->get['mundipagg_single'])) {
+            return $this->handleRecurrenceSingleTab($data);
+        }
+    }
+
+    public function handleRecurrencePlanTab($data)
+    {
+
+       $path = 'extension/payment/mundipagg/recurrence/';
+
+       $productFormTemplate = $this->openCart->load->view(
+           $path . 'plans/productFormTabHeader'
+       );
+
+       $planform['formPlan'] = $path . 'templates/form_plan.twig';
+       $planform['panelPlanFrequency'] = $path . 'templates/panelPlanFrequency.twig';
+       $planform['formBase'] = $path . 'templates/form_base.twig';
+
+       $productFormTabContentTemplate = $this->openCart->load->view(
+           $path . 'plans/productFormTabContent',
+           $planform
+       );
+
+       $helper = new MundipaggHelperProductPageChanges($this->openCart);
+       $data['heading_title'] = 'Plano';
+       $data['text_form'] = 'Criar plano';
+
+       $data['tab_design'] = $data['tab_design'] . $productFormTemplate;
+       $data['footer'] = $data['footer'] . $productFormTabContentTemplate;
+
+       foreach ($data as $key => $value) {
+           $this->template->set($key, $value);
+       }
+
+       return $this->template;
+    }
+
+    public function handleRecurrenceSingleTab($data)
+    {
+       $path = 'extension/payment/mundipagg/recurrence/';
+
+       $productFormTemplate = $this->openCart->load->view(
+           $path . 'plans/productFormTabHeader'
+       );
+
+       $planform['formPlan'] = $path . 'templates/form_plan.twig';
+       $planform['panelPlanFrequency'] = $path . 'templates/panelPlanFrequency.twig';
+       $planform['formBase'] = $path . 'templates/form_base.twig';
+
+       $productFormTabContentTemplate = $this->openCart->load->view(
+           $path . 'plans/productFormTabContent',
+           $planform
+       );
+
+       $helper = new MundipaggHelperProductPageChanges($this->openCart);
+       $data['heading_title'] = 'Single';
+       $data['text_form'] = 'Criar plano';
+
+       $data['tab_design'] = $data['tab_design'] . $productFormTemplate;
+       $data['footer'] = $data['footer'] . $productFormTabContentTemplate;
+
+       foreach ($data as $key => $value) {
+           $this->template->set($key, $value);
+       }
+
+       return $this->template;
     }
 }

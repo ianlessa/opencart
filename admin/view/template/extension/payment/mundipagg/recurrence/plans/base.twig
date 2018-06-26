@@ -20,5 +20,21 @@
             </div>
         </div>
     </div>
+
 </div>
+
+
+<script>
+$(document).ready(function () {
+
+    $('#list-template').hide();
+
+    $('.checkbox-tab').change(function() {
+            $('#grid-template').toggle();
+            $('#list-template').toggle();
+    });
+});
+
+</script>
+
 {{ footer }}
