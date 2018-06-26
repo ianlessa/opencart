@@ -53,5 +53,4 @@ class Recurrence
         $this->recurrenceSettings = new RecurrenceSettings($this->openCart);
         $this->data['recurrenceSettings'] = $this->recurrenceSettings->getAllSettings();
     }
-
 }

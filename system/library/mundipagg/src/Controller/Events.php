@@ -153,7 +153,6 @@ class Events
 
     public function handleRecurrenceSingleTab($data)
     {
-
        $path = 'extension/payment/mundipagg/recurrence/';
 
        $productFormTemplate = $this->openCart->load->view(
@@ -182,5 +181,4 @@ class Events
 
        return $this->template;
     }
-
 }

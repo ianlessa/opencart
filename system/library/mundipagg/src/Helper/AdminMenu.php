@@ -65,7 +65,6 @@ class AdminMenu
         }
 
         return $result;
-
     }
 
     private function getMenuChildren($name)

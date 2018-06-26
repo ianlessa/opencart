@@ -49,5 +49,4 @@ class Templates extends Recurrence
         $this->data['formBase'] = $path . 'recurrence/templates/form_base.twig';
         $this->render('templates/create');
     }
-
 }
