@@ -13,7 +13,7 @@
     <div class="form-group required">
         <label class="col-sm-2 control-label" for="">Nome do produto</label>
         <div class="col-sm-8">
-            <input type="text" name="" value="" placeholder="Digite o nome do produto" id="" class="form-control">
+            <input type="text" name="filter_product" value="" placeholder="Digite o nome do produto" id="" class="form-control">
         </div>
         <div class="col-sm-2">
             <button type="submit" form="form-product" title="" class="btn btn-primary" data-original-title="Save"><i class="fa fa-plus-circle"></i></button>
@@ -104,16 +104,17 @@
     </div>
 
 <script>
-
-$("#select-subscription").change(function(){
-    var selected = $("option:selected", this);
-    if(selected.parent()[0].id == "new"){
-        $('#customized').css('display', 'block');
-        $('.actions-templates').css('display', 'none');
-    } else if(selected.parent()[0].id == "pre-defined"){
-        $('#customized').css('display', 'none');
-        $('.actions-templates').css('display', 'unset');
-    }
+$(document).ready(function() {
+    $("#select-subscription").change(function(){
+        var selected = $("option:selected", this);
+        if(selected.parent()[0].id == "new"){
+            $('#customized').css('display', 'block');
+            $('.actions-templates').css('display', 'none');
+        } else if(selected.parent()[0].id == "pre-defined"){
+            $('#customized').css('display', 'none');
+            $('.actions-templates').css('display', 'unset');
+        }
+    });
 });
 
 </script>
