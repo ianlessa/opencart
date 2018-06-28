@@ -514,7 +514,7 @@
 											"top": 477,
 											"width": 229.9248046875,
 											"height": 13,
-											"text": "+dueAT: DueValueObject[1]",
+											"text": "+dueAt: DueValueObject[1]",
 											"horizontalAlignment": 0
 										},
 										{
@@ -961,7 +961,7 @@
 											"top": 605,
 											"width": 137.97265625,
 											"height": 13,
-											"text": "+interval: char",
+											"text": "+intervalType: char",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2625,7 +2625,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR2VXjUuxQ0g="
 									},
-									"name": "dueAT",
+									"name": "dueAt",
 									"type": {
 										"$ref": "AAAAAAFkR05tSD8CCXY="
 									},
@@ -2868,7 +2868,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR1KiQ0DPLk4="
 									},
-									"name": "interval",
+									"name": "intervalType",
 									"type": "char"
 								},
 								{
