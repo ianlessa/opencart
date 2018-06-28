@@ -27,6 +27,9 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->createOrderBoletoInfoTable();
         $this->createOrderCardInfoTable();
 
+        //aggregates
+        $this->createTemplateAggregateTables();
+
         $this->populatePaymentTable();
 
         $this->installEvents();
@@ -47,7 +50,74 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->dropOrderBoletoInfoTable();
         $this->dropOrderCardInfoTable();
 
+        //aggregates
+        $this->dropTemplateAggregateTables();
+
         $this->uninstallEvents();
+    }
+
+    private function createTemplateAggregateTables()
+    {
+
+        //template table
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_template` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `is_single` TINYINT NOT NULL DEFAULT 0,
+            `name` VARCHAR(45) NULL,
+            `description` VARCHAR(45) NULL,
+            `accept_credit_card` TINYINT NOT NULL DEFAULT 0,
+            `accept_boleto` TINYINT NOT NULL DEFAULT 0,
+            `allow_installments` TINYINT NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`))    
+        ");
+
+        //template_due table
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_template_due` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `template_id` INT NOT NULL,
+            `type` CHAR NOT NULL,
+            `value` INT NOT NULL,
+            PRIMARY KEY (`id`, `template_id`),
+            INDEX `fk_template_due_template_idx` (`template_id` ASC),
+            CONSTRAINT `fk_template_due_template`
+              FOREIGN KEY (`template_id`)
+              REFERENCES `" . DB_PREFIX . "mundipagg_template` (`id`)
+              ON DELETE NO ACTION
+              ON UPDATE NO ACTION)
+        ");
+
+        //template_repetition table
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_template_repetition` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `template_id` INT NOT NULL,
+            `frequency` INT NOT NULL,
+            `interval_type` CHAR NOT NULL,
+            `discount_type` CHAR NOT NULL,
+            `discount_value` FLOAT NOT NULL,
+            PRIMARY KEY (`id`, `template_id`),
+            INDEX `fk_template_repetition_template1_idx` (`template_id` ASC),
+            CONSTRAINT `fk_template_repetition_template1`
+              FOREIGN KEY (`template_id`)
+              REFERENCES `" . DB_PREFIX . "mundipagg_template` (`id`)
+              ON DELETE NO ACTION
+              ON UPDATE NO ACTION)
+        ");
+    }
+
+    private function dropTemplateAggregateTables()
+    {
+        $this->db->query("
+            DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template_repetition` CASCADE;
+        ");
+        $this->db->query("
+            DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template_due` CASCADE;
+        ");
+        $this->db->query("
+            DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template` CASCADE;
+        ");
     }
 
     /**
