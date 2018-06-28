@@ -309,7 +309,7 @@
 											"top": 414,
 											"width": 519,
 											"height": 13,
-											"text": "Templage Aggregate"
+											"text": "Template Aggregate"
 										},
 										{
 											"_type": "LabelView",
@@ -439,7 +439,7 @@
 											"top": 1016,
 											"width": 158.24072265625,
 											"height": 13,
-											"text": "(from Templage Aggregate)"
+											"text": "(from Template Aggregate)"
 										},
 										{
 											"_type": "LabelView",
@@ -671,7 +671,7 @@
 											"top": 384,
 											"width": 158.24072265625,
 											"height": 13,
-											"text": "(from Templage Aggregate)"
+											"text": "(from Template Aggregate)"
 										},
 										{
 											"_type": "LabelView",
@@ -886,7 +886,7 @@
 											"top": 56,
 											"width": 158.24072265625,
 											"height": 13,
-											"text": "(from Templage Aggregate)"
+											"text": "(from Template Aggregate)"
 										},
 										{
 											"_type": "LabelView",
@@ -1135,7 +1135,7 @@
 											"top": 752,
 											"width": 158.24072265625,
 											"height": 13,
-											"text": "(from Templage Aggregate)"
+											"text": "(from Template Aggregate)"
 										},
 										{
 											"_type": "LabelView",
@@ -2540,7 +2540,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Templage Aggregate",
+					"name": "Template Aggregate",
 					"ownedElements": [
 						{
 							"_type": "UMLClass",
