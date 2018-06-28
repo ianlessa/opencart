@@ -47,6 +47,21 @@ class Templates extends Recurrence
 
         $path = 'extension/payment/mundipagg/';
         $this->data['formBase'] = $path . 'recurrence/templates/form_base.twig';
+
+        $this->data['saveAction'] = $this->openCart->url->link(
+            'extension/payment/mundipagg/templates',
+            [
+                'user_token' => $this->openCart->session->data['user_token'],
+                'action' => 'save'
+            ],
+            true
+        );
+
         $this->render('templates/create');
+    }
+
+    protected function save()
+    {
+        $a = 1;
     }
 }
