@@ -99,18 +99,20 @@ $(document).ready(function(e){
 
     });
 
-    $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li', function( event ) {
+    $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li a', function( event ) {
+        event.preventDefault();
         var $target = $( event.currentTarget );
+        var symbol = $target.text();
         $target.closest('.bs-dropdown-to-select-group')
             .find('[data-bind="bs-drp-sel-value"]').val($target.attr('data-value'))
-            .attr('data-symbol', $target.context.textContent)
+            .attr('data-symbol', symbol)
             .end()
             .children('.dropdown-toggle').dropdown('toggle');
 
         $target.closest('.bs-dropdown-to-select-group')
-            .find('[data-bind="bs-drp-sel-label"]').text($target.context.textContent);
+            .find('[data-bind="bs-drp-sel-label"]').text(symbol);
 
-        var symbol = $target.context.textContent;
+
 
         $target.closest('.bs-dropdown-to-select-group')
             .find('[data-bind="bs-drp-sel-value"]')
