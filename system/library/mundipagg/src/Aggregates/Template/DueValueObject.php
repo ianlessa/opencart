@@ -48,4 +48,12 @@ class DueValueObject
         $this->value = $value;
         return $this;
     }
+
+    public static function getTypesArray()
+    {
+        return [
+            ['code' => self::TYPE_EXACT,'name' => "Dia exato"],
+            ['code' => self::TYPE_WORKDAY,'name' => "Dia útil"]
+        ];
+    }
 }

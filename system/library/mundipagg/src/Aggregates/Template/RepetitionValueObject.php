@@ -91,4 +91,20 @@ class RepetitionValueObject
         $this->discountValue = $discountValue;
         return $this;
     }
+
+    public static function getDiscountTypesArray()
+    {
+        return [
+            ['code'=>self::DISCOUNT_TYPE_PERCENT , 'name' => '%'],
+            ['code'=>self::DISCOUNT_TYPE_FIXED , 'name' => "R$"]
+        ];
+    }
+
+    public static function getIntervalTypesArray()
+    {
+        return [
+            ['code'=>self::INTERVAL_TYPE_MONTHLY, 'name'=> "Mensal"],
+            ['code'=>self::INTERVAL_TYPE_SEMESTER, 'name'=> "Semestral"]
+        ];
+    }
 }

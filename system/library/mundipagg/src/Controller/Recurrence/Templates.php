@@ -2,6 +2,9 @@
 
 namespace Mundipagg\Controller\Recurrence;
 
+use Mundipagg\Aggregates\Template\DueValueObject;
+use Mundipagg\Aggregates\Template\RepetitionValueObject;
+
 class Templates extends Recurrence
 {
     public function __call($name, array $arguments)
@@ -48,6 +51,10 @@ class Templates extends Recurrence
         $path = 'extension/payment/mundipagg/';
         $this->data['formBase'] = $path . 'recurrence/templates/form_base.twig';
 
+        $this->data['dueTypesArray'] = DueValueObject::getTypesArray();
+        $this->data['discountTypesArray'] = RepetitionValueObject::getDiscountTypesArray();
+        $this->data['intervalTypesArray'] = RepetitionValueObject::getIntervalTypesArray();
+
         $this->data['saveAction'] = $this->openCart->url->link(
             'extension/payment/mundipagg/templates',
             [
@@ -62,6 +69,7 @@ class Templates extends Recurrence
 
     protected function save()
     {
-        $a = 1;
+        $a = $this->openCart->request->post;
+        $a = 2;
     }
 }
