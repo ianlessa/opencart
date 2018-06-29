@@ -69,6 +69,9 @@ class Templates extends Recurrence
         $this->render('templates/create');
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function save()
     {
         $postData = $this->openCart->request->post;
@@ -77,8 +80,8 @@ class Templates extends Recurrence
         try {
             $templateRoot = $templateRootFactory->createFromPostData($postData);
 
-            
-
+            $templateRepository = new TemplateRepository($this->openCart);
+            $templateRepository->save($templateRoot);
         }catch(Exception $e) {
             throw $e;
             //return false;
