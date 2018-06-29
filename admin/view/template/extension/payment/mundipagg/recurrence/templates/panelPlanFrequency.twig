@@ -2,11 +2,11 @@
     <label class="col-sm-5">Ciclos</label>
     <label class="col-sm-5">Intervalo</label>
     <div class="col-sm-5">
-        <input type="text" class="form-control" placeholder="3">
+        <input type="text" class="form-control" placeholder="3" name="cycles">
     </div>
     <div class="frequency">
         <div class="col-sm-5">
-            <select id="frequency" class="form-control">
+            <select id="frequency" class="form-control" name="intervals[0][frequency]">
                 <option>01</option>
                 <option>02</option>
                 <option>03</option>
@@ -18,7 +18,7 @@
                 <option>09</option>
                 <option>10</option>
             </select>
-            <select id="interval" class="form-control">
+            <select id="interval" class="form-control" name="intervals[0][type]">
                 {% for intervalType in intervalTypesArray %}
                     <option value="{{ intervalType.code }}">{{ intervalType.name }}</option>
                 {% endfor %}
@@ -31,7 +31,7 @@
     <label class="col-sm-5">Trial</label>
     <div class="col-sm-5">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="15">
+          <input type="text" class="form-control" placeholder="15" name="trial-days">
           <span class="input-group-addon">Days</span>
         </div>
     </div>

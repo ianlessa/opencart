@@ -4,6 +4,8 @@ namespace Mundipagg\Controller\Recurrence;
 
 use Mundipagg\Aggregates\Template\DueValueObject;
 use Mundipagg\Aggregates\Template\RepetitionValueObject;
+use Mundipagg\Factories\TemplateRootFactory;
+use Mundipagg\Repositories\TemplateRepository;
 
 class Templates extends Recurrence
 {
@@ -69,7 +71,17 @@ class Templates extends Recurrence
 
     protected function save()
     {
-        $a = $this->openCart->request->post;
-        $a = 2;
+        $postData = $this->openCart->request->post;
+
+        $templateRootFactory = new TemplateRootFactory();
+        try {
+            $templateRoot = $templateRootFactory->createFromPostData($postData);
+
+            
+
+        }catch(Exception $e) {
+            throw $e;
+            //return false;
+        }
     }
 }

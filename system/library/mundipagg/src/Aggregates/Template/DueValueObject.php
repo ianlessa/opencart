@@ -3,6 +3,8 @@
 namespace Mundipagg\Aggregates\Template;
 
 
+use Exception;
+
 class DueValueObject
 {
     const TYPE_EXACT = 'E';
@@ -24,9 +26,13 @@ class DueValueObject
     /**
      * @param string $type
      * @return DueValueObject
+     * @throws Exception
      */
     public function setType($type)
     {
+        if (!in_array($type,self::getValidTypes())) {
+            throw new Exception("Invalid Due Type: $type! ");
+        }
         $this->type = $type;
         return $this;
     }
@@ -42,10 +48,15 @@ class DueValueObject
     /**
      * @param int $value
      * @return DueValueObject
+     * @throws Exception
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $intValue = intval($value);
+        if ($intValue <= 0) {
+            throw new Exception("Due value should be greater than 0: $value!");
+        }
+        $this->value = $intValue;
         return $this;
     }
 
@@ -54,6 +65,14 @@ class DueValueObject
         return [
             ['code' => self::TYPE_EXACT,'name' => "Dia exato"],
             ['code' => self::TYPE_WORKDAY,'name' => "Dia útil"]
+        ];
+    }
+
+    public static function getValidTypes()
+    {
+        return [
+            self::TYPE_EXACT,
+            self::TYPE_WORKDAY
         ];
     }
 }

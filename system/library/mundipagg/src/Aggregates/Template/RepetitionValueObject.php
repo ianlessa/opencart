@@ -3,6 +3,8 @@
 namespace Mundipagg\Aggregates\Template;
 
 
+use Exception;
+
 class RepetitionValueObject
 {
     const DISCOUNT_TYPE_FIXED = 'F';
@@ -31,10 +33,16 @@ class RepetitionValueObject
     /**
      * @param int $frequency
      * @return RepetitionValueObject
+     * @throws Exception
      */
     public function setFrequency($frequency)
     {
-        $this->frequency = $frequency;
+
+        $intValue = intval($frequency);
+        if ($intValue <= 0) {
+            throw new Exception("Interval frequency should be greater than 0: $frequency!");
+        }
+        $this->frequency = $intValue;
         return $this;
     }
 
@@ -49,9 +57,14 @@ class RepetitionValueObject
     /**
      * @param string $intervalType
      * @return RepetitionValueObject
+     * @throws Exception
      */
     public function setIntervalType($intervalType)
     {
+        if (!in_array($intervalType,self::getValidIntervalTypes())) {
+            throw new Exception("Invalid Interval Type: $intervalType! ");
+        }
+
         $this->intervalType = $intervalType;
         return $this;
     }
@@ -67,9 +80,14 @@ class RepetitionValueObject
     /**
      * @param string $discountType
      * @return RepetitionValueObject
+     * @throws Exception
      */
     public function setDiscountType($discountType)
     {
+        if (!in_array($discountType,self::getValidDiscountTypes())) {
+            throw new Exception("Invalid Interval Discount Type: $discountType! ");
+        }
+
         $this->discountType = $discountType;
         return $this;
     }
@@ -105,6 +123,22 @@ class RepetitionValueObject
         return [
             ['code'=>self::INTERVAL_TYPE_MONTHLY, 'name'=> "Mensal"],
             ['code'=>self::INTERVAL_TYPE_SEMESTER, 'name'=> "Semestral"]
+        ];
+    }
+
+    public static function getValidIntervalTypes()
+    {
+        return [
+            self::INTERVAL_TYPE_MONTHLY,
+            self::INTERVAL_TYPE_SEMESTER
+        ];
+    }
+
+    public static function getValidDiscountTypes()
+    {
+        return [
+            self::DISCOUNT_TYPE_PERCENT,
+            self::DISCOUNT_TYPE_FIXED
         ];
     }
 }
