@@ -16,7 +16,7 @@ function formatValueDiscount(value, type, symbol) {
         return "Não";
     }
 
-    if (type == 'percent') {
+    if (type == 'P') {
         return [value, symbol].join("");
     }
     return [symbol, value].join(" ");
@@ -40,7 +40,7 @@ function makeIntervalColumn(inputName, interval)
 {
     var newCol = $("<td>");
     newCol.append(makeSpan(interval));
-    newCol.append(makeInput(inputName, "interval", interval));
+    newCol.append(makeInput(inputName, "type", interval));
 
     return newCol;
 }
@@ -51,8 +51,8 @@ function makeDiscountColumn(inputName, discount, type_discount, type_discount_sy
    value_type_discount = formatValueDiscount(discount, type_discount, type_discount_symbol);
 
    newCol.append(makeSpan(value_type_discount));
-   newCol.append(makeInput(inputName, "discount", discount));
-   newCol.append(makeInput(inputName, "type_discount", type_discount));
+   newCol.append(makeInput(inputName, "discountValue", discount));
+   newCol.append(makeInput(inputName, "discountType", type_discount));
 
     return newCol;
 }
