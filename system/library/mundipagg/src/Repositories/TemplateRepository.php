@@ -42,7 +42,6 @@ class TemplateRepository extends AbstractRep
         $templateRoot->getTemplate()->setId($db->getLastId());
 
         $this->createTemplateRepetitions($templateRoot);
-        $this->createTemplateDue($templateRoot);
 
         return true;
     }
