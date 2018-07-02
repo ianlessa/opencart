@@ -79,8 +79,8 @@ $(document).ready(function(e){
         var frequency = currentFrequency.find('#frequency').val();
         var interval = currentFrequency.find('#interval').val();
         var discount = currentFrequency.find('#discount').val();
-        var type_discount_symbol = currentFrequency.find('#type_discount').attr('data-symbol');
-        var type_discount = currentFrequency.find('#type_discount').val();
+        var type_discount_symbol = currentFrequency.find('#discountType').attr('data-symbol');
+        var type_discount = currentFrequency.find('#discountType').val();
 
         var inputName = "intervals[" + currentNumber + "]";
 
