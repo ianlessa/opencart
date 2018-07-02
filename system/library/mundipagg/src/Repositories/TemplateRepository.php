@@ -23,14 +23,18 @@ class TemplateRepository extends AbstractRep
                 `description`,
                 `accept_credit_card`,
                 `accept_boleto`,
-                `allow_installments`
+                `allow_installments`,
+                `due_type`,
+                `due_value`
             ) VALUES (
                 " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
                 '" . $templateRoot->getTemplate()->getName() . "',
                 '" . $templateRoot->getTemplate()->getDescription() . "',
                 " . ($templateRoot->getTemplate()->isAcceptCreditCard()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isAcceptBoleto()?1:0) . ",
-                " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . "
+                " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . ",
+                '" . $templateRoot->getDueAt()->getType() . "',
+                " . $templateRoot->getDueAt()->getValue() . "
             )
         ");
 
@@ -91,24 +95,4 @@ class TemplateRepository extends AbstractRep
 
         $this->openCart->db->query($query);
     }
-
-    protected function createTemplateDue($templateRoot)
-    {
-
-        $query = "
-            INSERT INTO `" . DB_PREFIX . "mundipagg_template_due` (
-                `template_id`,
-                `type`,
-                `value`                
-            ) VALUES (
-                ". $templateRoot->getTemplate()->getId() .",
-                '" . $templateRoot->getDueAt()->getType(). "',
-                " . floatval($templateRoot->getDueAt()->getValue()) . "
-            )
-        ";
-
-        $this->openCart->db->query($query);
-    }
-
-
 }

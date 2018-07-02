@@ -69,23 +69,9 @@ class ModelExtensionPaymentMundipagg extends Model
             `accept_credit_card` TINYINT NOT NULL DEFAULT 0,
             `accept_boleto` TINYINT NOT NULL DEFAULT 0,
             `allow_installments` TINYINT NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`))    
-        ");
-
-        //template_due table
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_template_due` (
-            `id` INT NOT NULL AUTO_INCREMENT,
-            `template_id` INT NOT NULL,
-            `type` CHAR NOT NULL,
-            `value` INT NOT NULL,
-            PRIMARY KEY (`id`, `template_id`),
-            INDEX `fk_template_due_template_idx` (`template_id` ASC),
-            CONSTRAINT `fk_template_due_template`
-              FOREIGN KEY (`template_id`)
-              REFERENCES `" . DB_PREFIX . "mundipagg_template` (`id`)
-              ON DELETE NO ACTION
-              ON UPDATE NO ACTION)
+            `due_type` CHAR NOT NULL,
+            `due_value` TINYINT NOT NULL,
+            PRIMARY KEY (`id`))   
         ");
 
         //template_repetition table
@@ -112,9 +98,7 @@ class ModelExtensionPaymentMundipagg extends Model
         $this->db->query("
             DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template_repetition` CASCADE;
         ");
-        $this->db->query("
-            DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template_due` CASCADE;
-        ");
+
         $this->db->query("
             DROP TABLE IF EXISTS `" . DB_PREFIX . "mundipagg_template` CASCADE;
         ");
