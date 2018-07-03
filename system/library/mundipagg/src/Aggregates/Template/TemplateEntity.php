@@ -19,6 +19,10 @@ class TemplateEntity
     protected $acceptBoleto;
     /** @var boolean */
     protected $allowInstallments;
+    /** @var int */
+    protected $cycles;
+    /** @var int */
+    protected $trial;
 
     public function __construct()
     {
@@ -27,6 +31,10 @@ class TemplateEntity
         $this->acceptBoleto =
         $this->allowInstallments =
             false;
+
+        $this->cycles =
+        $this->trial =
+            0;
     }
 
     /**
@@ -97,7 +105,7 @@ class TemplateEntity
      */
     public function setAcceptCreditCard($acceptCreditCard)
     {
-        $this->acceptCreditCard = $acceptCreditCard;
+        $this->acceptCreditCard = boolval(intval($acceptCreditCard));
         return $this;
     }
 
@@ -115,7 +123,7 @@ class TemplateEntity
      */
     public function setAcceptBoleto($acceptBoleto)
     {
-        $this->acceptBoleto = $acceptBoleto;
+        $this->acceptBoleto = boolval(intval($acceptBoleto));
         return $this;
     }
 
@@ -152,6 +160,40 @@ class TemplateEntity
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCycles()
+    {
+        return $this->cycles;
+    }
+
+    /**
+     * @param int $cycles
+     */
+    public function setCycles($cycles)
+    {
+        $this->cycles = abs(intval($cycles));
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTrial()
+    {
+        return $this->trial;
+    }
+
+    /**
+     * @param int $trial
+     */
+    public function setTrial($trial)
+    {
+        $this->trial = abs(intval($trial));
         return $this;
     }
 }

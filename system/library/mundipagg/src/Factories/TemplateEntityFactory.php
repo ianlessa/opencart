@@ -19,6 +19,14 @@ class TemplateEntityFactory
             ->setDescription($postData['description'])
         ;
 
+        if (isset($postData['cycles'])) {
+            $templateEntity->setCycles(intval($postData['cycles']));
+        }
+
+        if (isset($postData['trial'])) {
+            $templateEntity->setTrial(intval($postData['trial']));
+        }
+
         foreach($postData['payment_method'] as $paymentMethod)
         {
             switch($paymentMethod)

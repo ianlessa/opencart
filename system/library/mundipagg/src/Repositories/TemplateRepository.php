@@ -23,7 +23,9 @@ class TemplateRepository extends AbstractRep
                 `description`,
                 `accept_credit_card`,
                 `accept_boleto`,
-                `allow_installments`,
+                `allow_installments`,                
+                `cycles`,
+                `trial`,
                 `due_type`,
                 `due_value`
             ) VALUES (
@@ -33,6 +35,8 @@ class TemplateRepository extends AbstractRep
                 " . ($templateRoot->getTemplate()->isAcceptCreditCard()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isAcceptBoleto()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . ",
+                " . $templateRoot->getTemplate()->getCycles() . ",
+                " . $templateRoot->getTemplate()->getTrial() . ",
                 '" . $templateRoot->getDueAt()->getType() . "',
                 " . $templateRoot->getDueAt()->getValue() . "
             )

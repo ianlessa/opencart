@@ -70,7 +70,9 @@ class ModelExtensionPaymentMundipagg extends Model
             `accept_boleto` TINYINT NOT NULL DEFAULT 0,
             `allow_installments` TINYINT NOT NULL DEFAULT 0,
             `due_type` CHAR NOT NULL,
-            `due_value` TINYINT NOT NULL,
+            `due_value` TINYINT NOT NULL DEFAULT 0,
+            `cycles` TINYINT NOT NULL DEFAULT 0,
+            `trial` TINYINT NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`))   
         ");
 
