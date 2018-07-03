@@ -46,8 +46,9 @@
 
     <div class="col-sm-5">
         <select name="expiry_type" id="expiry_type" class="form-control">
-            <option>Dia exato</option>
-            <option>Dia útil</option>
+            {% for dueType in dueTypesArray %}
+            <option value="{{ dueType.code }}">{{ dueType.name }}</option>
+            {% endfor %}
         </select>
     </div>
     <div class="col-sm-5">

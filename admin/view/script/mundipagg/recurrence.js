@@ -16,7 +16,7 @@ function formatValueDiscount(value, type, symbol) {
         return "Não";
     }
 
-    if (type == 'percent') {
+    if (type == 'P') {
         return [value, symbol].join("");
     }
     return [symbol, value].join(" ");
@@ -40,7 +40,7 @@ function makeIntervalColumn(inputName, interval)
 {
     var newCol = $("<td>");
     newCol.append(makeSpan(interval));
-    newCol.append(makeInput(inputName, "interval", interval));
+    newCol.append(makeInput(inputName, "type", interval));
 
     return newCol;
 }
@@ -51,8 +51,8 @@ function makeDiscountColumn(inputName, discount, type_discount, type_discount_sy
    value_type_discount = formatValueDiscount(discount, type_discount, type_discount_symbol);
 
    newCol.append(makeSpan(value_type_discount));
-   newCol.append(makeInput(inputName, "discount", discount));
-   newCol.append(makeInput(inputName, "type_discount", type_discount));
+   newCol.append(makeInput(inputName, "discountValue", discount));
+   newCol.append(makeInput(inputName, "discountType", type_discount));
 
     return newCol;
 }
@@ -79,8 +79,8 @@ $(document).ready(function(e){
         var frequency = currentFrequency.find('#frequency').val();
         var interval = currentFrequency.find('#interval').val();
         var discount = currentFrequency.find('#discount').val();
-        var type_discount_symbol = currentFrequency.find('#type_discount').attr('data-symbol');
-        var type_discount = currentFrequency.find('#type_discount').val();
+        var type_discount_symbol = currentFrequency.find('#discountType').attr('data-symbol');
+        var type_discount = currentFrequency.find('#discountType').val();
 
         var inputName = "intervals[" + currentNumber + "]";
 
@@ -99,18 +99,20 @@ $(document).ready(function(e){
 
     });
 
-    $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li', function( event ) {
+    $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li a', function( event ) {
+        event.preventDefault();
         var $target = $( event.currentTarget );
+        var symbol = $target.text();
         $target.closest('.bs-dropdown-to-select-group')
             .find('[data-bind="bs-drp-sel-value"]').val($target.attr('data-value'))
-            .attr('data-symbol', $target.context.textContent)
+            .attr('data-symbol', symbol)
             .end()
             .children('.dropdown-toggle').dropdown('toggle');
 
         $target.closest('.bs-dropdown-to-select-group')
-            .find('[data-bind="bs-drp-sel-label"]').text($target.context.textContent);
+            .find('[data-bind="bs-drp-sel-label"]').text(symbol);
 
-        var symbol = $target.context.textContent;
+
 
         $target.closest('.bs-dropdown-to-select-group')
             .find('[data-bind="bs-drp-sel-value"]')
