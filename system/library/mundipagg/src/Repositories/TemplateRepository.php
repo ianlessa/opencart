@@ -7,7 +7,6 @@ use Mundipagg\Aggregates\Template\TemplateRoot;
 
 class TemplateRepository extends AbstractRep
 {
-
     /**
      * @param TemplateRoot $templateRoot
      */

@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-
 use Exception;
 
 class RepetitionValueObject
@@ -37,10 +36,11 @@ class RepetitionValueObject
      */
     public function setFrequency($frequency)
     {
-
         $intValue = intval($frequency);
         if ($intValue <= 0) {
-            throw new Exception("Interval frequency should be greater than 0: $frequency!");
+            throw new Exception(
+                "Interval frequency should be greater than 0: $frequency!"
+            );
         }
         $this->frequency = $intValue;
         return $this;
@@ -61,7 +61,7 @@ class RepetitionValueObject
      */
     public function setIntervalType($intervalType)
     {
-        if (!in_array($intervalType,self::getValidIntervalTypes())) {
+        if (!in_array($intervalType, self::getValidIntervalTypes())) {
             throw new Exception("Invalid Interval Type: $intervalType! ");
         }
 
@@ -84,7 +84,7 @@ class RepetitionValueObject
      */
     public function setDiscountType($discountType)
     {
-        if (!in_array($discountType,self::getValidDiscountTypes())) {
+        if (!in_array($discountType, self::getValidDiscountTypes())) {
             throw new Exception("Invalid Interval Discount Type: $discountType! ");
         }
 
@@ -113,8 +113,8 @@ class RepetitionValueObject
     public static function getDiscountTypesArray()
     {
         return [
-            ['code'=>self::DISCOUNT_TYPE_PERCENT , 'name' => '%'],
-            ['code'=>self::DISCOUNT_TYPE_FIXED , 'name' => "R$"]
+            ['code'=>self::DISCOUNT_TYPE_PERCENT, 'name' => '%'],
+            ['code'=>self::DISCOUNT_TYPE_FIXED, 'name' => "R$"]
         ];
     }
 

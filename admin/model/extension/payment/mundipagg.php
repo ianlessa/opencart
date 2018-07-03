@@ -58,7 +58,6 @@ class ModelExtensionPaymentMundipagg extends Model
 
     private function createTemplateAggregateTables()
     {
-
         //template table
         $this->db->query("
             CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "mundipagg_template` (

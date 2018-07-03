@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-
 class TemplateRoot
 {
     /** @var TemplateEntity */

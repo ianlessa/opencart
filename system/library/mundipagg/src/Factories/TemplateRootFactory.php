@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ian
- * Date: 29/06/18
- * Time: 14:45
- */
 
 namespace Mundipagg\Factories;
-
 
 use Mundipagg\Aggregates\Template\DueValueObject;
 use Mundipagg\Aggregates\Template\RepetitionValueObject;
@@ -41,7 +34,7 @@ class TemplateRootFactory
                     ->setDiscountValue($interval['discountValue'])
                     ->setDiscountType($interval['discountType']);
             }
-            array_push($repetitions,$repetition);
+            $repetitions[] = $repetition;
         }
 
         $templateRoot = new TemplateRoot();
@@ -49,7 +42,6 @@ class TemplateRootFactory
             ->setTemplate($templateEntityFactory->createFromPostData($postData))
             ->setDueAt($dueAt)
             ->setRepetitions($repetitions)
-            //->set
         ;
         return $templateRoot;
     }

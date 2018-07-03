@@ -2,7 +2,6 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-
 use Exception;
 
 class DueValueObject
@@ -30,7 +29,7 @@ class DueValueObject
      */
     public function setType($type)
     {
-        if (!in_array($type,self::getValidTypes())) {
+        if (!in_array($type, self::getValidTypes())) {
             throw new Exception("Invalid Due Type: $type! ");
         }
         $this->type = $type;

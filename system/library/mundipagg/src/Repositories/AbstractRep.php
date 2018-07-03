@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ian
- * Date: 29/06/18
- * Time: 16:22
- */
 
 namespace Mundipagg\Repositories;
-
 
 abstract class AbstractRep
 {
@@ -22,12 +15,12 @@ abstract class AbstractRep
         $objectId = null;
         if (
             is_object($object) &&
-            method_exists($object,'getId')
+            method_exists($object, 'getId')
         ) {
             $object = $object->getId();
         }
         if ($objectId === null) {
-            $this->create($object);
+            return $this->create($object);
         }
 
         return $this->update($object);

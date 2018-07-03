@@ -1,7 +1,6 @@
 <?php
 namespace Mundipagg\Factories;
 
-
 use Mundipagg\Aggregates\Template\TemplateEntity;
 
 class TemplateEntityFactory
