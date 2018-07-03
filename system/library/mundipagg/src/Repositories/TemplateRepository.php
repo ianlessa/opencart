@@ -57,6 +57,7 @@ class TemplateRepository extends AbstractRep
     {
         // TODO: Implement update() method.
     }
+
     public function delete($template)
     {
 

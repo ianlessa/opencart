@@ -32,10 +32,10 @@ abstract class AbstractRep
 
         return $this->update($object);
     }
+
     abstract protected function create(&$object);
     abstract protected function update(&$object);
-
     abstract public function delete($object);
-    abstract public function find($object);
-    abstract public function listEntities($object);
+    abstract public function find($objectId);
+    abstract public function listEntities($limit);
 }
