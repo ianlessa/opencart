@@ -2371,7 +2371,7 @@
 											"top": 541,
 											"width": 187.9921875,
 											"height": 13,
-											"text": "+TYPE_WORKDAY: char = U",
+											"text": "+TYPE_PREPAID: char = U",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4396,7 +4396,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR05tSD8CCXY="
 									},
-									"name": "TYPE_WORKDAY",
+									"name": "TYPE_PREPAID",
 									"type": "char",
 									"defaultValue": "U"
 								},

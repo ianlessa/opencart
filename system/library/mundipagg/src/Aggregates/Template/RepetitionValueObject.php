@@ -9,8 +9,9 @@ class RepetitionValueObject
     const DISCOUNT_TYPE_FIXED = 'F';
     const DISCOUNT_TYPE_PERCENT = 'P';
 
+    const INTERVAL_TYPE_WEEKLY = 'W';
     const INTERVAL_TYPE_MONTHLY = 'M';
-    const INTERVAL_TYPE_SEMESTER = 'S';
+    const INTERVAL_TYPE_YEARLY = 'Y';
 
     /** @var int */
     protected $frequency;
@@ -125,10 +126,12 @@ class RepetitionValueObject
     public function getIntervalTypeLabel()
     {
         switch ($this->intervalType) {
+            case self::INTERVAL_TYPE_WEEKLY:
+                return $this->frequency > 1 ? "week" : "weeks";
             case self::INTERVAL_TYPE_MONTHLY:
                 return $this->frequency > 1 ? "months" : "month";
-            case self::INTERVAL_TYPE_SEMESTER:
-                return $this->frequency > 1 ? "semesters" : "semester";
+            case self::INTERVAL_TYPE_YEARLY:
+                return $this->frequency > 1 ? "year" : "years";
         }
     }
 
@@ -143,16 +146,18 @@ class RepetitionValueObject
     public static function getIntervalTypesArray()
     {
         return [
+            ['code'=>self::INTERVAL_TYPE_WEEKLY, 'name'=> "Semanal"],
             ['code'=>self::INTERVAL_TYPE_MONTHLY, 'name'=> "Mensal"],
-            ['code'=>self::INTERVAL_TYPE_SEMESTER, 'name'=> "Semestral"]
+            ['code'=>self::INTERVAL_TYPE_YEARLY, 'name'=> "Anual"]
         ];
     }
 
     public static function getValidIntervalTypes()
     {
         return [
+            self::INTERVAL_TYPE_WEEKLY,
             self::INTERVAL_TYPE_MONTHLY,
-            self::INTERVAL_TYPE_SEMESTER
+            self::INTERVAL_TYPE_YEARLY
         ];
     }
 

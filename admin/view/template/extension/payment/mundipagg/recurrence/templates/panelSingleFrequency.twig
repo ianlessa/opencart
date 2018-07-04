@@ -1,7 +1,10 @@
 <div class="form-group required">
-    <label class="col-sm-3">Repetições</label>
+    <label class="col-sm-3">Ciclos</label>
     <label class="col-sm-3">Intervalo</label>
     <label class="col-sm-6">Desconto</label>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" placeholder="3" name="cycles">
+    </div>
     <div class="frequency">
         <div class="col-sm-3">
             <select id="frequency" class="form-control">
@@ -16,8 +19,6 @@
                 <option>09</option>
                 <option>10</option>
             </select>
-        </div>
-        <div class="col-sm-3">
             <select id="interval" class="form-control">
                 {% for intervalType in intervalTypesArray %}
                     <option value="{{ intervalType.code }}">{{ intervalType.name }}</option>
