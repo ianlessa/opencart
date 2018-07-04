@@ -43,4 +43,21 @@ class TemplateEntityFactory
 
         return $templateEntity;
     }
+
+    public function createFromDBData($dbData)
+    {
+        $templateEntity = new TemplateEntity();
+        $templateEntity
+            ->setId($dbData['id'])
+            ->setName($dbData['name'])
+            ->setDescription($dbData['description'])
+            ->setIsSingle($dbData['is_single'])
+            ->setAcceptBoleto($dbData['accept_boleto'])
+            ->setAcceptCreditCard($dbData['accept_credit_card'])
+            ->setAllowInstallments($dbData['allow_installments'])
+            ->setCycles($dbData['cycles'])
+            ->setTrial($dbData['trial'])
+        ;
+        return $templateEntity;
+    }
 }

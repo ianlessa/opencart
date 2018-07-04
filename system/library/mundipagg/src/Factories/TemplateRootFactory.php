@@ -45,4 +45,41 @@ class TemplateRootFactory
         ;
         return $templateRoot;
     }
+
+    public function createFromDBData($dbData) {
+        $templateEntityFactory = new TemplateEntityFactory();
+
+        $dueAt = new DueValueObject();
+        $dueAt
+            ->setType($dbData['due_type'])
+            ->setValue($dbData['due_value'])
+        ;
+        $discountTypes = explode(',',$dbData['discount_type']);
+        $discountValues = explode(',',$dbData['discount_value']);
+        $intervalTypes = explode(',',$dbData['interval_type']);
+        $frequencies = explode(',',$dbData['frequency']);
+
+        $repetitions = [];
+        foreach ($discountValues as $index => $discountValue) {
+            if (floatval($discountValue) == 0) {
+                continue;
+            }
+            $repetition = new RepetitionValueObject();
+            $repetition
+                ->setDiscountType($discountTypes[$index])
+                ->setDiscountValue($discountValues[$index])
+                ->setIntervalType($intervalTypes[$index])
+                ->setFrequency($frequencies[$index]);
+
+            $repetitions[] = $repetition;
+        }
+
+        $templateRoot = new TemplateRoot();
+        $templateRoot
+            ->setTemplate($templateEntityFactory->createFromDBData($dbData))
+            ->setDueAt($dueAt)
+            ->setRepetitions($repetitions);
+
+        return $templateRoot;
+    }
 }

@@ -106,7 +106,7 @@ class RepetitionValueObject
      */
     public function setDiscountValue($discountValue)
     {
-        $this->discountValue = $discountValue;
+        $this->discountValue = abs(floatval($discountValue));
         return $this;
     }
 

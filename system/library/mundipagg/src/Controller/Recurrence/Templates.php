@@ -20,6 +20,12 @@ class Templates extends Recurrence
 
     public function index()
     {
+
+        $templateRepository = new TemplateRepository($this->openCart);
+
+        $templateRoots = $templateRepository->listEntities();
+        $this->data['templateRoots'] = $templateRoots;
+
         $this->data['heading_title'] = $this->language['Templates'];
         $this->data['createLink'] =
             'index.php?route=extension/payment/mundipagg/templates&user_token=' .

@@ -40,17 +40,19 @@
                         </tr>
                         </thead>
                         <tbody>
+                        {% for templateRoot in templateRoots %}
                         <tr>
                             <td class="text-center">
-                                <input type="checkbox" name="selected[]" value="33">
+                                <input type="checkbox" name="selected[]" value="{{ templateRoot.template.id }}">
                             </td>
-                            <td class="text-left"><a href="#">Assinatura 6 meses</a></td>
+                            <td class="text-left"><a href="#">{{ templateRoot.template.name }}</a></td>
 
-                            <td class="text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pharetra, massa eget cursus viverra, nunc ligula finibus purus, sit amet bibendum erat nulla quis risus</td>
+                            <td class="text-left">{{ templateRoot.template.description }}</td>
                             <td class="text-right">
                                 <a href="#" title="" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                             </td>
                         </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

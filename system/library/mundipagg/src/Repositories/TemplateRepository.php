@@ -4,6 +4,7 @@ namespace Mundipagg\Repositories;
 
 use Mundipagg\Aggregates\Template\RepetitionValueObject;
 use Mundipagg\Aggregates\Template\TemplateRoot;
+use Mundipagg\Factories\TemplateRootFactory;
 
 class TemplateRepository extends AbstractRep
 {
@@ -69,7 +70,35 @@ class TemplateRepository extends AbstractRep
 
     public function listEntities($limit = 0)
     {
+        $query = "
+            SELECT 
+              t.*,
+              GROUP_CONCAT(r.frequency) AS frequency, 
+              GROUP_CONCAT(r.interval_type) AS interval_type,
+              GROUP_CONCAT(r.discount_type) AS discount_type, 
+              GROUP_CONCAT(r.discount_value) AS discount_value      
+            FROM `" . DB_PREFIX . "mundipagg_template` AS t 
+            INNER JOIN `" . DB_PREFIX . "mundipagg_template_repetition` AS r
+              ON t.id = r.template_id
+            GROUP BY t.id  
+        ";
 
+        if ($limit !== 0) {
+            $limit = intval($limit);
+            $query .= " LIMIT $limit";
+        }
+
+        $result = $this->openCart->db->query($query . ";");
+
+        $templateRootFactory = new TemplateRootFactory();
+        $templateRoots = [];
+
+        foreach ($result->rows as $row) {
+            $templateRoot = $templateRootFactory->createFromDBData($row);
+            $templateRoots[] = $templateRoot;
+        }
+
+        return $templateRoots;
     }
 
     protected function createTemplateRepetitions($templateRoot)
