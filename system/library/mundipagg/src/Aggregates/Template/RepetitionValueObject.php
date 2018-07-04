@@ -110,6 +110,28 @@ class RepetitionValueObject
         return $this;
     }
 
+    public function getDiscountValueLabel()
+    {
+        switch ($this->discountType) {
+            case self::DISCOUNT_TYPE_FIXED:
+                return "%s%.2f";
+            case self::DISCOUNT_TYPE_PERCENT:
+                return"%s%.2f%%";
+            default:
+                return "Error: %s : %.2f";
+        }
+    }
+
+    public function getIntervalTypeLabel()
+    {
+        switch ($this->intervalType) {
+            case self::INTERVAL_TYPE_MONTHLY:
+                return $this->frequency > 1 ? "months" : "month";
+            case self::INTERVAL_TYPE_SEMESTER:
+                return $this->frequency > 1 ? "semesters" : "semester";
+        }
+    }
+
     public static function getDiscountTypesArray()
     {
         return [

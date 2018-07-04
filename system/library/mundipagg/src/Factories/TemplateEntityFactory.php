@@ -18,6 +18,10 @@ class TemplateEntityFactory
             ->setDescription($postData['description'])
         ;
 
+        if (isset($postData['single'])) {
+            $templateEntity->setIsSingle($postData['single']);
+        }
+
         if (isset($postData['cycles'])) {
             $templateEntity->setCycles(intval($postData['cycles']));
         }

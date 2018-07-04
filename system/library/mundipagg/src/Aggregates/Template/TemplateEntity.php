@@ -68,7 +68,7 @@ class TemplateEntity
      */
     public function setIsSingle($isSingle)
     {
-        $this->isSingle = $isSingle;
+        $this->isSingle = boolval(intval($isSingle));
         return $this;
     }
 

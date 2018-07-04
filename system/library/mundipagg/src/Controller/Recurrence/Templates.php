@@ -90,7 +90,8 @@ class Templates extends Recurrence
             $templateRepository->save($templateRoot);
         }catch(Exception $e) {
             throw $e;
-            //return false;
         }
+
+        $this->redirect($this->openCart->url->link('extension/payment/mundipagg/templates',''));
     }
 }

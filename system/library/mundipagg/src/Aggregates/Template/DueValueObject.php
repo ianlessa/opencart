@@ -59,6 +59,17 @@ class DueValueObject
         return $this;
     }
 
+    public function getDueLabel()
+    {
+        switch ($this->type) {
+            case self::TYPE_EXACT:
+                return "Todo dia %d";
+            case self::TYPE_WORKDAY:
+                return "Todo %d° dia útil";
+            default: return "Error: %d : " . $this->type;
+        }
+    }
+
     public static function getTypesArray()
     {
         return [

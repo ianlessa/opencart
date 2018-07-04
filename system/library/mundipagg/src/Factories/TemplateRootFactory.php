@@ -61,15 +61,16 @@ class TemplateRootFactory
 
         $repetitions = [];
         foreach ($discountValues as $index => $discountValue) {
-            if (floatval($discountValue) == 0) {
-                continue;
-            }
             $repetition = new RepetitionValueObject();
             $repetition
-                ->setDiscountType($discountTypes[$index])
-                ->setDiscountValue($discountValues[$index])
                 ->setIntervalType($intervalTypes[$index])
                 ->setFrequency($frequencies[$index]);
+
+            if ($discountValue > 0) {
+                $repetition
+                    ->setDiscountType($discountTypes[$index])
+                    ->setDiscountValue($discountValues[$index]);
+            }
 
             $repetitions[] = $repetition;
         }
