@@ -29,8 +29,7 @@ class TemplateRootFactory
             $repetition
                 ->setFrequency($interval['frequency'])
                 ->setIntervalType($interval['type'])
-                ->setCycles($interval['cycles']);;
-
+                ->setCycles($interval['cycles']);
 
             if (isset($interval['discountValue'])) {
                 $repetition
@@ -81,7 +80,6 @@ class TemplateRootFactory
         $templateRoot
             ->setTemplate($templateEntityFactory->createFromDBData($dbData))
             ->setDueAt($dueAt);
-
 
         return $templateRoot;
     }
