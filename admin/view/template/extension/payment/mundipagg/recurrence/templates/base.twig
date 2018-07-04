@@ -1,3 +1,9 @@
+<style>
+    .label {
+        display: inline-block !important;
+    }
+</style>
+
 {{ header }}
 <link href="view/stylesheet/mundipagg/mundipagg.css" type="text/css" rel="stylesheet" />
 
@@ -36,7 +42,7 @@
                             <td class="text-left">Descrição</td>
                             <td class="text-center">Métodos de pagamento</td>
                             <td class="text-center">Data de vencimento</td>
-                            <td class="text-center">Ciclos/intervalos</td>
+                            <td class="text-center">Ciclos</td>
                             <td class="text-center">Descontos</td>
                             <td class="text-center">Parcelamento</td>
                             <td>Ações</td>
@@ -69,7 +75,7 @@
                                 {% if templateRoot.template.isSingle %}
                                     <span class="label label-default">---</span>
                                 {% else %}
-                                    <span class="label label-default">{{ templateRoot.repetitions[0].cycles }} ciclo{{ templateRoot.repetitions[0].cycles > 1 ? 's' : '' }}</span> /
+                                    <span class="label label-default">{{ templateRoot.repetitions[0].cycles }} ciclo{{ templateRoot.repetitions[0].cycles > 1 ? 's' : '' }}</span>
                                     <span class="label label-default">{{ templateRoot.repetitions[0].frequency }} {{ templateRoot.repetitions[0].intervalTypeLabel  }}</span>
                                 {% endif %}
                             </td>
@@ -78,7 +84,7 @@
                                     {% for repetition in templateRoot.repetitions %}
                                     {% set _currencySymbol = repetition.discountType == constant('Mundipagg\\Aggregates\\Template\\RepetitionValueObject::DISCOUNT_TYPE_FIXED') ? 'R$' : '' %}
                                     <span class="label label-default">
-                                        {{ repetition.cycles }} ciclo{{ repetition.cycles > 1 ? 's' : '' }} -  
+                                        {{ repetition.cycles }} ciclo{{ repetition.cycles > 1 ? 's' : '' }} -
                                         {{ repetition.frequency }} {{ repetition.intervalTypeLabel  }} :
                                         {{ repetition.discountValueLabel | format(_currencySymbol,repetition.discountValue) }}
                                     </span>&nbsp;

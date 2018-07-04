@@ -134,11 +134,11 @@ class RepetitionValueObject
     {
         switch ($this->intervalType) {
             case self::INTERVAL_TYPE_WEEKLY:
-                return $this->frequency > 1 ? "week" : "weeks";
+                return $this->frequency > 1 ? "weeks" : "week";
             case self::INTERVAL_TYPE_MONTHLY:
                 return $this->frequency > 1 ? "months" : "month";
             case self::INTERVAL_TYPE_YEARLY:
-                return $this->frequency > 1 ? "year" : "years";
+                return $this->frequency > 1 ? "years" : "year";
         }
     }
 
