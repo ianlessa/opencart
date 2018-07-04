@@ -75,7 +75,8 @@ class TemplateRepository extends AbstractRep
               GROUP_CONCAT(r.frequency) AS frequency, 
               GROUP_CONCAT(r.interval_type) AS interval_type,
               GROUP_CONCAT(r.discount_type) AS discount_type, 
-              GROUP_CONCAT(r.discount_value) AS discount_value      
+              GROUP_CONCAT(r.discount_value) AS discount_value,      
+              GROUP_CONCAT(r.cycles) AS cycles      
             FROM `" . DB_PREFIX . "mundipagg_template` AS t 
             INNER JOIN `" . DB_PREFIX . "mundipagg_template_repetition` AS r
               ON t.id = r.template_id

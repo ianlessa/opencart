@@ -28,7 +28,8 @@ class TemplateRootFactory
             $repetition = new RepetitionValueObject();
             $repetition
                 ->setFrequency($interval['frequency'])
-                ->setIntervalType($interval['type']);
+                ->setIntervalType($interval['type'])
+                ->setCycles($interval['cycles']);;
 
 
             if (isset($interval['discountValue'])) {
@@ -59,12 +60,14 @@ class TemplateRootFactory
         $discountValues = explode(',',$dbData['discount_value']);
         $intervalTypes = explode(',',$dbData['interval_type']);
         $frequencies = explode(',',$dbData['frequency']);
+        $cycles = explode(',',$dbData['cycles']);
 
         foreach ($discountValues as $index => $discountValue) {
             $repetition = new RepetitionValueObject();
             $repetition
                 ->setIntervalType($intervalTypes[$index])
-                ->setFrequency($frequencies[$index]);
+                ->setFrequency($frequencies[$index])
+                ->setCycles($cycles[$index]);
 
             if ($discountValue > 0) {
                 $repetition
