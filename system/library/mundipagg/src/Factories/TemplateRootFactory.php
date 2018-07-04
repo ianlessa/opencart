@@ -16,6 +16,7 @@ class TemplateRootFactory
     public function createFromPostData($postData)
     {
         $templateEntityFactory = new TemplateEntityFactory();
+        $templateRoot = new TemplateRoot();
 
         $dueAt = new DueValueObject();
         $dueAt
@@ -36,14 +37,13 @@ class TemplateRootFactory
                     ->setDiscountValue($interval['discountValue'])
                     ->setDiscountType($interval['discountType']);
             }
+            $templateRoot->addRepetition($repetition);
             $repetitions[] = $repetition;
         }
 
-        $templateRoot = new TemplateRoot();
         $templateRoot
             ->setTemplate($templateEntityFactory->createFromPostData($postData))
             ->setDueAt($dueAt)
-            ->setRepetitions($repetitions)
         ;
         return $templateRoot;
     }

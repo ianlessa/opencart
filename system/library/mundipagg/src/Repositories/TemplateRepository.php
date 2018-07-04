@@ -23,8 +23,8 @@ class TemplateRepository extends AbstractRep
                 `description`,
                 `accept_credit_card`,
                 `accept_boleto`,
-                `allow_installments`,                
-                `cycles`,
+                `allow_installments`,               
+                
                 `trial`,
                 `due_type`,
                 `due_value`
@@ -34,8 +34,7 @@ class TemplateRepository extends AbstractRep
                 '" . $templateRoot->getTemplate()->getDescription() . "',
                 " . ($templateRoot->getTemplate()->isAcceptCreditCard()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isAcceptBoleto()?1:0) . ",
-                " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . ",
-                " . $templateRoot->getTemplate()->getCycles() . ",
+                " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . ",                
                 " . $templateRoot->getTemplate()->getTrial() . ",
                 '" . $templateRoot->getDueAt()->getType() . "',
                 " . $templateRoot->getDueAt()->getValue() . "
@@ -106,6 +105,7 @@ class TemplateRepository extends AbstractRep
         $query = "
             INSERT INTO `" . DB_PREFIX . "mundipagg_template_repetition` (
                 `template_id`,
+                `cycles`,
                 `frequency`,
                 `interval_type`,
                 `discount_type`,
@@ -117,6 +117,7 @@ class TemplateRepository extends AbstractRep
         foreach ($templateRoot->getRepetitions() as $repetition) {
             $query .= "(
                 ". $templateRoot->getTemplate()->getId() .",
+                ". $repetition->getCycles() . ",
                 ". intval($repetition->getFrequency()) .",
                 '". $repetition->getIntervalType() ."',
                 '". $repetition->getDiscountType() ."',
