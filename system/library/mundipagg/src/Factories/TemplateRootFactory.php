@@ -24,7 +24,6 @@ class TemplateRootFactory
             ->setValue($postData['expiry_date'])
         ;
 
-        $repetitions = [];
         foreach ($postData['intervals'] as $interval) {
             $repetition = new RepetitionValueObject();
             $repetition
@@ -38,7 +37,6 @@ class TemplateRootFactory
                     ->setDiscountType($interval['discountType']);
             }
             $templateRoot->addRepetition($repetition);
-            $repetitions[] = $repetition;
         }
 
         $templateRoot
@@ -50,6 +48,7 @@ class TemplateRootFactory
 
     public function createFromDBData($dbData) {
         $templateEntityFactory = new TemplateEntityFactory();
+        $templateRoot = new TemplateRoot();
 
         $dueAt = new DueValueObject();
         $dueAt
@@ -61,7 +60,6 @@ class TemplateRootFactory
         $intervalTypes = explode(',',$dbData['interval_type']);
         $frequencies = explode(',',$dbData['frequency']);
 
-        $repetitions = [];
         foreach ($discountValues as $index => $discountValue) {
             $repetition = new RepetitionValueObject();
             $repetition
@@ -74,14 +72,13 @@ class TemplateRootFactory
                     ->setDiscountValue($discountValues[$index]);
             }
 
-            $repetitions[] = $repetition;
+            $templateRoot->addRepetition($repetition);
         }
 
-        $templateRoot = new TemplateRoot();
         $templateRoot
             ->setTemplate($templateEntityFactory->createFromDBData($dbData))
-            ->setDueAt($dueAt)
-            ->setRepetitions($repetitions);
+            ->setDueAt($dueAt);
+
 
         return $templateRoot;
     }

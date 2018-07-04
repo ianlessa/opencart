@@ -25,7 +25,7 @@ class TemplateEntityFactory
         if (isset($postData['trial'])) {
             $templateEntity->setTrial(intval($postData['trial']));
         }
-        
+
         $paymentMethods =
             isset($postData['payment_method']) ? $postData['payment_method'] : [];
         foreach( $paymentMethods as $paymentMethod)
