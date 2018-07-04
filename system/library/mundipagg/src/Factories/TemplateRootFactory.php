@@ -29,6 +29,8 @@ class TemplateRootFactory
             $repetition
                 ->setFrequency($interval['frequency'])
                 ->setIntervalType($interval['type']);
+
+
             if (isset($interval['discountValue'])) {
                 $repetition
                     ->setDiscountValue($interval['discountValue'])

@@ -22,10 +22,6 @@ class TemplateEntityFactory
             $templateEntity->setIsSingle($postData['single']);
         }
 
-        if (isset($postData['cycles'])) {
-            $templateEntity->setCycles(intval($postData['cycles']));
-        }
-
         if (isset($postData['trial'])) {
             $templateEntity->setTrial(intval($postData['trial']));
         }
@@ -59,7 +55,6 @@ class TemplateEntityFactory
             ->setAcceptBoleto($dbData['accept_boleto'])
             ->setAcceptCreditCard($dbData['accept_credit_card'])
             ->setAllowInstallments($dbData['allow_installments'])
-            ->setCycles($dbData['cycles'])
             ->setTrial($dbData['trial'])
         ;
         return $templateEntity;

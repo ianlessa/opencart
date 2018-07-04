@@ -21,6 +21,13 @@ class RepetitionValueObject
     protected $discountType;
     /** @var float */
     protected $discountValue;
+    /** @var int */
+    protected $cycles;
+
+    public function __construct()
+    {
+        $this->cycles = 0;
+    }
 
     /**
      * @return int
@@ -167,5 +174,22 @@ class RepetitionValueObject
             self::DISCOUNT_TYPE_PERCENT,
             self::DISCOUNT_TYPE_FIXED
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getCycles()
+    {
+        return $this->cycles;
+    }
+
+    /**
+     * @param int $cycles
+     */
+    public function setCycles($cycles)
+    {
+        $this->cycles = abs(intval($cycles));
+        return $this;
     }
 }
