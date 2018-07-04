@@ -78,7 +78,9 @@
                                     {% for repetition in templateRoot.repetitions %}
                                     {% set _currencySymbol = repetition.discountType == constant('Mundipagg\\Aggregates\\Template\\RepetitionValueObject::DISCOUNT_TYPE_FIXED') ? 'R$' : '' %}
                                     <span class="label label-default">
-                                        {{ repetition.frequency }} {{ repetition.intervalTypeLabel  }} : {{ repetition.discountValueLabel | format(_currencySymbol,repetition.discountValue) }}
+                                        {{ repetition.cycles }} ciclo{{ repetition.cycles > 1 ? 's' : '' }} -  
+                                        {{ repetition.frequency }} {{ repetition.intervalTypeLabel  }} :
+                                        {{ repetition.discountValueLabel | format(_currencySymbol,repetition.discountValue) }}
                                     </span>&nbsp;
                                     {% else %}
                                         <span class="label label-default">Não</span>

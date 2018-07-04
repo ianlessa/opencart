@@ -32,7 +32,7 @@ function makeCicleColumn(inputName, cicle)
     }
 
     newCol.append(makeSpan(cicle + name));
-    newCol.append(makeInput(inputName, "cicles", cicle));
+    newCol.append(makeInput(inputName, "cycles", cicle));
     return newCol;
 }
 
@@ -90,7 +90,7 @@ $(document).ready(function(e){
         var newRow = $("<tr>");
         var currentFrequency = $(this).parents('.frequency:first');
 
-        var cicles = $("#cycles").val();
+        var cycles = $("#cycles").val();
         var frequency = currentFrequency.find('#frequency').val();
         var interval = currentFrequency.find('#interval').val();
         var discount = currentFrequency.find('#discount').val();
@@ -99,7 +99,7 @@ $(document).ready(function(e){
 
         var inputName = "intervals[" + currentNumber + "]";
 
-        newRow.append(makeCicleColumn(inputName, cicles));
+        newRow.append(makeCicleColumn(inputName, cycles));
         newRow.append(makeFrequencyColumn(inputName, frequency));
         newRow.append(makeIntervalColumn(inputName, interval));
         newRow.append(makeDiscountColumn(
