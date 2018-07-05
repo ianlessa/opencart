@@ -26,27 +26,21 @@ class Templates extends Recurrence
         $this->data['templateRoots'] = $templateRoots;
 
         $this->data['heading_title'] = $this->language['Templates'];
-        $this->data['createLink'] =
-            'index.php?route=extension/payment/mundipagg/templates&user_token=' .
-            $this->openCart->request->get['user_token'] .
-            '&action=create';
+        $baseLink = 'index.php?route=extension/payment/mundipagg/templates&user_token=' .
+            $this->openCart->request->get['user_token'];
+        $this->data['createLink'] = $baseLink . '&action=create';
+        $this->data['updateLink'] = $baseLink . '&action=update';
+
         $this->render('templates/base');
     }
 
-    protected function edit()
-    {
-    }
 
-    protected function delete()
-    {
-    }
-
-    protected function create()
+    protected function setBaseCreationFormData()
     {
         $this->data['heading_title'] = $this->language['Templates'];
 
         $this->data['formAction'] = 'index.php?route=extension/payment/mundipagg/templates&user_token=' .
-            $this->openCart->request->get['user_token'] .                                                                                                                                               
+            $this->openCart->request->get['user_token'] .
             '&action=create';
 
         $this->data['formPlan'] = 'extension/payment/mundipagg/recurrence/templates/form_plan.twig';
@@ -70,7 +64,27 @@ class Templates extends Recurrence
             ],
             true
         );
+    }
 
+    protected function update()
+    {
+        $this->setBaseCreationFormData();
+
+
+
+
+
+
+        $this->render('templates/create');
+    }
+
+    protected function delete()
+    {
+    }
+
+    protected function create()
+    {
+        $this->setBaseCreationFormData();
         $this->render('templates/create');
     }
 

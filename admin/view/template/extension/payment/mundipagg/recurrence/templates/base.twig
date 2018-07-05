@@ -102,7 +102,7 @@
                                 <span class="label label-{{ installmentsClass }}">{{ templateRoot.template.allowInstallments ? "Sim" : "Não" }}</span>
                             </td>
                             <td>
-                                <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                <a href='{{ updateLink }}&templateId={{ templateRoot.template.id }}' type="button" title="Editar" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
