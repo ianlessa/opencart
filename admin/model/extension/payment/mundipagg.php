@@ -64,7 +64,7 @@ class ModelExtensionPaymentMundipagg extends Model
             `id` INT NOT NULL AUTO_INCREMENT,
             `is_single` TINYINT NOT NULL DEFAULT 0,
             `name` VARCHAR(45) NULL,
-            `description` VARCHAR(45) NULL,
+            `description` TEXT NULL,
             `accept_credit_card` TINYINT NOT NULL DEFAULT 0,
             `accept_boleto` TINYINT NOT NULL DEFAULT 0,
             `allow_installments` TINYINT NOT NULL DEFAULT 0,

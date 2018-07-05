@@ -22,17 +22,17 @@ function formatValueDiscount(value, type, symbol) {
     return [symbol, value].join(" ");
 }
 
-function makeCicleColumn(inputName, cicle)
+function makeCycleColumn(inputName, cycle)
 {
     var newCol = $("<td>");
 
     var name = ' ciclo';
-    if (cicle > 1) {
+    if (cycle > 1) {
         name = ' ciclos';
     }
 
-    newCol.append(makeSpan(cicle + name));
-    newCol.append(makeInput(inputName, "cycles", cicle));
+    newCol.append(makeSpan(cycle + name));
+    newCol.append(makeInput(inputName, "cycles", cycle));
     return newCol;
 }
 
@@ -99,7 +99,7 @@ $(document).ready(function(e){
 
         var inputName = "intervals[" + currentNumber + "]";
 
-        newRow.append(makeCicleColumn(inputName, cycles));
+        newRow.append(makeCycleColumn(inputName, cycles));
         newRow.append(makeFrequencyColumn(inputName, frequency));
         newRow.append(makeIntervalColumn(inputName, interval));
         newRow.append(makeDiscountColumn(

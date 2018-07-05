@@ -2656,7 +2656,7 @@
 											"top": 750,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+id: int {unique}",
+											"text": "#id: int {unique}",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2673,7 +2673,7 @@
 											"top": 765,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+isSingle: boolean = false",
+											"text": "#isSingle: boolean = false",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2690,7 +2690,7 @@
 											"top": 780,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+name: string",
+											"text": "#name: string",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2707,7 +2707,7 @@
 											"top": 795,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+description: string",
+											"text": "#description: string",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2724,7 +2724,7 @@
 											"top": 810,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+acceptCreditCard: boolean = false",
+											"text": "#acceptCreditCard: boolean = false",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2741,7 +2741,7 @@
 											"top": 825,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+acceptBoleto: boolean = false",
+											"text": "#acceptBoleto: boolean = false",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2758,7 +2758,7 @@
 											"top": 840,
 											"width": 274.9423828125,
 											"height": 13,
-											"text": "+allowInstallments: boolean = false",
+											"text": "#allowInstallments: boolean = false",
 											"horizontalAlignment": 0
 										},
 										{
@@ -5923,7 +5923,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR26QAV2k/PQ="
 									},
-									"name": "&TemplateRoot"
+									"name": "&TemplateRoot",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -5951,7 +5952,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR28l5l8YpIg="
 									},
-									"name": "&TemplateRoot"
+									"name": "&TemplateRoot",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -5978,7 +5980,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR2+DfmBziXY="
 									},
-									"name": "TemplateRoot"
+									"name": "TemplateRoot",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -6005,7 +6008,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR2/cp2H3Urw="
 									},
-									"name": "int"
+									"name": "int",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -6033,6 +6037,7 @@
 										"$ref": "AAAAAAFkYNyjwitS9bA="
 									},
 									"name": "int  ",
+									"type": "",
 									"defaultValue": "0"
 								},
 								{
@@ -6064,7 +6069,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkYN9jkjFmBfs="
 									},
-									"name": "TemplateRoot"
+									"name": "TemplateRoot",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -6226,7 +6232,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNEhJhNAzR8="
 											},
-											"name": "TemplateEntity"
+											"name": "TemplateEntity",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -6276,7 +6283,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNHfBRXT7Mw="
 											},
-											"name": "DueValueObject"
+											"name": "DueValueObject",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -6327,7 +6335,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNM9xhpYiy0="
 											},
-											"name": "RepetitionValueObject"
+											"name": "RepetitionValueObject",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -6720,6 +6729,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "id",
+									"visibility": "protected",
 									"type": "int",
 									"isUnique": true
 								},
@@ -6730,6 +6740,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "isSingle",
+									"visibility": "protected",
 									"type": "boolean",
 									"defaultValue": "false"
 								},
@@ -6740,6 +6751,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "name",
+									"visibility": "protected",
 									"type": "string"
 								},
 								{
@@ -6749,6 +6761,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "description",
+									"visibility": "protected",
 									"type": "string"
 								},
 								{
@@ -6758,6 +6771,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "acceptCreditCard",
+									"visibility": "protected",
 									"type": "boolean",
 									"defaultValue": "false"
 								},
@@ -6768,6 +6782,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "acceptBoleto",
+									"visibility": "protected",
 									"type": "boolean",
 									"defaultValue": "false"
 								},
@@ -6778,6 +6793,7 @@
 										"$ref": "AAAAAAFkRz7WSj6Wjac="
 									},
 									"name": "allowInstallments",
+									"visibility": "protected",
 									"type": "boolean",
 									"defaultValue": "false"
 								},
@@ -7945,7 +7961,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkZyXZj5LVGBA="
 									},
-									"name": "array"
+									"name": "array",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -7974,7 +7991,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFkZyY3jpOUoe8="
 									},
-									"name": "array"
+									"name": "array",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
@@ -8022,7 +8040,8 @@
 										"$ref": "AAAAAAFkYNTXoR0Kvqg="
 									},
 									"name": "openCart",
-									"visibility": "protected"
+									"visibility": "protected",
+									"type": ""
 								}
 							],
 							"operations": [
@@ -8068,7 +8087,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNb3ByExEMA="
 											},
-											"name": "&object"
+											"name": "&object",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -8155,7 +8175,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNgKRyLTmzk="
 											},
-											"name": "object"
+											"name": "object",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -8183,7 +8204,8 @@
 											"_parent": {
 												"$ref": "AAAAAAFkYNhBdSNKxE0="
 											},
-											"name": "int"
+											"name": "int",
+											"type": ""
 										},
 										{
 											"_type": "UMLParameter",
@@ -8222,6 +8244,7 @@
 												"$ref": "AAAAAAFkYNibtyPBEZY="
 											},
 											"name": "int ",
+											"type": "",
 											"defaultValue": "0"
 										}
 									],
