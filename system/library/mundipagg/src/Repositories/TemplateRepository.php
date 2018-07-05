@@ -23,8 +23,7 @@ class TemplateRepository extends AbstractRep
                 `description`,
                 `accept_credit_card`,
                 `accept_boleto`,
-                `allow_installments`,               
-                
+                `allow_installments`,
                 `trial`,
                 `due_type`,
                 `due_value`

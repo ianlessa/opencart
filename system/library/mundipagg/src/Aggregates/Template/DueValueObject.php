@@ -2,14 +2,13 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-
 use Exception;
 
 class DueValueObject
 {
     const TYPE_EXACT = 'X';
     const TYPE_PREPAID = 'E';
-    const TYPE_POSPAID = 'O';
+    const TYPE_POSTPAID = 'O';
 
     /** @var string */
     protected $type;
@@ -31,7 +30,7 @@ class DueValueObject
      */
     public function setType($type)
     {
-        if (!in_array($type,self::getValidTypes())) {
+        if (!in_array($type, self::getValidTypes())) {
             throw new Exception("Invalid Due Type: $type! ");
         }
         $this->type = $type;
@@ -68,7 +67,7 @@ class DueValueObject
                 return "Todo dia %d";
             case self::TYPE_PREPAID:
                 return "Pré-pago";
-            case self::TYPE_POSPAID:
+            case self::TYPE_POSTPAID:
                 return "Pós-pago";
             default: return "Error: %d : " . $this->type;
         }
@@ -77,9 +76,9 @@ class DueValueObject
     public static function getTypesArray()
     {
         return [
-            ['code' => self::TYPE_EXACT,'name' => "Dia exato"],
-            ['code' => self::TYPE_PREPAID,'name' => "Pré-pago"],
-            ['code' => self::TYPE_POSPAID,'name' => "Pós-pago"]
+            ['code' => self::TYPE_EXACT, 'name' => "Dia exato"],
+            ['code' => self::TYPE_PREPAID, 'name' => "Pré-pago"],
+            ['code' => self::TYPE_POSTPAID, 'name' => "Pós-pago"]
         ];
     }
 
@@ -88,7 +87,7 @@ class DueValueObject
         return [
             self::TYPE_EXACT,
             self::TYPE_PREPAID,
-            self::TYPE_POSPAID
+            self::TYPE_POSTPAID
         ];
     }
 }

@@ -2303,7 +2303,7 @@
 											"top": 548,
 											"width": 187.9921875,
 											"height": 13,
-											"text": "+TYPE_POSPAID: char = O",
+											"text": "+TYPE_POSTPAID: char = O",
 											"horizontalAlignment": 0
 										},
 										{
@@ -6464,7 +6464,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFkR05tSD8CCXY="
 									},
-									"name": "TYPE_POSPAID",
+									"name": "TYPE_POSTPAID",
 									"type": "char",
 									"defaultValue": "O"
 								},

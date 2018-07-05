@@ -20,7 +20,6 @@ class Templates extends Recurrence
 
     public function index()
     {
-
         $templateRepository = new TemplateRepository($this->openCart);
 
         $templateRoots = $templateRepository->listEntities();

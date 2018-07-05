@@ -46,7 +46,8 @@ class TemplateRootFactory
         return $templateRoot;
     }
 
-    public function createFromDBData($dbData) {
+    public function createFromDBData($dbData)
+    {
         $templateEntityFactory = new TemplateEntityFactory();
         $templateRoot = new TemplateRoot();
 
