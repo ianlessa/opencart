@@ -18,15 +18,17 @@ class TemplateEntityFactory
             ->setDescription($postData['description'])
         ;
 
-        if (isset($postData['cycles'])) {
-            $templateEntity->setCycles(intval($postData['cycles']));
+        if (isset($postData['single'])) {
+            $templateEntity->setIsSingle($postData['single']);
         }
 
         if (isset($postData['trial'])) {
             $templateEntity->setTrial(intval($postData['trial']));
         }
 
-        foreach($postData['payment_method'] as $paymentMethod)
+        $paymentMethods =
+            isset($postData['payment_method']) ? $postData['payment_method'] : [];
+        foreach( $paymentMethods as $paymentMethod)
         {
             switch($paymentMethod)
             {
@@ -41,6 +43,22 @@ class TemplateEntityFactory
             }
         }
 
+        return $templateEntity;
+    }
+
+    public function createFromDBData($dbData)
+    {
+        $templateEntity = new TemplateEntity();
+        $templateEntity
+            ->setId($dbData['id'])
+            ->setName($dbData['name'])
+            ->setDescription($dbData['description'])
+            ->setIsSingle($dbData['is_single'])
+            ->setAcceptBoleto($dbData['accept_boleto'])
+            ->setAcceptCreditCard($dbData['accept_credit_card'])
+            ->setAllowInstallments($dbData['allow_installments'])
+            ->setTrial($dbData['trial'])
+        ;
         return $templateEntity;
     }
 }

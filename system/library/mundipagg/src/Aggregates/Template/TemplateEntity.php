@@ -19,8 +19,6 @@ class TemplateEntity
     /** @var boolean */
     protected $allowInstallments;
     /** @var int */
-    protected $cycles;
-    /** @var int */
     protected $trial;
 
     public function __construct()
@@ -31,7 +29,6 @@ class TemplateEntity
         $this->allowInstallments =
             false;
 
-        $this->cycles =
         $this->trial =
             0;
     }
@@ -68,7 +65,7 @@ class TemplateEntity
      */
     public function setIsSingle($isSingle)
     {
-        $this->isSingle = $isSingle;
+        $this->isSingle = boolval(intval($isSingle));
         return $this;
     }
 
@@ -159,23 +156,6 @@ class TemplateEntity
     public function setName($name)
     {
         $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCycles()
-    {
-        return $this->cycles;
-    }
-
-    /**
-     * @param int $cycles
-     */
-    public function setCycles($cycles)
-    {
-        $this->cycles = abs(intval($cycles));
         return $this;
     }
 

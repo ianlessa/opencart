@@ -22,13 +22,27 @@ function formatValueDiscount(value, type, symbol) {
     return [symbol, value].join(" ");
 }
 
+function makeCycleColumn(inputName, cycle)
+{
+    var newCol = $("<td>");
+
+    var name = ' ciclo';
+    if (cycle > 1) {
+        name = ' ciclos';
+    }
+
+    newCol.append(makeSpan(cycle + name));
+    newCol.append(makeInput(inputName, "cycles", cycle));
+    return newCol;
+}
+
 function makeFrequencyColumn(inputName, frequency)
 {
     var newCol = $("<td>");
 
-    var name = ' Repetição';
+    var name = ' intervalo';
     if (frequency > 1) {
-        name = ' Repetições';
+        name = ' intervalos';
     }
 
     newCol.append(makeSpan(frequency + name));
@@ -76,6 +90,7 @@ $(document).ready(function(e){
         var newRow = $("<tr>");
         var currentFrequency = $(this).parents('.frequency:first');
 
+        var cycles = $("#cycles").val();
         var frequency = currentFrequency.find('#frequency').val();
         var interval = currentFrequency.find('#interval').val();
         var discount = currentFrequency.find('#discount').val();
@@ -84,6 +99,7 @@ $(document).ready(function(e){
 
         var inputName = "intervals[" + currentNumber + "]";
 
+        newRow.append(makeCycleColumn(inputName, cycles));
         newRow.append(makeFrequencyColumn(inputName, frequency));
         newRow.append(makeIntervalColumn(inputName, interval));
         newRow.append(makeDiscountColumn(

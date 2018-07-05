@@ -6,8 +6,9 @@ use Exception;
 
 class DueValueObject
 {
-    const TYPE_EXACT = 'E';
-    const TYPE_WORKDAY = 'U';
+    const TYPE_EXACT = 'X';
+    const TYPE_PREPAID = 'E';
+    const TYPE_POSTPAID = 'O';
 
     /** @var string */
     protected $type;
@@ -59,11 +60,25 @@ class DueValueObject
         return $this;
     }
 
+    public function getDueLabel()
+    {
+        switch ($this->type) {
+            case self::TYPE_EXACT:
+                return "Todo dia %d";
+            case self::TYPE_PREPAID:
+                return "Pré-pago";
+            case self::TYPE_POSTPAID:
+                return "Pós-pago";
+            default: return "Error: %d : " . $this->type;
+        }
+    }
+
     public static function getTypesArray()
     {
         return [
-            ['code' => self::TYPE_EXACT,'name' => "Dia exato"],
-            ['code' => self::TYPE_WORKDAY,'name' => "Dia útil"]
+            ['code' => self::TYPE_EXACT, 'name' => "Dia exato"],
+            ['code' => self::TYPE_PREPAID, 'name' => "Pré-pago"],
+            ['code' => self::TYPE_POSTPAID, 'name' => "Pós-pago"]
         ];
     }
 
@@ -71,7 +86,8 @@ class DueValueObject
     {
         return [
             self::TYPE_EXACT,
-            self::TYPE_WORKDAY
+            self::TYPE_PREPAID,
+            self::TYPE_POSTPAID
         ];
     }
 }

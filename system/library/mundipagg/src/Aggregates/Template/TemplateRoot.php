@@ -8,7 +8,7 @@ class TemplateRoot
     protected $template;
     /** @var DueValueObject */
     protected $dueAt;
-    /** @var array */
+    /** @var RepetitionValueObject[] */
     protected $repetitions;
 
     /**
@@ -56,13 +56,12 @@ class TemplateRoot
     }
 
     /**
-     * @param array $repetitions
+     * @param RepetitionValueObject $repetitions
      * @return TemplateRoot
      */
-    public function setRepetitions($repetitions)
+    public function addRepetition($repetition)
     {
-        $this->repetitions = $repetitions;
+        $this->repetitions[] = $repetition;
         return $this;
     }
-
 }
