@@ -19,6 +19,7 @@ class TemplateEntity
     /** @var boolean */
     protected $allowInstallments;
     /** @var int */
+    /** @var int */
     protected $trial;
 
     public function __construct()
