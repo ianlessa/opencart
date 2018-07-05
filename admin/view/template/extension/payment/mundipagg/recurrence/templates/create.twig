@@ -53,6 +53,7 @@
                                  action='{{ saveAction }}'
                            >
                                <div class="col-sm-8">
+                                   {%  set formId = 'plans-form' %}
                                    {% include formPlan %}
                                </div>
                            </form>
@@ -75,6 +76,7 @@
                                  action='{{ saveAction }}'
                            >
                                <div class="col-sm-8">
+                                   {%  set formId = 'single-form' %}
                                    {% include formSingle %}
                                </div>
                            </form>
