@@ -68,12 +68,19 @@ class Templates extends Recurrence
 
     protected function update()
     {
+        $getData = $this->openCart->request->get;
+        if (!isset($getData['templateId'])) {
+            return $this->create();
+        }
+
+        $templateRepository = new TemplateRepository($this->openCart);
+        $templateRoot = $templateRepository->find($getData['templateId']);
+        if ($templateRoot === null) {
+            return $this->create();
+        }
+
         $this->setBaseCreationFormData();
-
-
-
-
-
+        $this->data['selectedTemplateRoot'] = $templateRoot;
 
         $this->render('templates/create');
     }

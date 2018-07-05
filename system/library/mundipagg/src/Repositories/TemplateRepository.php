@@ -63,7 +63,28 @@ class TemplateRepository extends AbstractRep
 
     public function find($templateId)
     {
+        $query = "
+             SELECT 
+              t.*,
+              GROUP_CONCAT(r.frequency) AS frequency, 
+              GROUP_CONCAT(r.interval_type) AS interval_type,
+              GROUP_CONCAT(r.discount_type) AS discount_type, 
+              GROUP_CONCAT(r.discount_value) AS discount_value,      
+              GROUP_CONCAT(r.cycles) AS cycles      
+            FROM `" . DB_PREFIX . "mundipagg_template` AS t 
+            INNER JOIN `" . DB_PREFIX . "mundipagg_template_repetition` AS r
+              ON t.id = r.template_id
+            WHERE t.id = " . intval($templateId) . "  
+            GROUP BY t.id  
+        ";
 
+        $result = $this->openCart->db->query($query . ";");
+        if ($result->num_rows < 1 ) {
+           return null;
+        }
+
+        return (new TemplateRootFactory())
+            ->createFromDBData($result->rows[0]);
     }
 
     public function listEntities($limit = 0)
