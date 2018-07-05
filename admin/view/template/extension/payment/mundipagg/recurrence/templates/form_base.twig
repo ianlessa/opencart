@@ -69,7 +69,9 @@
         </select>
     </div>
 </div>
-
+{% if selectedTemplateRoot %}
+    <input type="hidden" name="template-id" value="{{ selectedTemplateRoot.template.id }}" />
+{% endif %}
 <script>
 
     $('.installment-{{ formId }}').hide();

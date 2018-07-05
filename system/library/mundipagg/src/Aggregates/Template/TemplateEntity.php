@@ -47,7 +47,7 @@ class TemplateEntity
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = intval($id);
         return $this;
     }
 

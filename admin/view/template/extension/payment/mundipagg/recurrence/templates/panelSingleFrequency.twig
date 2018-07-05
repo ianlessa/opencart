@@ -7,10 +7,10 @@
     </div>
     <div class="frequency">
         <div class="col-sm-3">
-            <select id="frequency" class="form-control">
+            <select id="frequency" class="form-control mp-single-frequency">
                 {% for frequency in  1..12 %}<option>{{ frequency }}</option>{% endfor %}
             </select>
-            <select id="interval" class="form-control">
+            <select id="interval" class="form-control mp-single-interval">
                 {% for intervalType in intervalTypesArray %}
                     <option value="{{ intervalType.code }}">{{ intervalType.name }}</option>
                 {% endfor %}
@@ -27,7 +27,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         {% for discountType in discountTypesArray %}
-                            <li><a href="#" data-value="{{ discountType.code }}">{{ discountType.name }}</a></li>
+                            <li><a href="#" data-value="{{ discountType.code }}" class="mp-discount-type-link">{{ discountType.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </div><!-- /btn-group -->
@@ -59,3 +59,25 @@
     </div>
 </div>
 <script type="text/javascript" src="view/script/mundipagg/recurrence.js"></script>
+{% if selectedTemplateRoot %}
+<script id="autoSetIntervalsScript">
+
+    function autoSetIntervals(cycles,frequency,intervalType,discountType,discountValue)
+    {
+        $('#cycles').val(cycles);
+        $('.mp-single-frequency').val(frequency);
+        $('.mp-single-interval').val(intervalType);
+        $('.bs-dropdown-to-select').click();
+        $('.mp-discount-type-link[data-value="' + discountType +'"]').click();
+        $('#discount').val(discountValue);
+        $('.btn-add-frequency').click();
+    }
+    $(document).ready(function() {
+    {% for repetition in selectedTemplateRoot.repetitions %}
+        autoSetIntervals({{ repetition.cycles }},{{ repetition.frequency }},'{{ repetition.intervalType }}','{{ repetition.discountType }}',{{ repetition.discountValue }});
+    {% endfor %}
+    });
+
+    $("#autoSetIntervalsScript").remove();
+</script>
+{% endif %}

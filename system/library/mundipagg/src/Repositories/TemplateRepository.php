@@ -16,7 +16,7 @@ class TemplateRepository extends AbstractRep
         /** @var \DB $db */
         $db = $this->openCart->db;
 
-        $query = ("
+        $query = "
             INSERT INTO `" . DB_PREFIX . "mundipagg_template` (
                 `is_single`,
                 `name`,
@@ -38,7 +38,7 @@ class TemplateRepository extends AbstractRep
                 '" . $templateRoot->getDueAt()->getType() . "',
                 " . $templateRoot->getDueAt()->getValue() . "
             )
-        ");
+        ";
 
         $db->query($query);
         $templateRoot->getTemplate()->setId($db->getLastId());
@@ -53,7 +53,27 @@ class TemplateRepository extends AbstractRep
      */
     protected function update(&$templateRoot)
     {
-        // TODO: Implement update() method.
+        /** @var \DB $db */
+        $db = $this->openCart->db;
+
+        $query = "
+            UPDATE `" . DB_PREFIX . "mundipagg_template` SET
+                `is_single` = " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
+                `name` = '" . $templateRoot->getTemplate()->getName() . "',
+                `description` = '" . $templateRoot->getTemplate()->getDescription() . "',
+                `accept_credit_card` = " . ($templateRoot->getTemplate()->isAcceptCreditCard()?1:0) . ",
+                `accept_boleto` = " . ($templateRoot->getTemplate()->isAcceptBoleto()?1:0) . ",
+                `allow_installments` = " . ($templateRoot->getTemplate()->isAllowInstallments()?1:0) . ", 
+                `trial` = " . $templateRoot->getTemplate()->getTrial() . ",
+                `due_type` = '" . $templateRoot->getDueAt()->getType() . "',
+                `due_value` = " . $templateRoot->getDueAt()->getValue() . "
+            WHERE `id` = " . $templateRoot->getTemplate()->getId() . "
+        ";
+
+        $db->query($query);
+
+        $this->deleteTemplateRepetitions($templateRoot);
+        $this->createTemplateRepetitions($templateRoot);
     }
 
     public function delete($template)
@@ -148,5 +168,13 @@ class TemplateRepository extends AbstractRep
         $query = rtrim($query,',') . ';';
 
         $this->openCart->db->query($query);
+    }
+
+    protected function deleteTemplateRepetitions($templateRoot)
+    {
+        $this->openCart->db->query("
+            DELETE FROM `" . DB_PREFIX . "mundipagg_template_repetition` WHERE
+                `template_id` = " . $templateRoot->getTemplate()->getId() . "
+        ");
     }
 }

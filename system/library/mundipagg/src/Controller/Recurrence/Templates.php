@@ -107,6 +107,11 @@ class Templates extends Recurrence
             $templateRoot = $templateRootFactory->createFromPostData($postData);
 
             $templateRepository = new TemplateRepository($this->openCart);
+
+            if (isset($postData['template-id'])) {
+                $templateRoot->getTemplate()->setId($postData['template-id']);
+            }
+
             $templateRepository->save($templateRoot);
         }catch(Exception $e) {
             throw $e;
