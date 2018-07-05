@@ -19,6 +19,7 @@ class TemplateEntity
     /** @var boolean */
     protected $allowInstallments;
     /** @var int */
+    /** @var int */
     protected $trial;
 
     public function __construct()
@@ -47,7 +48,7 @@ class TemplateEntity
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = intval($id);
         return $this;
     }
 

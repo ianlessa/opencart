@@ -40,6 +40,7 @@
                     <table id="images" class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
+                            <td class="text-left">Id</td>
                             <td class="text-left">Nome</td>
                             <td class="text-left">Descrição</td>
                             <td class="text-center">Métodos de pagamento</td>
@@ -55,6 +56,7 @@
                             {% set labelClass = templateRoot.template.isSingle ? 'success' : 'primary' %}
                             {% set badgeLabel = templateRoot.template.isSingle ? 'single' : 'plan' %}
                         <tr>
+                            <td>{{ templateRoot.template.id }}</td>
                             <td>
                                 {{ templateRoot.template.name }} <span class="label label-{{ labelClass }}">{{ badgeLabel }}</span>
                                 {% if templateRoot.template.trial > 0 %}
@@ -102,7 +104,7 @@
                                 <span class="label label-{{ installmentsClass }}">{{ templateRoot.template.allowInstallments ? "Sim" : "Não" }}</span>
                             </td>
                             <td>
-                                <button type="button" title="" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                <a href='{{ updateLink }}&templateId={{ templateRoot.template.id }}' type="button" title="Editar" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

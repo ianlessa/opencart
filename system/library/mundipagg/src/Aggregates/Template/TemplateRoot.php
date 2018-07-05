@@ -64,4 +64,9 @@ class TemplateRoot
         $this->repetitions[] = $repetition;
         return $this;
     }
+
+    public function getId()
+    {
+        return $this->template->getId();
+    }
 }

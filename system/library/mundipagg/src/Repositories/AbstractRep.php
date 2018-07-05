@@ -17,7 +17,7 @@ abstract class AbstractRep
             is_object($object) &&
             method_exists($object, 'getId')
         ) {
-            $object = $object->getId();
+            $objectId = $object->getId();
         }
         if ($objectId === null) {
             return $this->create($object);

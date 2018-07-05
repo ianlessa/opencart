@@ -1,14 +1,14 @@
 <label class="col-sm-12 form-group">Nome</label>
 <div class="form-group required">
     <div class="col-sm-10">
-        <input type="text" name="name" value="" placeholder="" id="" class="form-control">
+        <input type="text" name="name" value="{{ selectedTemplateRoot.template.name }}" placeholder="" id="" class="form-control">
     </div>
 </div>
 
 <label class="col-sm-12 form-group">Descrição</label>
 <div class="form-group">
     <div class="col-sm-10">
-        <textarea type="text" name="description" value="" placeholder="" id="" class="form-control"></textarea>
+        <textarea type="text" name="description" value="" placeholder="" id="" class="form-control">{{ selectedTemplateRoot.template.description }}</textarea>
     </div>
 </div>
 
@@ -17,12 +17,20 @@
     <div class="col-sm-10">
         <div class="checkbox">
             <label>
-              <input type="checkbox" name="payment_method[]" id="checkbox-creditcard" value="credit_card" class="mp-checkbox-creditcard-{{ formId }}"> Credit Card
+              <input type="checkbox" name="payment_method[]" id="checkbox-creditcard" value="credit_card" class="mp-checkbox-creditcard-{{ formId }}"
+                  {% if selectedTemplateRoot.template.isAcceptCreditCard %}
+                      checked
+                  {% endif %}
+              > Credit Card
             </label>
         </div>
         <div class="checkbox">
             <label>
-              <input type="checkbox" name="payment_method[]" id="checkbox-boleto" value="boleto"> Boleto
+              <input type="checkbox" name="payment_method[]" id="checkbox-boleto" value="boleto"
+                  {% if selectedTemplateRoot.template.isAcceptBoleto %}
+                      checked
+                  {% endif %}
+              > Boleto
             </label>
         </div>
     </div>
@@ -32,7 +40,9 @@
     <label class="col-sm-12 form-group">Permite parcelamento</label>
     <div class="form-group required">
         <div class="col-sm-10">
-            <select name="allow_installment" id="allow_installment" class="form-control">
+            <select name="allow_installment" id="allow_installment" class="form-control"
+                    value="{{ selectedTemplateRoot.template.allowInstallments }}"
+            >
                 <option value="1"> Sim </option>
                 <option value="0"> Não </option>
             </select>
@@ -59,7 +69,9 @@
         </select>
     </div>
 </div>
-
+{% if selectedTemplateRoot %}
+    <input type="hidden" name="template-id" value="{{ selectedTemplateRoot.template.id }}" />
+{% endif %}
 <script>
 
     $('.installment-{{ formId }}').hide();
@@ -78,5 +90,10 @@
             $('.mp-expiry-date-placeholder-{{ formId }}').show();
         }
     });
+
+    {% if selectedTemplateRoot.dueAt.type %}
+        $('.mp-expiry-type-{{ formId }}').val('{{ selectedTemplateRoot.dueAt.type }}');
+    $('.mp-expiry-type-{{ formId }}').change();
+    {% endif %}
 
 </script>

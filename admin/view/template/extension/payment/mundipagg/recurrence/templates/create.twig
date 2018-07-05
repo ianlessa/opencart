@@ -29,21 +29,21 @@
 
             <div class="panel-body">
 		       <ul class="nav nav-tabs">
-                   {% if recurrenceSettings.recurrence_subscriptionByPlan == '1'%}
+                   {% if recurrenceSettings.recurrence_subscriptionByPlan == '1' and (not selectedTemplateRoot or (selectedTemplateRoot and not selectedTemplateRoot.template.isSingle)) %}
 		               <li class="active"><a href="#tab-plans" data-toggle="tab" title="{{ general.label }}">Plans</a></li>
                    {% endif %}
-                   {% if recurrenceSettings.recurrence_singleSubscription == '1'%}
+                   {% if recurrenceSettings.recurrence_singleSubscription == '1' and (not selectedTemplateRoot or (selectedTemplateRoot and selectedTemplateRoot.template.isSingle)) %}
 		               <li 
                            {% if recurrenceSettings.recurrence_singleSubscription == '1' and recurrenceSettings.recurrence_subscriptionByPlan != '1' %}
                            class="active"
                            {% endif %}
-                         ><a href="#tab-single" data-toggle="tab" title="{{ credit_card.label }}">Single</a></li>
+                         ><a id='mp-tab-handler-single' href="#tab-single" data-toggle="tab" title="{{ credit_card.label }}">Single</a></li>
                    {% endif %}
                </ul>
 
 		       <div class="tab-content">
-                   
-                   {% if recurrenceSettings.recurrence_subscriptionByPlan == '1'%}
+
+                   {% if recurrenceSettings.recurrence_subscriptionByPlan == '1' and (not selectedTemplateRoot or (selectedTemplateRoot and not selectedTemplateRoot.template.isSingle)) %}
 		           <div class="tab-pane active" id="tab-plans">
                        <div class="panel-heading">
                            <h3>Plans</h3>
@@ -60,8 +60,8 @@
                        </div>
                    </div>
                    {% endif %}
-                   {% if recurrenceSettings.recurrence_singleSubscription == '1'%}
-                   <div 
+                   {% if recurrenceSettings.recurrence_singleSubscription == '1' and (not selectedTemplateRoot or (selectedTemplateRoot and selectedTemplateRoot.template.isSingle)) %}
+                   <div
                            {% if recurrenceSettings.recurrence_singleSubscription == '1' and recurrenceSettings.recurrence_subscriptionByPlan != '1' %}
                            class="tab-pane active"
                            {% else %}
@@ -93,6 +93,12 @@
     $('#checkbox-creditcard').change(function () {
             return $('.installment').toggle();
     });
+
+    {% if selectedTemplateRoot.template.isSingle %}
+    $(document).ready(function(){
+        $('#mp-tab-handler-single').click();
+    });
+    {% endif %}
 </script>
 
 {{ footer }}
