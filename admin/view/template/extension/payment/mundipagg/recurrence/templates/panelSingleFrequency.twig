@@ -61,8 +61,7 @@
 <script type="text/javascript" src="view/script/mundipagg/recurrence.js"></script>
 {% if selectedTemplateRoot %}
 <script id="autoSetIntervalsScript">
-
-    function autoSetIntervals(cycles,frequency,intervalType,discountType,discountValue)
+    function autoSetIntervals(cycles, frequency, intervalType, discountType, discountValue)
     {
         $('#cycles').val(cycles);
         $('.mp-single-frequency').val(frequency);
@@ -74,7 +73,7 @@
     }
     $(document).ready(function() {
     {% for repetition in selectedTemplateRoot.repetitions %}
-        autoSetIntervals({{ repetition.cycles }},{{ repetition.frequency }},'{{ repetition.intervalType }}','{{ repetition.discountType }}',{{ repetition.discountValue }});
+        autoSetIntervals({{ repetition.cycles }}, {{ repetition.frequency }}, '{{ repetition.intervalType }}', '{{ repetition.discountType }}', {{ repetition.discountValue }});
     {% endfor %}
     });
 
