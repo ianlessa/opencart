@@ -18,6 +18,7 @@ class TemplateRepository extends AbstractRep
 
         $query = "
             INSERT INTO `" . DB_PREFIX . "mundipagg_template` (
+                `is_disabled`,
                 `is_single`,
                 `name`,
                 `description`,
@@ -28,6 +29,7 @@ class TemplateRepository extends AbstractRep
                 `due_type`,
                 `due_value`
             ) VALUES (
+                " . ($templateRoot->isDisabled()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
                 '" . $templateRoot->getTemplate()->getName() . "',
                 '" . $templateRoot->getTemplate()->getDescription() . "',
@@ -58,6 +60,7 @@ class TemplateRepository extends AbstractRep
 
         $query = "
             UPDATE `" . DB_PREFIX . "mundipagg_template` SET
+                `is_disabled` = " . ($templateRoot->isDisabled()?1:0) . ",
                 `is_single` = " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
                 `name` = '" . $templateRoot->getTemplate()->getName() . "',
                 `description` = '" . $templateRoot->getTemplate()->getDescription() . "',
@@ -107,7 +110,7 @@ class TemplateRepository extends AbstractRep
             ->createFromDBData($result->rows[0]);
     }
 
-    public function listEntities($limit = 0)
+    public function listEntities($limit = 0,$listDisabled = true)
     {
         $query = "
             SELECT 
@@ -119,9 +122,14 @@ class TemplateRepository extends AbstractRep
               GROUP_CONCAT(r.cycles) AS cycles      
             FROM `" . DB_PREFIX . "mundipagg_template` AS t 
             INNER JOIN `" . DB_PREFIX . "mundipagg_template_repetition` AS r
-              ON t.id = r.template_id
-            GROUP BY t.id  
+              ON t.id = r.template_id             
         ";
+
+        if (!$listDisabled) {
+            $query .= " WHERE t.is_disabled != false ";
+        }
+
+        $query .= " GROUP BY t.id";
 
         if ($limit !== 0) {
             $limit = intval($limit);
