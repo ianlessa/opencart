@@ -77,7 +77,9 @@
     $('.installment-{{ formId }}').hide();
     $('.mp-expiry-date-placeholder-{{ formId }}').hide();
     $('.mp-checkbox-creditcard-{{ formId }}').change(function () {
-            return $('.installment-{{ formId }}').toggle();
+            var method = $('.mp-checkbox-creditcard-{{ formId }}').is(':checked') ?
+                'show' : 'hide';
+            return $('.installment-{{ formId }}')[method]();
     });
 
     $('.mp-expiry-type-{{ formId }}').change(function(event){
@@ -93,7 +95,11 @@
 
     {% if selectedTemplateRoot.dueAt.type %}
         $('.mp-expiry-type-{{ formId }}').val('{{ selectedTemplateRoot.dueAt.type }}');
-    $('.mp-expiry-type-{{ formId }}').change();
+        $('.mp-expiry-type-{{ formId }}').change();
     {% endif %}
+
+    $(document).ready(function() {
+        $('.mp-checkbox-creditcard-{{ formId }}').change();
+    });
 
 </script>
