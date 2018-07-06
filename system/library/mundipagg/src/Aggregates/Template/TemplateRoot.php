@@ -2,7 +2,9 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-class TemplateRoot
+use Mundipagg\Aggregates\IAGGRoot;
+
+class TemplateRoot implements IAGGRoot
 {
     /** @var bool */
     protected $isDisabled;
@@ -90,7 +92,7 @@ class TemplateRoot
      */
     public function setDisabled($isDisabled)
     {
-        $this->isDisabled = $isDisabled;
+        $this->isDisabled = boolval($isDisabled);
         return $this;
     }
 }
