@@ -71,7 +71,7 @@ class TemplateRepository extends AbstractRep
                 `trial` = " . $templateRoot->getTemplate()->getTrial() . ",
                 `due_type` = '" . $templateRoot->getDueAt()->getType() . "',
                 `due_value` = " . $templateRoot->getDueAt()->getValue() . "
-            WHERE `id` = " . $templateRoot->getTemplate()->getId() . "
+            WHERE `id` = " . $templateRoot->getId() . "
         ";
 
         $db->query($query);
@@ -82,7 +82,14 @@ class TemplateRepository extends AbstractRep
 
     public function delete(IAGGRoot $templateRoot)
     {
+        $query = "
+            UPDATE `" . DB_PREFIX . "mundipagg_template` SET
+                `is_disabled` = " . ($templateRoot->isDisabled()?1:0) . "
+             WHERE `id` = " . $templateRoot->getId() . "                         
+        ";
+        $this->openCart->db->query($query);
 
+        return true;
     }
 
     public function find($templateId)

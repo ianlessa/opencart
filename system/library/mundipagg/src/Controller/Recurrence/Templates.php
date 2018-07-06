@@ -22,7 +22,7 @@ class Templates extends Recurrence
     {
         $templateRepository = new TemplateRepository($this->openCart);
 
-        $templateRoots = $templateRepository->listEntities();
+        $templateRoots = $templateRepository->listEntities(0,false);
         $this->data['templateRoots'] = $templateRoots;
 
         $this->data['heading_title'] = $this->language['Templates'];
