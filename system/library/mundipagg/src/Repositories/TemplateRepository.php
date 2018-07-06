@@ -134,7 +134,7 @@ class TemplateRepository extends AbstractRep
         ";
 
         if (!$listDisabled) {
-            $query .= " WHERE t.is_disabled != false ";
+            $query .= " WHERE t.is_disabled = false ";
         }
 
         $query .= " GROUP BY t.id";
