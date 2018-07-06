@@ -32,5 +32,5 @@ abstract class AbstractRep
     abstract protected function update(IAGGRoot &$object);
     abstract public function delete(IAGGRoot $object);
     abstract public function find($objectId);
-    abstract public function listEntities($limit,$listDisabled);
+    abstract public function listEntities($limit, $listDisabled);
 }

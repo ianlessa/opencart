@@ -118,7 +118,7 @@ class TemplateRepository extends AbstractRep
             ->createFromDBData($result->rows[0]);
     }
 
-    public function listEntities($limit = 0,$listDisabled = true)
+    public function listEntities($limit = 0, $listDisabled = true)
     {
         $query = "
             SELECT 
