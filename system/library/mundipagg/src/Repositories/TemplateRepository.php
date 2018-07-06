@@ -84,7 +84,7 @@ class TemplateRepository extends AbstractRep
     {
         $query = "
             UPDATE `" . DB_PREFIX . "mundipagg_template` SET
-                `is_disabled` = " . ($templateRoot->isDisabled()?1:0) . "
+                `is_disabled` = true
              WHERE `id` = " . $templateRoot->getId() . "                         
         ";
         $this->openCart->db->query($query);
