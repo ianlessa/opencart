@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Repositories;
 
-use Mundipagg\Aggregates\IAGGRoot;
+use Mundipagg\Aggregates\IAggregateRoot;
 use Mundipagg\Aggregates\Template\RepetitionValueObject;
 use Mundipagg\Aggregates\Template\TemplateRoot;
 use Mundipagg\Factories\TemplateRootFactory;
@@ -12,7 +12,7 @@ class TemplateRepository extends AbstractRep
     /**
      * @param TemplateRoot $templateRoot
      */
-    protected function create(IAGGRoot &$templateRoot)
+    protected function create(IAggregateRoot &$templateRoot)
     {
         /** @var \DB $db */
         $db = $this->openCart->db;
@@ -54,7 +54,7 @@ class TemplateRepository extends AbstractRep
     /**
      * @param TemplateRoot $templateRoot
      */
-    protected function update(IAGGRoot &$templateRoot)
+    protected function update(IAggregateRoot &$templateRoot)
     {
         /** @var \DB $db */
         $db = $this->openCart->db;
@@ -80,7 +80,7 @@ class TemplateRepository extends AbstractRep
         $this->createTemplateRepetitions($templateRoot);
     }
 
-    public function delete(IAGGRoot $templateRoot)
+    public function delete(IAggregateRoot $templateRoot)
     {
         $query = "
             UPDATE `" . DB_PREFIX . "mundipagg_template` SET

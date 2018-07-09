@@ -2,7 +2,7 @@
 
 namespace Mundipagg\Repositories;
 
-use Mundipagg\Aggregates\IAGGRoot;
+use Mundipagg\Aggregates\IAggregateRoot;
 
 abstract class AbstractRep
 {
@@ -13,7 +13,7 @@ abstract class AbstractRep
         $this->openCart = $openCart;
     }
 
-    public function save(IAGGRoot &$object){
+    public function save(IAggregateRoot &$object){
         $objectId = null;
         if (
             is_object($object) &&
@@ -28,9 +28,9 @@ abstract class AbstractRep
         return $this->update($object);
     }
 
-    abstract protected function create(IAGGRoot &$object);
-    abstract protected function update(IAGGRoot &$object);
-    abstract public function delete(IAGGRoot $object);
+    abstract protected function create(IAggregateRoot &$object);
+    abstract protected function update(IAggregateRoot &$object);
+    abstract public function delete(IAggregateRoot $object);
     abstract public function find($objectId);
     abstract public function listEntities($limit, $listDisabled);
 }

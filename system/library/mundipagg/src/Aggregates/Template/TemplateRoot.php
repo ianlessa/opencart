@@ -2,9 +2,9 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-use Mundipagg\Aggregates\IAGGRoot;
+use Mundipagg\Aggregates\IAggregateRoot;
 
-class TemplateRoot implements IAGGRoot
+class TemplateRoot implements IAggregateRoot
 {
     /** @var bool */
     protected $isDisabled;
