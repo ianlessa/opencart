@@ -25,5 +25,4 @@ abstract class AbstractDatabaseBridge
     abstract public function getLastId();
     abstract protected function setTableArray();
     abstract protected function getDatabaseAccessObject();
-
 }

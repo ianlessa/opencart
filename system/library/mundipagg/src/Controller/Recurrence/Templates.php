@@ -75,7 +75,7 @@ class Templates extends Recurrence
             return $this->create();
         }
 
-        $templateRepository = new TemplateRepository($this->openCart);
+        $templateRepository = new TemplateRepository(new OpencartDatabaseBridge());
         $templateRoot = $templateRepository->find($getData['templateId']);
         if ($templateRoot === null) {
             return $this->create();
@@ -91,7 +91,7 @@ class Templates extends Recurrence
     {
         $getData = $this->openCart->request->get;
         if (isset($getData['templateId'])) {
-            $templateRepository = new TemplateRepository($this->openCart);
+            $templateRepository = new TemplateRepository(new OpencartDatabaseBridge());
             $templateRoot = $templateRepository->find($getData['templateId']);
             if ($templateRoot !== null) {
                 $templateRepository->delete($templateRoot);

@@ -36,6 +36,4 @@ class OpencartDatabaseBridge extends AbstractDatabaseBridge
     {
         return $this->db->getLastId();
     }
-
-
 }
