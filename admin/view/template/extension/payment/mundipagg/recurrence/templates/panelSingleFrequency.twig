@@ -1,40 +1,34 @@
 <div class="form-group required">
-    <label class="col-sm-3">Repetições</label>
+    <label class="col-sm-3">Ciclos</label>
     <label class="col-sm-3">Intervalo</label>
     <label class="col-sm-6">Desconto</label>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" placeholder="3" name="cycles" id="cycles">
+    </div>
     <div class="frequency">
         <div class="col-sm-3">
-            <select id="frequency" class="form-control">
-                <option>01</option>
-                <option>02</option>
-                <option>03</option>
-                <option>04</option>
-                <option>05</option>
-                <option>06</option>
-                <option>07</option>
-                <option>08</option>
-                <option>09</option>
-                <option>10</option>
+            <select id="frequency" class="form-control mp-single-frequency">
+                {% for frequency in  1..12 %}<option>{{ frequency }}</option>{% endfor %}
             </select>
-        </div>
-        <div class="col-sm-3">
-            <select id="interval" class="form-control">
-                <option>Mensal</option>
-                <option>Semestral</option>
+            <select id="interval" class="form-control mp-single-interval">
+                {% for intervalType in intervalTypesArray %}
+                    <option value="{{ intervalType.code }}">{{ intervalType.name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="col-sm-3">
             <div class="input-group">
                 <div class="input-group-btn bs-dropdown-to-select-group">
                     <button type="button" class="btn btn-default dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
-                       <span data-bind="bs-drp-sel-label">%</span>
-                       <input type="hidden" id="type_discount" data-bind="bs-drp-sel-value" value="percent" data-symbol="%">
+                       <span data-bind="bs-drp-sel-label">{{ discountTypesArray[0].name }}</span>
+                       <input type="hidden" id="discountType" data-bind="bs-drp-sel-value" value="P" data-symbol="%">
                        <span class="caret"></span>
                        <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li data-value="fixed"><a href="#">R$</a></li>
-                        <li data-value="percent"><a href="#">%</a></li>
+                        {% for discountType in discountTypesArray %}
+                            <li><a href="#" data-value="{{ discountType.code }}" class="mp-discount-type-link">{{ discountType.name }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div><!-- /btn-group -->
                 <input type="number" step="0.01" min="0" class="form-control discount" id="discount">
@@ -52,6 +46,7 @@
             <table id="images" class="table table-striped table-bordered table-hover table-interval" data-number="0">
                 <thead>
                 <tr>
+                    <td>Ciclos</td>
                     <td>Intervalo</td>
                     <td>Tipo</td>
                     <td>Desconto</td>
@@ -64,3 +59,24 @@
     </div>
 </div>
 <script type="text/javascript" src="view/script/mundipagg/recurrence.js"></script>
+{% if selectedTemplateRoot %}
+<script id="autoSetIntervalsScript">
+    function autoSetIntervals(cycles, frequency, intervalType, discountType, discountValue)
+    {
+        $('#cycles').val(cycles);
+        $('.mp-single-frequency').val(frequency);
+        $('.mp-single-interval').val(intervalType);
+        $('.bs-dropdown-to-select').click();
+        $('.mp-discount-type-link[data-value="' + discountType +'"]').click();
+        $('#discount').val(discountValue);
+        $('.btn-add-frequency').click();
+    }
+    $(document).ready(function() {
+    {% for repetition in selectedTemplateRoot.repetitions %}
+        autoSetIntervals({{ repetition.cycles }}, {{ repetition.frequency }}, '{{ repetition.intervalType }}', '{{ repetition.discountType }}', {{ repetition.discountValue }});
+    {% endfor %}
+    });
+
+    $("#autoSetIntervalsScript").remove();
+</script>
+{% endif %}

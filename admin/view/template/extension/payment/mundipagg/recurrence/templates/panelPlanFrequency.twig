@@ -1,42 +1,36 @@
 <div class="form-group required">
-    <label class="col-sm-5">Repetições</label>
+    <label class="col-sm-5">Ciclos</label>
     <label class="col-sm-5">Intervalo</label>
+    <div class="col-sm-5">
+        <input type="text" class="form-control" placeholder="3" name="intervals[0][cycles]" value="{{ selectedTemplateRoot.repetitions[0].cycles }}">
+    </div>
     <div class="frequency">
         <div class="col-sm-5">
-            <select id="frequency" class="form-control">
-                <option>01</option>
-                <option>02</option>
-                <option>03</option>
-                <option>04</option>
-                <option>05</option>
-                <option>06</option>
-                <option>07</option>
-                <option>08</option>
-                <option>09</option>
-                <option>10</option>
+            <select id="frequency" class="form-control" name="intervals[0][frequency]">
+                {% for frequency in  1..12 %}<option>{{ frequency }}</option>{% endfor %}
             </select>
-        </div>
-        <div class="col-sm-5">
-            <select id="interval" class="form-control">
-                <option>Mensal</option>
-                <option>Semestral</option>
+            <select id="interval" class="form-control" name="intervals[0][type]">
+                {% for intervalType in intervalTypesArray %}
+                    <option value="{{ intervalType.code }}">{{ intervalType.name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
 </div>
 
 <div class="form-group required">
-    <label class="col-sm-5">Ciclos</label>
     <label class="col-sm-5">Trial</label>
-    <div class="frequency">
-        <div class="col-sm-5">
-            <input type="text" class="form-control" placeholder="3">
-        </div>
-        <div class="col-sm-5">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="15">
-              <span class="input-group-addon">Days</span>
-            </div>
+    <div class="col-sm-5">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="15" name="trial" value="{{ selectedTemplateRoot.template.trial }}">
+          <span class="input-group-addon">Days</span>
         </div>
     </div>
 </div>
+
+{% if selectedTemplateRoot.repetitions[0].intervalType %}
+    <script>
+        $('#interval').val('{{ selectedTemplateRoot.repetitions[0].intervalType }}');
+        $('#frequency').val('{{ selectedTemplateRoot.repetitions[0].frequency }}');
+    </script>
+{% endif %}
