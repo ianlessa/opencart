@@ -22,7 +22,7 @@ class Templates extends Recurrence
     {
         $templateRepository = new TemplateRepository($this->openCart);
 
-        $templateRoots = $templateRepository->listEntities();
+        $templateRoots = $templateRepository->listEntities(0, false);
         $this->data['templateRoots'] = $templateRoots;
 
         $this->data['heading_title'] = $this->language['Templates'];
@@ -30,6 +30,7 @@ class Templates extends Recurrence
             $this->openCart->request->get['user_token'];
         $this->data['createLink'] = $baseLink . '&action=create';
         $this->data['updateLink'] = $baseLink . '&action=update';
+        $this->data['deleteLink'] = $baseLink . '&action=delete';
 
         $this->render('templates/base');
     }
@@ -87,6 +88,16 @@ class Templates extends Recurrence
 
     protected function delete()
     {
+        $getData = $this->openCart->request->get;
+        if (isset($getData['templateId'])) {
+            $templateRepository = new TemplateRepository($this->openCart);
+            $templateRoot = $templateRepository->find($getData['templateId']);
+            if ($templateRoot !== null) {
+                $templateRepository->delete($templateRoot);
+            }
+        }
+
+        $this->redirect($this->openCart->url->link('extension/payment/mundipagg/templates',''));
     }
 
     protected function create()

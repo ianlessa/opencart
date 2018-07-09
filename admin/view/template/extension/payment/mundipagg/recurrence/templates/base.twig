@@ -48,7 +48,7 @@
                             <td class="text-center">Ciclos</td>
                             <td class="text-center">Descontos</td>
                             <td class="text-center">Parcelamento</td>
-                            <td>Ações</td>
+                            <td class="text-center">Ações</td>
                         </tr>
                         </thead>
                         <tbody>
@@ -105,6 +105,7 @@
                             </td>
                             <td>
                                 <a href='{{ updateLink }}&templateId={{ templateRoot.template.id }}' type="button" title="Editar" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                <a href='{{ deleteLink }}&templateId={{ templateRoot.template.id }}' type="button" title="Remover" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

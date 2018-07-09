@@ -2,6 +2,7 @@
 
 namespace Mundipagg\Repositories;
 
+use Mundipagg\Aggregates\IAggregateRoot;
 use Mundipagg\Aggregates\Template\RepetitionValueObject;
 use Mundipagg\Aggregates\Template\TemplateRoot;
 use Mundipagg\Factories\TemplateRootFactory;
@@ -11,13 +12,14 @@ class TemplateRepository extends AbstractRep
     /**
      * @param TemplateRoot $templateRoot
      */
-    protected function create(&$templateRoot)
+    protected function create(IAggregateRoot &$templateRoot)
     {
         /** @var \DB $db */
         $db = $this->openCart->db;
 
         $query = "
             INSERT INTO `" . DB_PREFIX . "mundipagg_template` (
+                `is_disabled`,
                 `is_single`,
                 `name`,
                 `description`,
@@ -28,6 +30,7 @@ class TemplateRepository extends AbstractRep
                 `due_type`,
                 `due_value`
             ) VALUES (
+                " . ($templateRoot->isDisabled()?1:0) . ",
                 " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
                 '" . $templateRoot->getTemplate()->getName() . "',
                 '" . $templateRoot->getTemplate()->getDescription() . "',
@@ -51,13 +54,14 @@ class TemplateRepository extends AbstractRep
     /**
      * @param TemplateRoot $templateRoot
      */
-    protected function update(&$templateRoot)
+    protected function update(IAggregateRoot &$templateRoot)
     {
         /** @var \DB $db */
         $db = $this->openCart->db;
 
         $query = "
             UPDATE `" . DB_PREFIX . "mundipagg_template` SET
+                `is_disabled` = " . ($templateRoot->isDisabled()?1:0) . ",
                 `is_single` = " . ($templateRoot->getTemplate()->isSingle()?1:0) . ",
                 `name` = '" . $templateRoot->getTemplate()->getName() . "',
                 `description` = '" . $templateRoot->getTemplate()->getDescription() . "',
@@ -67,7 +71,7 @@ class TemplateRepository extends AbstractRep
                 `trial` = " . $templateRoot->getTemplate()->getTrial() . ",
                 `due_type` = '" . $templateRoot->getDueAt()->getType() . "',
                 `due_value` = " . $templateRoot->getDueAt()->getValue() . "
-            WHERE `id` = " . $templateRoot->getTemplate()->getId() . "
+            WHERE `id` = " . $templateRoot->getId() . "
         ";
 
         $db->query($query);
@@ -76,9 +80,16 @@ class TemplateRepository extends AbstractRep
         $this->createTemplateRepetitions($templateRoot);
     }
 
-    public function delete($template)
+    public function delete(IAggregateRoot $templateRoot)
     {
+        $query = "
+            UPDATE `" . DB_PREFIX . "mundipagg_template` SET
+                `is_disabled` = true
+             WHERE `id` = " . $templateRoot->getId() . "                         
+        ";
+        $this->openCart->db->query($query);
 
+        return true;
     }
 
     public function find($templateId)
@@ -107,7 +118,7 @@ class TemplateRepository extends AbstractRep
             ->createFromDBData($result->rows[0]);
     }
 
-    public function listEntities($limit = 0)
+    public function listEntities($limit = 0, $listDisabled = true)
     {
         $query = "
             SELECT 
@@ -119,9 +130,14 @@ class TemplateRepository extends AbstractRep
               GROUP_CONCAT(r.cycles) AS cycles      
             FROM `" . DB_PREFIX . "mundipagg_template` AS t 
             INNER JOIN `" . DB_PREFIX . "mundipagg_template_repetition` AS r
-              ON t.id = r.template_id
-            GROUP BY t.id  
+              ON t.id = r.template_id             
         ";
+
+        if (!$listDisabled) {
+            $query .= " WHERE t.is_disabled = false ";
+        }
+
+        $query .= " GROUP BY t.id";
 
         if ($limit !== 0) {
             $limit = intval($limit);

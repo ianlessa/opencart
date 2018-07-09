@@ -2,14 +2,23 @@
 
 namespace Mundipagg\Aggregates\Template;
 
-class TemplateRoot
+use Mundipagg\Aggregates\IAggregateRoot;
+
+class TemplateRoot implements IAggregateRoot
 {
+    /** @var bool */
+    protected $isDisabled;
     /** @var TemplateEntity */
     protected $template;
     /** @var DueValueObject */
     protected $dueAt;
     /** @var RepetitionValueObject[] */
     protected $repetitions;
+
+    public function __construct()
+    {
+        $this->isDisabled = false;
+    }
 
     /**
      * @return TemplateEntity
@@ -68,5 +77,22 @@ class TemplateRoot
     public function getId()
     {
         return $this->template->getId();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return $this->isDisabled;
+    }
+
+    /**
+     * @param bool $isDisabled
+     */
+    public function setDisabled($isDisabled)
+    {
+        $this->isDisabled = boolval($isDisabled);
+        return $this;
     }
 }

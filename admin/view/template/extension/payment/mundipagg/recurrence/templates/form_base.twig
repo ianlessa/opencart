@@ -40,9 +40,7 @@
     <label class="col-sm-12 form-group">Permite parcelamento</label>
     <div class="form-group required">
         <div class="col-sm-10">
-            <select name="allow_installment" id="allow_installment" class="form-control"
-                    value="{{ selectedTemplateRoot.template.allowInstallments }}"
-            >
+            <select name="allow_installment" id="allow_installment" class="form-control mp-allow-installment-{{ formId }}">
                 <option value="1"> Sim </option>
                 <option value="0"> Não </option>
             </select>
@@ -77,7 +75,9 @@
     $('.installment-{{ formId }}').hide();
     $('.mp-expiry-date-placeholder-{{ formId }}').hide();
     $('.mp-checkbox-creditcard-{{ formId }}').change(function () {
-            return $('.installment-{{ formId }}').toggle();
+            var method = $('.mp-checkbox-creditcard-{{ formId }}').is(':checked') ?
+                'show' : 'hide';
+            return $('.installment-{{ formId }}')[method]();
     });
 
     $('.mp-expiry-type-{{ formId }}').change(function(event){
@@ -92,8 +92,15 @@
     });
 
     {% if selectedTemplateRoot.dueAt.type %}
+        $('.mp-allow-installment-{{ formId }}').val(
+            (!!'{{ selectedTemplateRoot.template.allowInstallments }}') ? '1' : '0'
+        );
         $('.mp-expiry-type-{{ formId }}').val('{{ selectedTemplateRoot.dueAt.type }}');
-    $('.mp-expiry-type-{{ formId }}').change();
+        $('.mp-expiry-type-{{ formId }}').change();
     {% endif %}
+
+    $(document).ready(function() {
+        $('.mp-checkbox-creditcard-{{ formId }}').change();
+    });
 
 </script>
